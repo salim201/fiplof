@@ -1,0 +1,14 @@
+﻿ALTER TABLE public.demandeur_d ADD COLUMN datenaissancepersonne date;
+ALTER TABLE public.demandeur_d ADD COLUMN lieunaissancepersonne character varying(100);
+ALTER TABLE public.demandeur_d ADD COLUMN sexepersonne character varying(10);
+ALTER TABLE public.demandeur_d ADD COLUMN adressepersonne character varying(100);
+ALTER TABLE public.demandeur_d ADD COLUMN actepersonne character varying(6);
+ALTER TABLE public.demandeur_d ADD COLUMN numcipersonne character varying(20);
+ALTER TABLE public.demandeur_d ADD COLUMN datecipersonne date;
+ALTER TABLE public.demandeur_d ADD COLUMN lieucipersonne character varying(50);
+ALTER TABLE public.demandeur_d ADD COLUMN numactenaissancepersonne character varying(20);
+ALTER TABLE public.demandeur_d ADD COLUMN dateactenaissancepersonne date;
+ALTER TABLE public.demandeur_d ADD COLUMN lieuactenaissancepersonne character varying(50);
+ALTER TABLE public.demandeur_d ADD COLUMN nompere character(80);
+ALTER TABLE public.demandeur_d ADD COLUMN nommere character(80);
+ALTER TABLE public.demandeur_d ADD COLUMN nevers smallint;

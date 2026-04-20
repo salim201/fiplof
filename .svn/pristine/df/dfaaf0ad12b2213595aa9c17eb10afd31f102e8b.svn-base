@@ -1,0 +1,162 @@
+import hashlib
+
+from PyQt4 import QtGui
+
+import globalvars
+from main import Ui_MainWindow
+from models.Acces import Acces
+from models.GroupeAcces import GroupeAcces
+
+
+class AccessManager:
+    ui = None  # type: Ui_MainWindow
+    access = None  # type: list[Acces]
+    groupe_access = None  # type: list[GroupeAcces]
+
+    def __init__(self, ui, connection):
+        self.ui, self.connection = ui, connection
+        model_groupe_access = GroupeAcces(self.connection)
+        model_access = Acces(self.connection)
+        self.groupe_access = model_groupe_access.find_by_gid(globalvars.groupe_id)
+        self.access = model_access.find_all()
+        h = hashlib.sha256(str(globalvars.groupe_id)).hexdigest().upper()
+        self.is_admin = (h == globalvars.GROUPE_ADMIN_ID)
+
+    def apply_rules(self):
+        self.ui.actionGestion_des_Groupes.setVisible(self.is_admin)
+        self.ui.menuG_rer_Utilisateurs.setEnabled(self.is_admin)
+
+        #********DEMANDES************************************************
+        self.activate_widget("DEMANDE/CREATE", self.ui.action_Creation)
+        self.activate_widget("DEMANDE/CREATE", self.ui.actionNouveauDmd)
+        self.activate_widget("DEMANDE/READ", self.ui.action_Consultation)
+        self.activate_widget("DEMANDE/EDIT_INFO", self.ui.actionEdition_des_Informations)
+        self.activate_widget("DEMANDE/EDIT_GEO", self.ui.actionEditions_de_la_Geometrie)
+        self.activate_widget("DEMANDE/LISTIN_IMPORT", self.ui.actionImport_listing)
+        self.activate_widget("DEMANDE/DATE_ATTRIB", self.ui.actionAttribution_des_dates)
+        self.activate_widget("DEMANDE/OPPOSITION", self.ui.actionOppositions)
+        self.activate_widget("DEMANDE/CREATE_NO_GEOM", self.ui.actionDemande_sans_geometrie)
+        #****************FIN  DEMANDES*****************************************
+
+        #*****************CERTFICAT******************************************
+        self.activate_widget("CERTIFICAT/CREATE", self.ui.action_Creation_Certificat_Recherche)
+        self.activate_widget("CERTIFICAT/READ", self.ui.action_Creation_Certificat_Consultation)
+        self.activate_widget("CERTIFICAT/READ", self.ui.action_ConsultationCertificat)
+        self.activate_widget("CERTIFICAT/ATTESTATION", self.ui.actionAttestation_2)
+        self.activate_widget("CERTIFICAT/ANNULLE", self.ui.actionAnnulation_Certificat)
+        self.activate_widget("CERTIFICAT/EDIT_INFO", self.ui.actionEdition_des_informations)
+        self.activate_widget("CERTIFICAT/EDIT_GEO", self.ui.actionEdition_de_la_geometrie)
+        self.activate_widget("CERTIFICAT/TRANSFO_GROUPEE", self.ui.actionTransformation_group_e)
+        #**************FIN CERTIFICAT**************************************************
+
+        #******************RECONNAISSANCE LOCALE**************************************
+        self.activate_widget("RECONNAISSANCE_LOCALE/EXPORT_RL", self.ui.actionExport_Donn_es_pour_RL)
+        self.activate_widget("RECONNAISSANCE_LOCALE/IMPORT_RL", self.ui.actionImport_Donn_es_Apr_s_RL)
+        # ******************FIN RECONNAISSANCE LOCALE**************************************
+
+        # ******************PERSONNES**************************************
+        self.activate_widget("PERSONNE_PHYSIQUE/READ", self.ui.action_Physique)
+        self.activate_widget("PERSONNE_MORALE/READ", self.ui.action_Morale)
+        #*******************FIN PERSONNES***********************************
+
+        #*******************OPERATIONS SUBSEQUENTES*********************
+        self.activate_widget("OPERATIONS_SUBSEQUENTES", self.ui.menuOp_rations_subs_quentes)
+        #*******************FIN OPERATIONS SUBSEQUENTES******************
+
+        #*******************IMPOT FONCIER*******************************
+        self.activate_widget("IMPOT_FONCIER/CREATE", self.ui.menu_Saisie_Des_Donn_es)
+        self.activate_widget("IMPOT_FONCIER/CALCUL", self.ui.menuCalcul_Impots)
+        self.activate_widget("IMPOT_FONCIER/PARAMETRES", self.ui.menuParam_tres)
+        self.activate_widget("IMPOT_FONCIER/REGISTRE", self.ui.actionRegistre_Demande)
+        self.activate_widget("IMPOT_FONCIER/BENEFICIAIRES", self.ui.actionListes_des_b_n_ficiaires)
+        self.activate_widget("IMPOT_FONCIER/AFFICHAGE", self.ui.actionAffichage)
+        self.activate_widget("IMPOT_FONCIER/AUTRES", self.ui.menuAutres)
+        # *******************FIN IMPOT FONCIER*******************************
+
+        #**********FICHIER**************************************************
+        self.activate_widget("FICHIER/LOAD_PTS_XLS", self.ui.actionCharger_points_depuis_xls)
+        self.activate_widget("FICHIER/LEVE_GPS", self.ui.actionLevee_Parcellaire)
+        #**********FIN FICHIER*********************************************
+
+        #****************IMPORT EXPORT***********************************
+        self.activate_widget("IMPORT_EXPORT/IMPORT", self.ui.actionImportDb)
+        self.activate_widget("IMPORT_EXPORT/EXPORT", self.ui.actionExport)
+        self.activate_widget("IMPORT_EXPORT/IMPORT_PLOF", self.ui.actionImport)
+        self.activate_widget("IMPORT_EXPORT/IMPORT_FIPLOF", self.ui.actionImport_FIPLOF)
+        self.activate_widget("IMPORT_EXPORT/EXPORT_SHAPE", self.ui.actionExporter_shapefile)
+        #****************FIN IMPORT EXPORT*****************************
+
+        #***********PROJET*************************************
+        #self.activate_widget("PROJET/GERER", self.ui.menuProjet)
+        self.activate_widget("PROJET/NEW", self.ui.actionNouveau)
+        self.activate_widget("PROJET/LIST", self.ui.actionListe_Des_Projets)
+        self.activate_widget("PROJET/PARAMS", self.ui.actionParam_tre_Des_Projets)
+        self.activate_widget("PROJET/ANCIENNE_DONNEES", self.ui.menuAnciennes_Donn_es)
+        self.activate_widget("PROJET/DONNEES_TERRAIN", self.ui.menuDonn_es_Terrain)
+        #***********FIN PROJET*******************************
+
+        #*****************PARAMETRES************************
+        self.activate_widget("PARAMETRES/HAMEAU", self.ui.actionHameau)
+        self.activate_widget("PARAMETRES/CATEGORIE", self.ui.actionConsistance)
+        self.activate_widget("PARAMETRES/CONSISTANCE_BAT", self.ui.actionConsistance_Batiment)
+        self.activate_widget("PARAMETRES/TERRITOIRE", self.ui.menuTerritoires)
+        self.activate_widget("PARAMETRES/CONTENANCE_MAX", self.ui.actionContenance_octroyable)
+        self.activate_widget("PARAMETRES/BDD", self.ui.actionBase_de_donn_es)
+        self.activate_widget("PARAMETRES/COMPTEUR", self.ui.actionCompteur)
+        self.activate_widget("PARAMETRES/BD_VIDE", self.ui.actionCr_er_une_base_de_donn_es_vide)
+        self.activate_widget("PARAMETRES/BD_SPLIT", self.ui.actionS_parer_la_base_en_base_de_donn_es_par_commune)
+        #*****************FIN PARAMETRES****************************
+
+        #******************ETATS*****************************
+        self.activate_widget("ETATS/AFFICHAGE", self.ui.actionFilazana_Peta_Drindrina)
+        self.activate_widget("ETATS/FANAPAHANA", self.ui.actionFanapahana)
+        self.activate_widget("ETATS/ATTESTATION", self.ui.actionAttestation)
+        self.activate_widget("ETATS/RP", self.ui.actionRegistre_parcellaire)
+        self.activate_widget("ETATS/PAGE_OP", self.ui.actionPage_Operations_Subs_quentes)
+        self.activate_widget("ETATS/RDD", self.ui.actionRegistre_de_demandes)
+        self.activate_widget("ETATS/AVIS_IMPOSITION", self.ui.actionAvis_d_Imposition)
+        self.activate_widget("ETATS/CERTIFICAT_AFFICHAGE", self.ui.actionCertificat_d_Affichage)
+        self.activate_widget("ETATS/LISTING_DEMANDE", self.ui.actionListing_Demande)
+        self.activate_widget("ETATS/PVRL", self.ui.actionPVRL)
+        self.activate_widget("ETATS/NOMBRE_CF", self.ui.actionNombre_Demandes_et_CF)
+        self.activate_widget("ETATS/STATISTIQUES", self.ui.menuStatistiques)
+        #****************FIN ETATS***************************
+
+        # ******************INVENTAIRES*****************************
+        self.activate_widget("INVENTAIRE/IMPORT_DATA", self.ui.menuImport_de_donn_es)
+        self.activate_widget("INVENTAIRE/FILTRE", self.ui.actionFiltre_inventaire)
+        # ****************FIN INVENTAIRES***************************
+
+        #***********************PLOF******************************
+        self.activate_widget("PLOF/IMPORT_SHAPE", self.ui.actionImport_Shape_PLOF)
+        self.activate_widget("PLOF/IMPORT_DXF", self.ui.actionImport_Fichier_DXF)
+        #****************FIN PLOF***********************
+
+        # ***********************TOOLS******************************
+        self.activate_widget("TOOL_EDIT/EDIT_GEOM", self.ui.actionEditing_Node_Layers)
+        self.activate_widget("TOOL_EDIT/DEL_GEOM", self.ui.actionDelete)
+        self.activate_widget("TOOL_EDIT/PARAM_ACCROCHAGE", self.ui.actionActionPolygoneAuto)
+        # ****************FIN TOOLS***********************
+
+        # ***********************BOUTONS******************************
+        self.activate_widget("BTN/RASTER", self.ui.pushButtonAddRaster)
+        self.activate_widget("BTN/VECTEUR", self.ui.pushButtonAddShape)
+        self.activate_widget("BTN/SUPPR", self.ui.pushButtonDelRaster)
+        # ****************FIN BOUTONS***********************
+
+
+
+    def activate_widget(self, menu_name, widget):
+        # type: (str, QtGui.QWidget) -> object
+        if self.is_admin:
+            widget.setEnabled(True)
+            return
+        fa = filter(lambda a: a.nom == menu_name, self.access)
+        if len(fa) == 0:
+            widget.setEnabled(False)
+            return
+        fg = filter(lambda a:
+                    a.groupe_id == globalvars.groupe_id
+                    and a.acces_id == fa[0].id
+                    and a.autorise, self.groupe_access)
+        widget.setEnabled((len(fg) > 0) or self.is_admin)

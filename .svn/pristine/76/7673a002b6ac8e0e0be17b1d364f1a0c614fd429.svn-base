@@ -1,0 +1,644 @@
+# coding: utf-8
+import os
+import subprocess
+import psycopg2
+import psycopg2.extras
+import globalvars
+from Synchronisation.synchro_Dialog_run import synchro_Dialog_run
+from Parametres.DbExportThread import DbExportThread
+import datetime
+class CompareDbModel:
+    dataTolog = []
+    def __init__(self,connLocal,connRemote,bar_syncho):
+        print '--connectDB Model--'
+        self.bar=bar_syncho
+        self.dataTolog = []
+        self.current_value = bar_syncho.ui.progressBar.value()
+        self.title = ["Connexion", "Table", "Activite", "Situation", "Erreur"]
+        self.thread = None
+        from Configuration import DbConfig
+        self.db_config = DbConfig.DbConfig()
+
+    def append_dataTolog(self,conn, table, act, sit, erreur):
+        self.dataToLog.append({"Connexion": conn, "Table": table, "Activite": act, "Situation": sit, "Erreur": erreur})
+
+    @staticmethod
+    def compare_Tables_columns_remote_local(self,connLocal,connRemote,bar):
+        bar.ui.label.setText("Comparaison des tables - colonnes")
+        bar.ui.progressBar.setValue(8)
+        cur1 = connLocal.cursor()
+        cur2 = connRemote.cursor()
+        try:
+            query_test = """
+                SELECT table_name,
+                       column_name, 'local' as db
+                FROM information_schema.columns c
+                WHERE c.table_schema = 'public';
+                """
+
+            cur1.execute(query_test)
+            result_test = cur1.fetchall()
+
+            query_public = """
+                           SELECT table_name,
+                                   column_name, 'remote' as db
+                            FROM information_schema.columns c1
+                            WHERE c1.table_schema = 'public';
+                                                   """
+            cur2.execute(query_public)
+            result_public = cur2.fetchall()
+
+            test_columns = {(table_name, column_name) for table_name, column_name,db in result_test}
+            public_columns = {(table_name, column_name) for table_name, column_name,db in result_public}
+
+            ssmissing_columns = test_columns.symmetric_difference(public_columns)
+
+            missing_columns = set()
+
+            # Comparaison des colonnes de result_test avec result_public
+            for table_name, column_name in test_columns:
+                if (table_name, column_name) not in public_columns:
+                    missing_columns.add((table_name, column_name,'local'))
+
+            # Comparaison inverse pour s'assurer de toutes les colonnes manquantes
+            for table_name, column_name in public_columns:
+                if (table_name, column_name) not in test_columns:
+                    missing_columns.add((table_name, column_name,'remote'))
+
+            bar.ui.label.setText("Comparaison des tables réussie")
+            bar.ui.progressBar.setValue(9)
+
+            return missing_columns
+
+        except Exception as e:
+            print "error at function  compare_Tables_remote_local"
+            print(e)
+            connLocal.rollback()
+            connRemote.rollback()
+
+    def sync_Tables_remote_local(self,connLocal, connRemote,missing_columns_list):
+
+        self.bar.ui.label.setText(u"tentative de sychronisation des structures des tables")
+        self.current_value+=2
+        self.bar.ui.progressBar.setValue(self.current_value)
+
+        schema_columns_local=set()
+        schema_columns_remote=set()
+        try:
+            cur1 = connLocal.cursor()
+            cur2 = connRemote.cursor()
+            for table_name, column_name, db in missing_columns_list:
+                if db =='local' :
+                   schema_columns_local.add(self.recup_table_columns(cur1,table_name,column_name))
+                elif db =='remote':
+                   schema_columns_remote.add(self.recup_table_columns(cur2, table_name, column_name))
+            self.current_value += 5
+
+            self.bar.ui.progressBar.setValue(self.current_value)
+            if (schema_columns_local) :
+                self.update_table_columns(connRemote,schema_columns_local)
+            if (schema_columns_remote):
+                self.update_table_columns(connLocal,schema_columns_remote)
+            self.current_value += 2
+            self.bar.ui.progressBar.setValue(self.current_value)
+            return True
+
+        except Exception as e:
+            print ' error function sync_Tables_remote_local'
+            print(e.message)
+            cur1.close()
+            cur2.close()
+            connLocal.rollback()
+            connRemote.rollback()
+            return False
+
+    def recup_table_data(self,connLocal,connRemote):
+        print u'***********************tentative de synchronisation de données dans  recup_table_data**************************'
+        self.current_value = self.bar.ui.progressBar.value()
+        self.bar.ui.label.setText(u"tentative de sychronisation  de données")
+        self.current_value += 2
+        self.bar.ui.progressBar.setValue(self.current_value)
+        try:
+            # 8- comparaison des tables
+            curlocal = connLocal.cursor()
+            curremote = connRemote.cursor()
+            is_sync=False
+
+            tables_local_list = self.select_alltable_schema(connLocal)
+            tables_remote_list =self.select_alltable_schema(connRemote)
+
+            if len(tables_local_list) != len(tables_remote_list):
+                missing_columns_list=CompareDbModel.compare_Tables_remote_local(connLocal, connRemote)
+                if (missing_columns_list):
+                    print 'eto le resaka'
+                    self.dataTolog.append({"Connexion": 'Remote and Local', "Table": missing_columns_list, "Activite": u'Liste des tables et colonnes manquates', "Situation": 'OK', "Erreur": ''})
+                    print 'vita eto eto le resaka'
+                    objet_compare_ = CompareDbModel(connLocal, connRemote)
+                    is_sync=objet_compare_.sync_Tables_remote_local(connLocal, connRemote, missing_columns_list)
+                else :
+                    self.dataTolog.append({"Connexion": 'Remote and Local', "Table": '',
+                                           "Activite": u'INFO : Aucune tables et colonnes manquates', "Situation": 'OK',
+                                           "Erreur": ''})
+            else:
+                self.dataTolog.append({"Connexion": 'Remote and Local', "Table":'' ,
+                                       "Activite": u'INFO : aucune différence en table entre local et remote', "Situation": 'OK',
+                                       "Erreur": ''})
+                is_sync=False
+            # 8- FIN comparaison des tables
+
+            list_tables_spec_topo = []
+            path = "Configuration/topo_tables_spec.ini"
+            from Helpers.FiPlofFile import FiPlofFile
+            list_tables_spec_topo = FiPlofFile.list_in_file(self, path, 5, 0)
+
+            if (is_sync):
+
+                # 9-sauvegarde Base de données locale and remote
+                pgdump = self.get_pgdump_path(connLocal)
+                print pgdump
+                dirname = "C:/sauvegarde"
+                date_jour = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+                filename = dirname + "/db_fiplof_"+date_jour+".sql"
+                print "*******************filename******************"
+                print filename
+                self.FILESAVE = str(filename)
+
+                self.thread = DbExportThread(pgdump=pgdump, filename=self.FILESAVE, nomBase=self.db_config.db_name)
+                self.thread.start()
+
+                pgdump = self.get_pgdump_path(connRemote)
+                print pgdump
+                dirname = "C:/sauvegardes"
+                filename = dirname + "/db_fiplof_rem_"+date_jour+".sql"
+                print "*******************filename local******************"
+                print filename
+                self.FILESAVE = str(filename)
+
+                # 9-sauvegarde Base de données locale and remote
+
+                path = "Configuration/remote.ini"
+                from Helpers.FiPlofFile import FiPlofFile
+                param = FiPlofFile.list_in_file(self, path, 6, 2)
+
+                self.thread_remote = DbExportThread(pgdump=pgdump, filename=self.FILESAVE, nomBase=param[4])
+                self.thread_remote.start()
+
+                self.bar.ui.label.setText(u" sychronisation  de données")
+                self.current_value += 2
+                self.bar.ui.progressBar.setValue(self.current_value)
+
+                if globalvars.groupe_id==10 or globalvars.groupe_id ==1 : # si admin et GF   il faut sychroniser les  données  dans topo_tables_spec.ini
+
+                    for table_spec_topo in list_tables_spec_topo:
+
+                        curremote.execute("SELECT * FROM %s" % table_spec_topo)
+                        remote_data = curremote.fetchall()
+                        curlocal.execute("SELECT * FROM %s" % table_spec_topo)
+                        local_data = curlocal.fetchall()
+                        self.sync_datas_tables_for_delete(connLocal,local_data, remote_data, table_spec_topo)
+
+
+                        local_data=None
+                        curlocal.execute("SELECT * FROM %s" % table_spec_topo)
+                        local_data = curlocal.fetchall()
+
+                        self.sync_datas_tables_update_insert(connLocal, local_data, remote_data,table_spec_topo)
+
+
+                if globalvars.groupe_id == 13:
+                    # synchronisation des tables existants
+                    # selection de dtoute les tables
+                    tables_local_list = self.select_alltable_schema(connLocal)
+                    print '------------------------------resaka info  cf no synchronisena-----------------------------------'
+
+        except Exception as e:
+            print ' error function recup_table_data' ''
+            self.dataTolog.append({"Connexion": 'Remote and Local', "Table":'',
+                                   "Activite": u'recup_table_data=Tentative de synchronisation des données des tables ', "Situation": 'KO',
+                                   "Erreur": e.message})
+            print(e.message)
+            try:
+                curlocal.close()
+                curremote.close()
+                connLocal.rollback()
+                connRemote.rollback()
+            except Exception as e:
+                print(e)
+                print 'ce n est pas grave'
+
+        return self.dataTolog
+
+    def sync_datas_tables_for_delete(self, conn, tables_target, tables_source, table_spec_topo):
+        self.bar.ui.label.setText(u" supression des  données")
+        self.current_value += 10
+        self.bar.ui.progressBar.setValue(self.current_value)
+        cur = conn.cursor()
+        try:
+            to_delete = set(tables_target) - set(tables_source)
+            if to_delete:
+                print '+++++++++++++++++++to delete *************************'
+                for element in to_delete:
+                    self.delete_data(conn, table_spec_topo, element[0])
+                    self.dataTolog.append({"Connexion": 'Remote and Local', "Table": table_spec_topo, "Activite": element,
+                                           "Situation": 'OK', "Erreur": ''})
+                print '+++++++++++++++++++to delete fin *************************'
+        except Exception as e:
+            self.dataTolog.append(
+                {"Connexion": 'Remote and Local', "Table": '', "Activite": u'tentative de sychronisation par suppression élément', "Situation": 'KO',
+                 "Erreur": e.message})
+            print("CompareDbModel sync_datas_tables_for_delete - Erreur lors de la synchronisation :", e)
+            # En cas d'erreur, annuler la transaction
+            try:
+                conn.rollback()
+                cur.close()
+                conn.close()
+            except Exception as e:
+                print(e)
+                print 'ce n est pas grave'
+
+    def sync_datas_tables_update_insert(self,conn, tables_target, tables_source,table_spec_topo):
+        cur=conn.cursor()
+        self.bar.ui.label.setText(u" update et insert des  données")
+        self.current_value += 3
+        self.bar.ui.progressBar.setValue(self.current_value)
+        try:
+
+            # Identifier les enregistrements à insérer, mettre à jour et supprimer
+            to_insert = set(tables_source) - set(tables_target)
+            to_update = set(tables_source).intersection(set(tables_target))
+
+            if to_insert :
+                print '+++++++++++++++++++to_insert *************************'
+                for element in to_insert:
+                    self.bar.ui.label.setText(u"  insert des  données")
+                    self.current_value += 10
+                    self.bar.ui.progressBar.setValue(self.current_value)
+                    self.insert_data(conn, table_spec_topo, element)
+
+                    self.dataTolog.append({"Connexion": 'Local_insertion', "Table": table_spec_topo, "Activite": element,
+                                           "Situation": 'OK', "Erreur": ''})
+
+                seq=self.get_current_sequence_value(conn,table_spec_topo)
+                self.checkSequence(conn,table_spec_topo,seq['columns_id'],seq['current_value'])
+                print '+++++++++++++++++++to_insert fin*************************'
+
+            if to_update:
+                print '+++++++++++++++++++to_update *************************'
+                for element in to_update:
+                    self.bar.ui.label.setText(u"update des  données")
+                    self.current_value += 10
+                    self.bar.ui.progressBar.setValue(self.current_value)
+                    self.update_data(conn,table_spec_topo,element)
+                    texte = "mise à jour :%s"%element[1]
+                    #self.append_dataTolog(self,'Local', table_spec_topo, texte, 'OK', '')
+                    self.dataTolog.append({"Connexion": 'Local_update', "Table": table_spec_topo,
+                                           "Activite": texte, "Situation": 'OK',
+                                           "Erreur": ''})
+                seq=self.get_current_sequence_value(conn, table_spec_topo)
+                self.checkSequence(conn,table_spec_topo, seq['columns_id'], seq['current_value'])
+                print '+++++++++++++++++++to_update fin*************************'
+
+        except Exception as e:
+            self.dataTolog.append({"Connexion": 'Local', "Table": '',
+                                   "Activite": u'tentative de sychronisation  par mise à jour ou insertion d éléments',
+                                   "Situation": 'KO', "Erreur": e.message})
+            print("CompareDbModel sync_datas_tables_update_insert - Erreur lors de la synchronisation :", e.message)
+            # En cas d'erreur, annuler la transaction
+            try:
+                conn.rollback()
+                cur.close()
+                conn.close()
+            except Exception as e:
+                print(e)
+                print 'ce n est pas grave'
+
+    def insert_data(self,conn,table,data):
+        try:
+            cur = conn.cursor()
+            # Récupérer la structure de la table
+            cur.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = %s",
+                        (table,))
+            columns = [row[0] for row in cur.fetchall()]
+
+            # Construire la requête d'insertion
+            columns_str = ", ".join(columns)
+            placeholders = ", ".join(["%s"] * len(columns))
+            insert_query = "INSERT INTO {} ({}) VALUES ({})".format(table, columns_str, placeholders)
+
+            data = tuple(int(value) if isinstance(value, long) else value for value in data)
+
+            cur.execute(insert_query, data)
+
+            # Valider la transaction
+            conn.commit()
+        except Exception as e:
+            print ' error CompareDbModel insert_data'
+            cur.close()
+            print(e.message)
+            conn.rollback()
+
+    def delete_data(self,conn,table,id_value):
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s",
+                        (table,))
+            first_column = cur.fetchone()  # Récupérer le premier élément
+            id=None
+            if first_column:
+                id=first_column[0]  # Retourner le nom de la première colonne
+            cur.execute("""
+                DELETE FROM {}
+                WHERE {} = %s
+            """.format(table,id), (id_value,))
+            conn.commit()
+        except Exception as e:
+            print ' error CompareDbModel delete_data'
+            print(e.message)
+            cur.close()
+            conn.rollback()
+
+    def update_data(self,conn,table,data):
+        try:
+            cur = conn.cursor()
+            # Récupérer la structure de la table
+            cur.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = %s",
+                        (table,))
+            columns = [row[0] for row in cur.fetchall()]
+
+            # Construire la requête de mise à jour
+            update_query = "UPDATE {} SET ".format(table)
+            columns_to_update = columns[1:]
+            data_to_update=data[1:]
+            update_query += ", ".join(["{} = %s".format(column) for column in columns_to_update])
+
+            # Conversion du tuple en liste pour pouvoir l'utiliser comme valeurs
+            update_query += " WHERE {} = {}".format(columns[0], data[0]) # Condition sur la colonne de clé
+
+            # print update_query
+            cur.execute(update_query, data_to_update)
+            # Valider la transaction
+            conn.commit()
+        except Exception as e:
+            print ' error CompareDbModel update_data'
+            cur.close()
+            print(e.message)
+            conn.rollback()
+
+    def select_alltable_schema(self,conn):
+        try:
+            conn.rollback()
+            # Créer un objet curseur pour exécuter des requêtes SQL
+            cur = conn.cursor()
+            #print'Exécuter la requête SQL pour récupérer les noms des tables du schéma spécifié'
+            cur.execute("""
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema = 'public';
+            """)
+            #print 'Récupérer les résultats select_alltable_schema'
+            res= cur.fetchall()
+
+            return res
+
+        except Exception as e:
+            print ' error CompareDbModel select_alltable_schema'
+            print(e.message)
+            conn.rollback()
+            return None
+
+    def recup_table_columns(self, cur, table_name, column_name):
+        try:
+            # Exécution de la requête SQL
+
+            sql_query = """
+                SELECT 
+                    table_name,
+                    column_name,
+                    CASE 
+                        WHEN data_type = 'USER-DEFINED' THEN 'geometry'
+                        ELSE data_type 
+                    END AS data_type,
+                    character_maximum_length,
+                    is_nullable,
+                    column_default
+                FROM 
+                    information_schema.columns
+                WHERE 
+                    table_schema = 'public'
+                    AND table_name = %s
+                    AND column_name = %s
+            """
+            # Exécution de la requête SQL avec les valeurs des paramètres
+            cur.execute(sql_query, (table_name, column_name))
+            # Récupération des résultats
+            rows = cur.fetchall()
+            print rows
+
+            # Affichage des résultats
+            return tuple(rows)
+
+        except Exception as e:
+            print 'Erreur dans recup_table_columns'
+            print(e)
+            cur.close()
+            return None
+
+    def update_table_columns(self,conn,schema_columns):
+        # Boucle à travers les résultats et synchronisation des colonnes dans 'autre_table'
+        self.current_value += 5
+        self.bar.ui.progressBar.setValue(self.current_value)
+        try:
+            cur = conn.cursor()
+            for row in schema_columns:
+                row=row[0]
+                table_name,column_name,data_type,character_maximum_length,is_nullable, column_default = row
+                # Vérification si la colonne existe déjà dans 'autre_table'
+                cur.execute("""
+                        SELECT COUNT(*) 
+                        FROM information_schema.columns 
+                        WHERE table_schema = 'public' 
+                        AND table_name = %s
+                        AND column_name = %s
+                    """, (table_name,column_name,))
+                count = cur.fetchone()[0]
+
+                # Si la colonne n'existe pas, l'ajouter à 'autre_table'
+                if count == 0:
+                    if column_default !=None :
+                        column_defaultsplit = column_default.split("(")[1].split(")")[0]
+                        column_defaultsplit = column_defaultsplit.split("::")[0]
+                        # Supprimer les guillemets simples entourant le nom de la séquence
+                        column_defaultsplit = column_defaultsplit.strip("'")
+                        sql = "CREATE SEQUENCE  %s START WITH 1;" % column_defaultsplit
+                        cur.execute(sql)
+                    sql_query = """
+                                     CREATE TABLE IF NOT EXISTS %s();
+                                            ALTER TABLE %s
+                                            ADD COLUMN %s %s 
+                                            %s
+                                            %s
+                                            %s
+                                        """ % (table_name, table_name, column_name, data_type,
+                                               '' if character_maximum_length is None else '(%s)' % character_maximum_length,
+                                               'NOT NULL' if is_nullable == 'NO' else '',
+                                               '' if column_default is None else 'DEFAULT %s' % column_default)
+
+                    #print sql_query
+                    # Exécuter la requête SQL
+                    cur.execute(sql_query)
+                    conn.commit()
+                    self.dataTolog.append(
+                        {"Connexion": 'Local', "Table": row, "Activite": u'Création ou mise à jour de la colonne',
+                         "Situation": 'OK', "Erreur": ''})
+            print '******************************************************ETO TOKONY MANAO LOG ***********************************************************************************'
+            self.current_value += 5
+            self.bar.ui.progressBar.setValue(self.current_value)
+            return True
+        except Exception as e:
+            self.dataTolog.append(
+                {"Connexion": 'Local', "Table": schema_columns, "Activite": u'Tentative de synchronisation des tables et colonnes ',
+                 "Situation": 'KO', "Erreur": e.message})
+
+            print ' error function update_table_columns'
+            try:
+                cur.close()
+                conn.rollback()
+            except Exception as e:
+                print(e)
+            print(e.message)
+            return False
+
+    def checkSequence(self,conn, table, colonne, current_value):
+        try:
+            cur = conn.cursor()
+            sql = "SELECT pg_get_serial_sequence('" + table + "', '" + colonne + "')"
+            print sql
+            cur.execute(sql)
+            res = cur.fetchall()
+            print res
+            print '///////////////'
+            if res and res[0][0]:
+                # Si res n'est pas vide et que le nom de la séquence existe
+                exe = cur.execute("ALTER SEQUENCE " + res[0][0] + " RESTART WITH %s ", (current_value,))
+                conn.commit()
+                print("Séquence mise à jour.")
+
+            else:
+                # Si res est vide ou la séquence est None, on ne fait rien
+                print("Aucune séquence trouvée ou la séquence est nulle.")
+
+            self.dataTolog.append({"Connexion": 'Local', "Table": table, "Activite": u'Mise à jour de la sequence',
+                    "Situation": 'OK' if res and res[0][0] else u'Pas de séquence trouvée', "Erreur": ''})
+
+        except Exception as e:
+            self.dataTolog.append(
+                {"Connexion": 'Local', "Table": table, "Activite": u'Tentative de Mise à jour de la sequence ', "Situation": 'KO',
+                 "Erreur": e.message})
+            print ' error function checkSequence'
+            try:
+                cur.close()
+                conn.rollback()
+            except Exception as e:
+                print(e)
+            print(e.message)
+
+    def get_current_sequence_value(self,conn,table_name):
+        cur = conn.cursor()
+        data={}
+        try:
+            current_value=None
+            cur.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = %s", (table_name,))
+            columns = [row[0] for row in cur.fetchall()]
+
+            print '------------------------column_id-----------------------------------------'
+            print columns[0]
+
+            # Récupérer le nom de la séquence associée à la table
+            cur.execute("SELECT pg_get_serial_sequence(%s, %s)", (table_name,columns[0]))
+            sequence_name = cur.fetchone()[0]
+            data['current_value']='1'
+            data['columns_id']=columns[0]
+            print '***********************'
+            if sequence_name:
+                cur.execute("SELECT nextval(%s)", (sequence_name,))
+                cur.execute("SELECT currval(%s)", (sequence_name,))
+                current_value = cur.fetchone()[0]
+                data['current_value']=current_value
+
+            return data
+
+        except Exception as e:
+            print ' error CompareDbModel  get_current_sequence_value '
+            print(e.message)
+            try:
+                conn.rollback()
+                cur.close()
+                conn.close()
+            except Exception as e:
+                print(e)
+                print 'ce n est pas grave'
+            return data
+
+    def get_pgdump_path(self,conn):
+        setting = None
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT setting FROM pg_settings where name like 'data_directory'")
+            setting = cursor.fetchone()
+
+
+            if setting is None:
+                return None
+            b = os.path.dirname(setting[0])
+            type='pg_dump'
+            test=str(os.path.join(b, "bin\\%s.exe" % type))
+            print test
+            return test
+
+        except Exception as e:
+            print(e)
+
+    '''
+        def sync_datas_tables(self,conn, tables_target, tables_source,table_spec_topo):
+            cur=conn.cursor()
+            try:
+
+                # Identifier les enregistrements à insérer, mettre à jour et supprimer
+                to_insert = set(tables_source) - set(tables_target)
+                to_update = set(tables_source).intersection(set(tables_target))
+                to_delete = set(tables_target) - set(tables_source)
+
+
+                if to_insert :
+                    print '+++++++++++++++++++to to_insert *************************'
+                    for element in to_insert:
+                        self.insert_data(conn, table_spec_topo, element)
+
+                if to_update:
+                    print '+++++++++++++++++++to to_update *************************'
+                    for element in to_update:
+                        self.update_data(conn,table_spec_topo,element)
+
+                if to_delete:
+                    print '+++++++++++++++++++to delete *************************'
+                    print to_delete
+                    for element in to_delete:
+                        print element[0]
+                        self.delete_data(conn, table_spec_topo, element[0])
+
+            except Exception as e:
+                print("CompareDbModel sync_datas_tables - Erreur lors de la synchronisation :", e)
+                # En cas d'erreur, annuler la transaction
+                conn.rollback()
+                cur.close()
+                conn.close()
+        '''
+
+    '''            for row in test_columns:
+                print "|".join(str(cell).ljust(20) for cell in row)
+
+            print '------------------------------------------'
+
+            for row1 in public_columns:
+                print "|".join(str(cell).ljust(20) for cell in row1)
+'''

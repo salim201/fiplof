@@ -1,0 +1,81 @@
+"""
+This file contains global variables
+"""
+from PyQt4 import QtCore
+
+EPSG_SCR = 29702
+
+#EPSG_SCR = 100583
+
+#team
+id_commune = 0
+"""
+@:var Id Commune selectionnee dans le login
+"""
+
+id_projet = 0
+"""
+@:var Id projet selectionne dans le login
+"""
+
+id_projet_commune = 0
+
+fond_image = ""
+"""
+@:var Fichier Fond Image
+"""
+
+couche_titres = ""
+"""
+@:var Fichier Couche Titres
+"""
+
+couche_cadastres = ""
+"""
+@:var Fichier Couche Cadastres
+"""
+
+couche_limites = ""
+"""
+@:var Fichier Couche Limites
+"""
+
+id_user = 0
+"""
+@:var Id de l'utilisateur connecte
+"""
+
+groupe_id = 0
+"""
+@:var Id du groupe de l'utilisateur connecte
+"""
+
+nomcommune = ""
+nomdistrict = ""
+nomregion = ""
+login = ""
+
+regexpAlpha = QtCore.QRegExp('\D*')
+regexpAlphaNum = QtCore.QRegExp('.*')
+regexpNomBase = QtCore.QRegExp('^[a-z]{1}[a-z0-9_]*')
+regexpNumDemande = QtCore.QRegExp('^\d{3}-{1}\d{2}-{1}F{1}-{1}\d*$')
+regexpNumCertificat = QtCore.QRegExp('^\d{3}-{1}\d{2}-{1}K{1}T{1}-{1}\d*$')
+regexpDate = QtCore.QRegExp('\d{1,2}/\d{1,2}/\d{4}')
+regexpNum = QtCore.QRegExp('\d*.{1}\d{2}')
+
+SelectionColor = "white"
+checked = 1
+CurrentLayer = 0
+Mode = 3
+Tolerance = 10
+Unit = ""
+NotIntersecting = 1
+Intersecting = 0
+SurfaceMax = 10
+LimitSelect = 30
+
+#id persronne pour crl
+idrolecrl=0
+idpersrolTitulaire=0
+idpersrolSupleant=0
+GROUPE_ADMIN_ID = "6B86B273FF34FCE19D6B804EFF5A3F5747ADA4EAA22F1D49C01E52DDB7875B4B"

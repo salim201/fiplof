@@ -1,0 +1,7 @@
+[database]
+host = 192.168.0.187
+port = 5432
+user = postgres
+pass = postgres
+name = presentation
+

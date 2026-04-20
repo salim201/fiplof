@@ -1,0 +1,308 @@
+# -- coding: utf-8 --
+import sys
+import os
+from logs import xlsLogger
+import psycopg2
+import os.path
+from PyQt4 import QtCore, QtGui
+from qgis.core import *
+from Utils import Utils
+from FormImportShapePLOF import Ui_Dialog
+import globalvars
+from Utils import Utils
+import xlwt
+import tempfile
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+class ImportShapePLOF(QtGui.QDialog):
+    def __init__(self, connection):
+        sys.setdefaultencoding('utf8')
+        QtGui.QDialog.__init__(self)
+        print("init constructeur")
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.connection = connection
+        self.setWindowTitle("Import de fichier Shape PLOF")
+        self.filename = ""
+        self.features = []
+        self.default_index = 0
+        self.liens = []
+        self.titre = ["TITRES","PROPRIETE","SUR_PLAN","TITRE_R","PARCELLE","PARTIE","FEUILLE"]
+        self.demande = ["FN_FG","DEMANDEUR","SUR_PLAN"]
+        self.cadastre = ["NOM_SECTION","SECTION","PARCELLE","NOM_PLAN"]
+        self.tss = ["FN_FG","DEMANDEUR","SUR_PLAN","OBSERVATION"]
+        self.title = []
+        self.initActions()
+        self.logger = xlsLogger.xlsLogger("Log Import shape ")
+        self.dataToLog = []
+
+    def initActions(self):
+        self.ui.pushButtonLancer.setEnabled(False)
+        self.ui.pushButtonAnnuler.setEnabled(True)
+        self.ui.pushButton_relier.setEnabled(False)
+        self.ui.pushButtonAnnuler.clicked.connect(self.close)
+        self.ui.pushButtonLancer.clicked.connect(self.launch)
+        self.ui.pushButtonParcourir.clicked.connect(self.browseFile)
+        self.ui.pushButton_relier.clicked.connect(self.relier_elements)
+        self.ui.comboListecouche.currentIndexChanged.connect(self.check_liste_couche)
+        self.ui.listWidget_default.addItems(self.titre)
+        self.ui.listWidget__liaison.clicked.connect(self.delier_liaison)
+
+    def create_styles(self):
+        border_style = 'borders: left thin, right thin, top thin, bottom thin;'
+        
+        styles = {
+            "header": xlwt.easyxf(
+                'font: bold on; '
+                'pattern: pattern solid, fore_color gray25; '
+                'alignment: horiz center; ' + border_style
+            ),
+            "default": xlwt.easyxf(border_style),
+            "green": xlwt.easyxf('pattern: pattern solid, fore_color bright_green; ' + border_style),
+            "yellow": xlwt.easyxf('pattern: pattern solid, fore_color yellow; ' + border_style),
+            "red": xlwt.easyxf('pattern: pattern solid, fore_color red; ' + border_style)
+        }
+        
+        return styles
+
+    def auto_adjust_columns(self,sheet, title, data):
+        for col_idx, col_name in enumerate(title):
+            max_length = max(
+                [len(str(row.get(col_name, ""))) for row in data] + [len(col_name)]
+            )
+            sheet.col(col_idx).width = (max_length + 5) * 256  
+
+    def write_data(self,sheet, title, data, styles):
+        color_map = {
+            "INSÉRÉ AVEC SUCCÈS": styles["green"],
+            "PARCELLE EN DOUBLON": styles["yellow"],
+            "ERREUR D'INSERTION": styles["red"]
+        }
+
+        for col_idx, col_name in enumerate(title):
+            sheet.write(0, col_idx, col_name, styles["header"])
+
+        for row_idx, row in enumerate(data, start=1):
+            etat_insertion = row.get("ETAT_INSERTION", "")
+            style = color_map.get(etat_insertion, styles["default"])
+
+            for col_idx, key in enumerate(title):
+                value = row.get(key, "")
+                
+                if isinstance(value, unicode):
+                    value = value.encode('utf-8')
+                elif isinstance(value, str):
+                    try:
+                        value = value.decode('utf-8')
+                    except UnicodeDecodeError:
+                        value = value.decode('latin-1')
+
+                sheet.write(row_idx, col_idx, value, style)
+
+    def export_Excel(self):
+        print("Export Excel")
+        try:
+            workbook = xlwt.Workbook()
+            sheet = workbook.add_sheet("Log Import shape")
+            styles = self.create_styles()
+            self.write_data(sheet, self.title, self.dataToLog, styles)
+            self.auto_adjust_columns(sheet, self.title, self.dataToLog)
+            
+            print(u"Export Excel terminé avec succès !")
+            temp_file = tempfile.NamedTemporaryFile(suffix=".xls", delete=False)
+            fichier_excel = temp_file.name
+            temp_file.close()
+
+            workbook.save(fichier_excel)
+            os.startfile(fichier_excel)
+        except Exception as e:
+            print("Erreur lors de l'export Excel :", e)
+            
+    def launch(self):
+        try:
+            cursor = self.connection.cursor()
+            total_features = len(self.features)
+            self.ui.progressBar_impor_shape.setMaximum(total_features)
+            self.ui.progressBar_impor_shape.setValue(0)
+
+            table_name = str(self.ui.comboListecouche.currentText()).lower()
+            columns = [str(lien[0]).lower() for lien in self.liens]
+            columns_str = ", ".join(columns) + ", geom"
+            placeholders = ", ".join(["%s"] * len(columns))
+            sql = "INSERT INTO {} ({}) VALUES ({}, ST_GeomFromText(%s, %s))".format(table_name, columns_str, placeholders)
+            self.dataToLog = []
+            nb_success = 0
+            nb_erreur = 0
+            nb_doublon = 0
+
+
+            for index, feature in enumerate(self.features):
+                try:
+                    geom_wkt = str(feature.geometry().exportToWkt())
+                    values = []
+                    xls = {}
+
+                    for lien in self.liens:
+                        try:
+                            valeur = feature.attribute(lien[1]).toPyObject()
+                            if valeur == "":
+                                valeur = None
+                            else:
+                                if isinstance(valeur, (float, int)):
+                                    pass 
+                                elif isinstance(valeur, unicode):  
+                                    valeur = psycopg2.extensions.adapt(valeur).getquoted()[1:-1]
+                                elif isinstance(valeur, str):  
+                                    valeur = unicode(valeur, 'utf-8', 'ignore')
+                                    valeur = psycopg2.extensions.adapt(valeur).getquoted()[1:-1]
+                                else:
+                                    valeur = str(valeur)  
+                        except Exception as err:
+                            print("Erreur lors de l'adaptation de la valeur ({}) : {}".format(lien[1], err))
+                            valeur = None
+                        values.append(valeur)
+                        xls[str(lien[0])] = valeur    
+                    
+                    values.append(geom_wkt)
+                    values.append(str(globalvars.EPSG_SCR))
+
+                    if len(self.checkGeomEquality(geom_wkt, table_name, cursor)) == 0:
+                        try:
+                            cursor.execute(sql, values)
+                            self.connection.commit()
+                            etat_insertion = "INSÉRÉ AVEC SUCCÈS"
+                            nb_success += 1
+                        except Exception as err:
+                            self.connection.rollback()
+                            # print("Erreur SQL :", err)
+                            etat_insertion = "ERREUR D'INSERTION"
+                            nb_erreur += 1
+                    else:
+                        etat_insertion = "PARCELLE EN DOUBLON"
+                        nb_doublon += 1
+                        
+                    xls["ETAT_INSERTION"] = etat_insertion
+                    self.dataToLog.append(xls) 
+                    xls = {}
+                except Exception as e:
+                    print("Erreur lors du traitement de la feature {} : {}".format(index, e))
+                    self.dataToLog.append({"etat_insertion": "ERREUR LECTURE FEATURE"})
+                    continue  
+
+                self.ui.progressBar_impor_shape.setValue(index + 1)
+
+            cursor.close()
+
+            if self.ui.progressBar_impor_shape.value() == total_features:
+                message =u"""
+                        <b>Import terminé</b><br><br>
+                        Données insérées avec succès : <b>{}</b><br>
+                        Données en doublon : <b>{}</b><br>
+                        Erreurs d'insertion ou lecture : <b>{}</b>
+                        """.format(nb_success,nb_doublon,nb_erreur)
+                Utils.alert(message,u"Résultat de l'import")
+                self.liens = []
+                self.ui.pushButtonLancer.setEnabled(False)
+                self.export_Excel()
+
+        except Exception as e:
+            print("-----------------Erreur import shape-------------")
+            print(e)
+
+    def checkGeomEquality(self, str_geom,couche,cur):
+        try:
+            sql = "SELECT geom FROM " + couche + " WHERE ST_OrderingEquals(ST_GeomFromText(%s,"+str(globalvars.EPSG_SCR)+"), geom)"
+            cur.execute(sql, (str_geom,))
+            res = cur.fetchall()
+            return res
+        except Exception as err:
+            print(err)
+            return None
+
+    def check_liste_couche(self):
+        self.default_index = self.ui.comboListecouche.currentIndex() 
+        self.ui.listWidget_default.clear()
+        self.ui.listWidget__liaison.clear()
+
+        if self.default_index == 0:
+            self.ui.listWidget_default.addItems(self.titre)
+            self.title = self.titre 
+        elif self.default_index == 1:
+            self.ui.listWidget_default.addItems(self.cadastre)
+            self.title = self.cadastre
+        elif self.default_index == 2:
+            self.ui.listWidget_default.addItems(self.demande)
+            self.title = self.demande
+        elif self.default_index == 3:
+            self.ui.listWidget_default.addItems(self.tss)
+            self.title = self.tss
+            
+        self.title = self.title + ["ETAT_INSERTION"]
+    def browseFile(self):
+        self.filename = QtGui.QFileDialog.getOpenFileName(self, "Choisissez un fichier","","Fichier de forme au format SHAPEFILE(*.shp)")
+        self.ui.filename.setText(self.filename)
+        try:
+            layer = QgsVectorLayer(_fromUtf8(str(self.filename)), "dataFromPLOFPapers", "ogr")
+            self.features = list(layer.getFeatures())
+            provider = layer.dataProvider()
+            fields = provider.fields()  
+            field_names = [field.name() for field in fields] 
+            self.ui.listWidget_shapefile.clear() 
+            self.ui.listWidget__liaison.clear()
+            self.liens = []
+            self.ui.listWidget_shapefile.addItems(field_names) 
+            self.ui.pushButton_relier.setEnabled(True)
+            self.ui.progressBar_impor_shape.setValue(0)
+            self.check_liste_couche()
+        except Exception as e:
+            print("-----------------Erreur import shape-------------")
+            print(e) 
+
+    def relier_elements(self):
+        try:
+            gauche_item = self.ui.listWidget_default.currentItem()
+            droite_item = self.ui.listWidget_shapefile.currentItem()
+
+            if gauche_item and droite_item:
+                lien = (gauche_item.text(), droite_item.text())
+                if lien not in self.liens:
+                    self.liens.append(lien)
+                    self.ui.listWidget__liaison.addItem(lien[0] + u" ⇄ " + lien[1])
+                    self.ui.listWidget_default.takeItem(self.ui.listWidget_default.row(gauche_item))
+                    self.ui.listWidget_shapefile.takeItem(self.ui.listWidget_shapefile.row(droite_item))
+                    self.ui.pushButtonLancer.setEnabled(True)
+                else:
+                    Utils.alert(u"Ce lien existe déjà !")
+            else:
+                Utils.alert(u"Sélectionnez un élément dans chaque liste.")
+        except Exception as e:
+            print("-----------------Erreur import shape-------------")
+            print(e) 
+
+    def delier_liaison(self):
+        try:
+            liaison_item = self.ui.listWidget__liaison.currentItem()
+            if liaison_item:
+                texte_liaison = u"{}".format(liaison_item.text())
+                
+                if u" ⇄ " in texte_liaison:
+                    gauche_texte, droite_texte = texte_liaison.split(u" ⇄ ")
+                    
+                    lien = (gauche_texte, droite_texte)
+                    if lien in self.liens:
+                        self.liens.remove(lien)
+                        self.ui.listWidget__liaison.takeItem(self.ui.listWidget__liaison.row(liaison_item))
+                        self.ui.listWidget_default.addItem(gauche_texte)
+                        self.ui.listWidget_shapefile.addItem(droite_texte)
+                else:
+                    print("-----------------Erreur suppression liaison-------------")
+                    print("-----------------Format de liaison invalide.------------")
+            else:
+                Utils.alert(u"Sélectionnez une liaison à supprimer.")
+        except Exception as e:
+            print("-----------------Erreur suppression liaison-------------")
+            print(e)

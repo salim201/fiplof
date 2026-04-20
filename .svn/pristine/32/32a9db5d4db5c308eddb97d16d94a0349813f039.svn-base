@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>582</width>
+    <height>343</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Historique d'un certificat</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QGroupBox" name="verticalGroupBox">
+       <property name="minimumSize">
+        <size>
+         <width>186</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>186</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Liste Des Certificats</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QTreeWidget" name="treeWidget">
+          <column>
+           <property name="text">
+            <string>Certificat</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="tableWidget">
+       <property name="minimumSize">
+        <size>
+         <width>182</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>182</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <attribute name="horizontalHeaderDefaultSectionSize">
+        <number>161</number>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Type de l'opération</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="tableWidget_2">
+       <property name="minimumSize">
+        <size>
+         <width>182</width>
+         <height>0</height>
+        </size>
+       </property>
+       <attribute name="horizontalHeaderDefaultSectionSize">
+        <number>179</number>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>N° certificat</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>N° demande</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Type certificat</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Date de création</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Date d'édition</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Date de délivrance</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Mémo</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Région</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>District</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Commune</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Hameau</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonAide">
+       <property name="text">
+        <string>Aide</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonDetails">
+       <property name="text">
+        <string>Details</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonFermer">
+       <property name="text">
+        <string>Fermer</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

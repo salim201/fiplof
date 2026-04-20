@@ -1,0 +1,79 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+	<meta http-equiv="Content-Type" content = "text/html;charset = utf-8"/>
+</head>
+<body>
+
+	<br/>
+
+	<table class="fullwidth border-all border-collapse">
+		<tr style="background-color: rgb(169,169,169);">
+			<th colspan="12">TARATASY FANGATAHANA HO AN'NY MPIARA-MANGATAKA TANY</th>
+			<th colspan="1">DATIN'NY FANGATAHANA</th>
+			<th colspan="1">$datereconnaissance</th>
+		</tr>
+		<tr style="background-color: rgb(169,169,169);">
+			<th colspan="2" >DISTRIKA</th>
+			<th >KAOMININA</th>
+			<th colspan="2" >FOKONTANY</th>
+			<th colspan="2">VOHITRA</th>
+			<th colspan="2">TOERANA MISY NY TANY</th>
+			<th >LAHARANA</th>
+			<th colspan="2">LAHARANA FANGATAHANA</th>
+			<th colspan="2">KAODY "PLANCHE PLOF"</th>
+    	</tr>
+		<tr>
+			<th colspan="2" >$distrika</th>
+			<th >$kaominina</th>
+			<th colspan="2">$fokontany</th>
+			<th colspan="2">$vohitra</th>
+			<th colspan="2">$lieudit</th>
+			<th >$codeParcelle</th>
+			<th colspan="2">$numdemande</th>
+			<th colspan="2">$planchePlof</th>
+    	</tr>
+		<tr  style="background-color: rgb(220,220,220);">
+			<th rowspan="2">Lah</th>
+			<th rowspan="2">ANARANA sy FANAMPINY</th>
+			<th rowspan="2" >LAHY/VAVY</th>
+			<th rowspan="1" colspan="3">NAHATERAHANA</th>
+			<th rowspan="1" colspan="3">KARAPANONDRO</th>
+			<th rowspan="1" colspan="3">IREO MIFANDRAY MIVANTANA</th>
+			<th rowspan="2">ADIRESY FONENANA</th>
+			<th rowspan="2">SONIA</th>
+    	</tr>
+		<tr  style="background-color: rgb(220,220,220);">
+			<th >DATY</th>
+			<th >TOERANA</th>
+			<th >LAHARANA KOPIA (raha tsy misy)</th>
+			<th >LAHARANA</th>
+			<th >DATY</th>
+			<th >TAO</th>
+			<th >RAY</th>
+			<th >RENY</th>
+			<th >VADY(ara-dalana)</th>
+    	</tr>
+		{REPEAT $coodemandeur:$c}
+		<tr>
+			<th ></th>
+			<th >$c.nom</th>
+			<th >$c.genre</th>
+			<th >$c.datenaissance</th>
+			<th >$c.lieucopie</th>
+			<th >$c.numcopie</th>
+			<th >$c.numci</th>
+			<th >$c.dateci</th>
+			<th >$c.lieuci</th>
+			<th >$c.pere</th>
+			<th >$c.mere</th>
+			<th >$c.conjoint</th>
+			<th >$c.adresse</th>
+			<th >$c.signature</th>
+    	</tr>
+		{ENDREPEAT $coodemandeur}
+	</table>
+
+
+</body>
+<html>

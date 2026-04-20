@@ -1,0 +1,71 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'Contenance.ui'
+#
+# Created: Thu Mar 07 06:55:07 2019
+#      by: PyQt4 UI code generator 4.9.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.resize(619, 139)
+        Dialog.setWindowTitle(_fromUtf8(""))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/sig/icone/marker--pencil.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        Dialog.setWindowIcon(icon)
+        self.horizontalLayout = QtGui.QHBoxLayout(Dialog)
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.tableWidget = QtGui.QTableWidget(Dialog)
+        self.tableWidget.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.tableWidget.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.tableWidget.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
+        self.tableWidget.setColumnCount(0)
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
+        self.horizontalLayout.addWidget(self.tableWidget)
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.pushButtonNouveau = QtGui.QPushButton(Dialog)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/std/icone/if_plus_circle_12296.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButtonNouveau.setIcon(icon1)
+        self.pushButtonNouveau.setObjectName(_fromUtf8("pushButtonNouveau"))
+        self.verticalLayout.addWidget(self.pushButtonNouveau)
+        self.pushButtonModifier = QtGui.QPushButton(Dialog)
+        self.pushButtonModifier.setEnabled(False)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/std/icone/if_pencil_14623.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButtonModifier.setIcon(icon2)
+        self.pushButtonModifier.setObjectName(_fromUtf8("pushButtonModifier"))
+        self.verticalLayout.addWidget(self.pushButtonModifier)
+        self.line = QtGui.QFrame(Dialog)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName(_fromUtf8("line"))
+        self.verticalLayout.addWidget(self.line)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+        self.pushButtonFermer = QtGui.QPushButton(Dialog)
+        self.pushButtonFermer.setObjectName(_fromUtf8("pushButtonFermer"))
+        self.verticalLayout.addWidget(self.pushButtonFermer)
+        self.horizontalLayout.addLayout(self.verticalLayout)
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        self.pushButtonNouveau.setText(QtGui.QApplication.translate("Dialog", "Nouveau", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonModifier.setText(QtGui.QApplication.translate("Dialog", "Modifier", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonFermer.setText(QtGui.QApplication.translate("Dialog", "Fermer", None, QtGui.QApplication.UnicodeUTF8))
+
+import icons_rc

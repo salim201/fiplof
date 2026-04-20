@@ -1,0 +1,110 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+    <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+</head>
+<body>
+  <p class="right bold">REPOBLIKAN'I MADAGASIKARA</p>
+  <p class="right italic">Fitiavana - Tanindrazana - Fandrosoana</p>
+  <p class="right">BIRAO IFOTON'NY FANANAN-TANY</p>
+  <table style="position:absolute; top: 0; width: 300">
+    <tr>
+      <td>FARITRA</td><td>: $faritra</td>
+    </tr>
+    <tr>
+      <td>DISTRIKA</td><td>: $distrika</td>
+    </tr>
+    <tr>
+      <td>KAOMININA</td><td>: $kaominina</td>
+    </tr>
+
+  </table>
+  <h1 class="big serif center">FILAZANA PETA-DRINDRINA</h1>
+  <table class = "center">
+    <tr>
+      <th>FOKONTANY</th><td>: $fokontany</td>
+    </tr>
+    <tr>
+      <th>VOHITRA</th><td>: $vohitra</td>
+    </tr>
+  </table>
+  <p class="center">ARAKA NY FANAPAHANA LAHARANA FAHA- <strong>$numDecision</strong> tamin'ny <strong>$daatedecision</strong></p>
+  <p class="center">MIKASIKA NY FITSIRIHINA IFOTONY</p>
+  <p class="center bold">NY BEN'NY TANANA</p>
+  <p>Dia <strong><i>mampafantatra sy miantso</i></strong> ny be sy ny maro fa ireto olona voatanisa miisa ................................<br/>
+      (........................................................................................................................) anaty lisitra manaraka ireto dia nametraka
+      fangatahana Karatany tao amin'ny Birao Ifoton'ny Fananan-tany <strong>$kaominina</strong>
+      amin'ireo tany ho tanisaina eto ambany.</p>
+  <p>Raha toa ka misy fanohanana amin'izany fangatahana karatany izany dia azo raisina ao amin'ny
+  Birao Ifoton'ny Fananan-tany manomboka anio ka hatramin'ny 15 andro aoroan'ny datin'ny fitsirihana.</p>
+  <p>Ireto avy ireo mpikambana amin'ny fitsirihana ifotony</p>
+  <ul>
+      <li><strong><i>Ny solotenan'ny Kaominina </i></strong>: $solotenaKaominina</li>
+      <br/>
+      <li><strong><i>Na ny mpisolo toerana </i></strong>: $solotenaMpisoloKaominina</li>
+      <br/>
+      <li><strong><i>Ny solotenan'ny Fokontany </i></strong>: $solotenaFkt</li>
+      <br/>
+      <li><strong><i>Na ny mpisolo toerana </i></strong>: $solotenaMpisoloFkt</li>
+      <br/>
+      <li><strong><i>Ray aman-dReny 1 </i></strong>: $rad1</li>
+      <br/>
+      <li><strong><i>Na ny mpisolo toerana </i></strong>: $radMpisolo1</li>
+      <br/>
+      <li><strong><i>Ray aman-dReny 2 </i></strong>: $rad2</li>
+      <br/>
+      <li><strong><i>Na ny mpisolo toerana </i></strong>: $radMpisolo2</li>
+      <br/>
+      <li><strong><i>Ray aman-dReny 3 </i></strong>: $rad3</li>
+      <br/>
+      <li><strong><i>Na ny mpisolo toerana </i></strong>: $radMpisolo3</li>
+  </ul>
+
+  <p>Ity filazana ity dia natao iantsoana indrindra ireo mpangataka karatany, ireo Lehibem-Pokontany
+      sy Ray aman-dReny mandrafitra ny Kaomity mpitsirika ifotony, ary ireo mpifanila tany sy ny mpanohana (raha misy).</p>
+  <p>Koa, asaina ireo olona voakasika rehetra sy ny fokonolona mba hanatrika ny fitsirihana ifotony
+      izay atao ny <strong>$daatereconnaissance</strong> eo amin’ny toerana misy ireo tany.
+</p>
+
+  <p class="right">Natao teto $kaominina  Androany faha .../.../... </p>
+  <p class="right">Ny Ben'ny Tan&agrave;na</p>
+
+<!--<table class="fullwidth border-all border-collapse">
+    <tr>
+        <th colspan = "5"></th>
+        <th colspan = "4">Mpifanila tany / Voisins</th>
+        <th></th>
+        <th></th>
+    </tr>
+      <tr>
+          <th>Laharana tany /<br/> Numero</th>
+          <th>Laharana fangatahana/ <br/>Numero de demande</th>
+          <th>Datin'ny fangatahana / <br/>Date de demande</th>
+          <th>Anaran'ny Mpangataka karatany / <br/>Nom demandeur</th>
+          <th>Adiresy/ <br/>Adresse</th>
+          <th>Avaratra / Nord</th>
+          <th>Atsimo / Sud</th>
+          <th>Atsinana / Est</th>
+          <th>Andrefana / Ouest</th>
+          <th>KAODY PLANCHE "PLOF"</th>
+          <th>Date RL</th>
+      </tr>
+      {REPEAT $rows:$r}
+       <tr>
+          <td>$r.codeParcelle</td>
+          <td>$r.num</td>
+          <td>$r.date</td>
+          <td>$r.nom</td>
+          <td>$r.adiresy</td>
+          <td>$r.voisinNord</td>
+           <td>$r.voisinSud</td>
+           <td>$r.voisinEst</td>
+           <td>$r.voisinOuest</td>
+          <td>$r.planchePlof</td>
+          <td>$daatereconnaissance</td>
+      </tr>
+      {ENDREPEAT $rows}
+  </table>-->
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+# coding: utf-8
+from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui, Qt
+import datetime
+from PopupInfosCadastre import Ui_INFORMATIONS
+from Utilisateur import AccesManager
+
+# create the dialog for qgsPlof  Qt.QDialog
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+
+
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+
+class PopupInfosCadastreRun(Qt.QDialog):
+    def __init__(self, parent):
+        Qt.QDialog.__init__(self)
+        self.parent = parent
+        self.connection, self.canvas = self.parent.connection, self.parent.MainWindow.canvas
+        self.newParcelleCF = True
+        self.gid = self.parent.currentSelect
+        self.ui = Ui_INFORMATIONS()
+        self.ui.setupUi(self)
+        self.ui.pushButtonAnnuler.setVisible(False)
+        self.ui.pushButtonValider.setVisible(False)
+        self.registry = None
+        self.iddemande = self.numDemande = self.dateDemande = self.idparcelle = None
+        self.MainWindow = self.parent.MainWindow
+        self.currentGeomIdParcelle = self.gid
+        self.idparcelle = self.gid
+        self.currvalDemande = self.gid
+        self.id_projet = parent.id_projet
+        self.geometryeEdit = 0
+        self.stateEdition = 1
+        self.geomid = self.gid
+        self.tool = parent.tool
+        self.iface = parent.iface
+        self.Mcs = self.MainWindow
+        self.idDemande = self.gid
+        self.getFeatureInfos()
+        self.init_actions()
+
+    def init_actions(self):
+        self.ui.pushButtonEditFisc.clicked.connect(self.cadastre_edit)
+        self.ui.pushButtonAnnuler.clicked.connect(self.stop_edit)
+        self.ui.pushButtonValider.clicked.connect(self.save_cadastre_edit)
+
+    def getFeatureInfos(self):
+        connection = self.connection
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT c.nom_section,c.section,c.parcelle,c.nom_plan"
+            " FROM cadastre c  WHERE c.gid=%s ", [int(self.gid)])
+        dm = cursor.fetchone()
+        self.ui.nom_section.setReadOnly(True)
+        self.ui.section.setReadOnly(True)
+        self.ui.parcelle.setReadOnly(True)
+        self.ui.nom_plan.setReadOnly(True)
+        
+        if len(dm) >= 1:
+            if dm[0] is None: 
+                self.ui.nom_section.setText("")
+            else:
+                self.ui.nom_section.setText(_fromUtf8(str(dm[0])))
+
+            if dm[1] is None:
+                self.ui.section.setText("")
+            else:
+                self.ui.section.setText( _fromUtf8(str(dm[1])))
+
+            if dm[2] is None:    
+                self.ui.parcelle.setText("")
+            else:
+                self.ui.parcelle.setText( _fromUtf8(str(dm[2])))
+
+            if dm[3] is None:    
+                self.ui.nom_plan.setText("")
+            else:
+                self.ui.nom_plan.setText( _fromUtf8(str(dm[3])))
+        else:
+            print("Erreur")
+
+    def save_cadastre_edit(self):
+        try:
+            nom_section = str(self.ui.nom_section.text()).encode("utf-8")
+            section = str(self.ui.section.text()).encode("utf-8")
+            parcelle = str(self.ui.parcelle.text()).encode("utf-8")
+            nom_plan = str(self.ui.nom_plan.text()).encode("utf-8")
+
+            cursor = self.connection.cursor()
+            exe = cursor.execute(
+                "update cadastre set nom_section = %s,section = %s,parcelle = %s,nom_plan = %s"
+                    "WHERE gid=%s ",
+                (nom_section,section,parcelle, nom_plan,self.gid))
+            
+            self.connection.commit()
+            QtGui.QMessageBox.information(
+                    self,
+                    "Edition Cadastre", _fromUtf8("Donnée insérer avec succès")
+                )
+            self.stop_edit()
+        except Exception as err:
+            print(err)
+            self.connection.rollback()
+
+    def cadastre_edit(self):
+        self.ui.pushButtonEditFisc.setVisible(False)
+        self.ui.pushButtonAnnuler.setVisible(True)
+        self.ui.pushButtonValider.setVisible(True)
+        self.ui.nom_section.setReadOnly(False)
+        self.ui.section.setReadOnly(False)
+        self.ui.parcelle.setReadOnly(False)
+        self.ui.nom_plan.setReadOnly(False)
+
+    def stop_edit(self):
+        self.ui.pushButtonEditFisc.setVisible(True)
+        self.ui.pushButtonAnnuler.setVisible(False)
+        self.ui.pushButtonValider.setVisible(False)
+        self.ui.nom_section.setReadOnly(True)
+        self.ui.section.setReadOnly(True)
+        self.ui.parcelle.setReadOnly(True)
+        self.ui.nom_plan.setReadOnly(True)

@@ -1,0 +1,61 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+	<meta http-equiv="Content-Type" content = "text/html;charset = utf-8"/>
+</head>
+<body>
+
+	<br/>
+	<table class="fullwidth border-all border-collapse">
+		<tr style="background-color: rgb(169,169,169);">
+			<th colspan="8">LISITRA FANGATAHANA KARATANY FAOBE</th>
+			<th colspan="1">DATIN'NY FANGATAHANA</th>
+			<th colspan="1">$datereconnaissance</th>
+		</tr>
+    	<tr style="background-color: rgb(169,169,169);">
+			<th >DISTRIKA</th>
+			<th >KAOMININA</th>
+			<th colspan="2" >FOKONTANY</th>
+			<th >VOHITRA</th>
+			<th colspan="2">TOERANA MISY NY TANY</th>
+			<th colspan="2">KAODY "PLANCHE PLOF"</th>
+			<th >Anaran’ny mpandray fangatahana</th>
+    	</tr>
+		<tr>
+			<th >$distrika</th>
+			<th >$kaominina</th>
+			<th colspan="2">$fokontany</th>
+			<th >$vohitra</th>
+			<th colspan="2">$lieudit</th>
+			<th colspan="2">$planchePlof</th>
+			<th >$collecteur</th>
+    	</tr>
+		<tr style="font-weight: normal;background-color: rgb(220,220,220);">
+			<th colspan="2">ANARAN’NY MPANGATAKA KARATANY *Raha tsy ampy taona dia ampiarahana ny mombamomba ny mpiantoka sy taratasy fiantohana ara-dalàna</th>
+			<th >LAHY/VAVY</th>
+			<th >DATY NAHATERAHANA</th>
+			<th>LAHARANA KARA-PANONDRO na KOPIA NAHATERAHANA</th>
+			<th >DATY SY TOERANA NAHAZOANA KARA-PANONDRO</th>
+			<th >ZAVA-MISY eo amin’ny tany</th>
+			<th >Laharana TANY</th>
+			<th >Laharana FANGATAHANA</th>
+			<th >Sonian’ny mpangataka</th>
+    	</tr>
+		{REPEAT $proprietaire:$p}
+			<tr style="font-weight: normal;">
+				<th colspan="2">$p.nom</th>
+				<th >$p.genre</th>
+				<th >$p.datenaissance</th>
+				<th >$p.numcicopie</th>
+				<th >$p.dateci</th>
+				<th >$p.consistance</th>
+				<th >$p.codeParcelle</th>
+				<th >$p.numdemande</th>
+				<th >$p.signature</th>
+			</tr>
+		{ENDREPEAT $proprietaire}
+  	</table>
+
+
+</body>
+<html>

@@ -1,0 +1,97 @@
+# -*- coding: utf-8 -*-
+import psycopg2
+import psycopg2.extras
+from PyQt4.QtGui import QApplication
+from PyQt4.QtCore import QTimer
+from models.ConnectRemoteModel import ConnectRemoteModel
+from models.CompareDbModel import CompareDbModel
+class ConnectRemote:
+    def __init__(self):
+        self.file = None
+        self.lines=None
+
+    @staticmethod
+    def connectToRemote(self):
+        try:
+            param = []
+            path = "Configuration/remote.ini"
+            from Helpers.FiPlofFile import FiPlofFile
+            #content = FiPlofFile.readFile(self, path)
+            param =FiPlofFile.list_in_file(self, path,6,2)
+
+            connRemote = ConnectRemoteModel.connectToRemote(self, param)
+            return connRemote
+        except Exception as e:
+            print 'Erreur dans connectToRemote'
+            return False
+            print(e.message)
+
+    @staticmethod
+    def connectToLocal(self):
+        try:
+            from Configuration import DbConfig
+            db_config=DbConfig.DbConfig()
+            connLocal=psycopg2.connect(database=db_config.db_name, user=db_config.db_user,
+                                           password=self.db_config.db_pass, host=self.db_config.db_host)
+            return connLocal
+
+        except Exception as e:
+            print 'Erreur dans connectToLocal'
+            print(e.message)
+            return False
+
+
+    @staticmethod
+    def connectDBs(self):
+        try:
+            print '***********************tentative de connxion à une base de données à distance pour synchronisation**************************'
+            localConn=None
+            remoteConn=None
+            from Synchronisation.synchro_Dialog_run import synchro_Dialog_run
+            bar_syncho=synchro_Dialog_run()
+            bar_syncho.ui.progressBar.setValue(1)
+            bar_syncho.show()
+            QTimer.singleShot(300000, lambda: bar_syncho.ui.progressBar.setValue(2))
+
+            bar_syncho.ui.label.setText("Verification de la connexion à la base de données local ")
+            bar_syncho.ui.progressBar.setValue(4)
+            localConn =ConnectRemote.connectToLocal(self)
+
+            bar_syncho.ui.label.setText("Verification de la connexion à la base de données à distance ")
+            bar_syncho.ui.progressBar.setValue(6)
+            remoteConn = ConnectRemote.connectToRemote(self)
+            missing_columns_list=CompareDbModel.compare_Tables_columns_remote_local(self,localConn,remoteConn,bar_syncho)
+
+            objet_compare = CompareDbModel(localConn, remoteConn,bar_syncho)
+            if (missing_columns_list):
+                objet_compare.sync_Tables_remote_local(localConn, remoteConn,missing_columns_list)
+            if (bar_syncho.ui.progressBar.value()<60):
+                bar_syncho.ui.progressBar.setValue(60)
+            objet_compare.recup_table_data(localConn,remoteConn)
+            bar_syncho.close()
+        except Exception as e:
+            print "erreur ato amin'i connectDBS"
+            print(e)
+            try:
+                remoteConn.rollback()
+                localConn.rollback()
+                bar_syncho.close()
+            except Exception as e:
+                print(e)
+            return False
+
+    def progresswithp(self, p):
+        self.ui.progressBarlisting.setValue(p)
+
+    def reset(self):
+        self.current_value = 0
+        self.ui.progressBarlisting.reset()
+
+    def progress(self):
+        print '-----progress---'
+        print self.current_value
+        if self.current_value <= self.ui.progressBarlisting.maximum():
+            self.current_value += self.pas
+            self.ui.progressBarlisting.setValue(self.current_value)
+        print '-----progress suivant---'
+        print self.current_value

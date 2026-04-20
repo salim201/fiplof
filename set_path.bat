@@ -1,0 +1,2 @@
+IF EXIST "C:\Program Files (x86)\PostgreSQL\9.3\bin" SET PATH=%PATH%;"C:\Program Files (x86)\PostgreSQL\9.3\bin"
+IF EXIST "C:\Program Files\PostgreSQL\9.3\bin" SET PATH=%PATH%;"C:\Program Files\PostgreSQL\9.3\bin"

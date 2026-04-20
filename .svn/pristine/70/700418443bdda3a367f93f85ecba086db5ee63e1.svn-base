@@ -1,0 +1,128 @@
+from PyQt4.QtCore import QThread, pyqtSignal
+import subprocess
+import os
+from Configuration import DbConfig
+import datetime
+from time import strftime
+
+class ShapeExportThread(QThread):
+    messageAddedSignal = pyqtSignal(str)
+    doneSignal = pyqtSignal()
+
+    def __init__(self, pgdump, filename):
+        QThread.__init__(self)
+        self.db_config = DbConfig.DbConfig()
+        self.pgdump, self.filename = pgdump, filename
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        if "shp" in self.pgdump:
+            self.run_pg2shp()
+    def run_pg2shp(self):
+        bat = self.create_batfile()
+        proc = subprocess.Popen([bat], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+        while True:
+            output = proc.stdout.readline()
+            if output == '' and proc.poll() is not None:
+                break
+            if output:
+                self.messageAddedSignal.emit(output.strip())
+        proc.poll()
+        self.doneSignal.emit()
+        os.remove(bat)
+
+    def run_dump(self):
+        os.putenv("PGPASSWORD", self.db_config.db_pass)
+        proc = subprocess.Popen(
+            [
+                "%s" % (self.pgdump,),
+                "-U", self.db_config.db_user,
+                "-h", self.db_config.db_host,
+                "--file", self.filename,
+                "--format", "p",
+                "--blobs",
+                "--clean",
+                "--create",
+                "--verbose",
+                "%s" % self.db_config.db_name
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            shell=True
+        )
+        while True:
+            output = proc.stdout.readline()
+            if output == '' and proc.poll() is not None:
+                break
+            if output:
+                self.messageAddedSignal.emit(output.strip())
+        proc.poll()
+        self.doneSignal.emit()
+
+    def run_import(self):
+        bat = self.create_batfile()
+        proc = subprocess.Popen([bat], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+        while True:
+            output = proc.stdout.readline()
+            if output == '' and proc.poll() is not None:
+                break
+            if output:
+                self.messageAddedSignal.emit(output.strip())
+        proc.poll()
+        self.doneSignal.emit()
+        os.remove(bat)
+
+    def create_batfile(self):
+        saveShp_exe = self.pgdump
+        #psql_exe = os.path.dirname(saveShp_exe) + "/psql.exe"
+        dirname = os.path.dirname(__file__)
+        plof_schema = dirname + "/plof_schema.sql"
+        bat = dirname + "/exportShape.bat"
+        fd = os.open(bat, os.O_WRONLY | os.O_CREAT)
+        os.write(fd, "@echo on\n")
+        os.write(fd, "SET PGPASSWORD=%s\n" % (self.db_config.db_name,))
+        date_jour = ""
+        try:
+            date_jour = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+        except Exception as err:
+            print (err)
+        #os.write(fd, "\"%s\" -U postgres < \"%s\"\n" % (psql_exe, plof_schema))
+        #os.write(fd, "\"%s\" --host localhost "
+                     #"--port 5432 "
+                     #"--username \"postgres\" --dbname \"%s\"  "
+                     #"--verbose \"%s\"\n" % (restore_exe, self.db_config.db_name, self.filename))
+        #pathdir_demande = self.filename + "\SHAPES_" + date_jour +"\demande"
+        #pathdir_certificat = self.filename + "\SHAPES_"+ date_jour +"\certificat"
+
+        pathdir_demande = self.filename + "\VECTEURS_FIPLOF" + "\demande"
+        pathdir_certificat = self.filename + "\VECTEURS_FIPLOF" + "\certificat"
+
+        '''
+        try:
+            os.write(fd,"mkdir \"%s\"\n"
+                     "mkdir \"%s\"\n"
+                     "\"%s\" -f \"%s\"\demande_\"%s\"_\"%s\".shp -h \"%s\" -u postgres -P postgres \"%s\" public.vw_shape_demande "
+                     "--port \"%s\" \n"
+                     "\"%s\" -f \"%s\"\certificat_\"%s\"_\"%s\".shp -h \"%s\" -u postgres -P postgres \"%s\" public.vw_shape_certificat "
+                     "--port \"%s\" \n" % (pathdir_demande,pathdir_certificat, saveShp_exe,pathdir_demande,self.db_config.db_name,date_jour, self.db_config.db_host,self.db_config.db_name, self.db_config.db_port,saveShp_exe,pathdir_certificat,self.db_config.db_name,date_jour, self.db_config.db_host,self.db_config.db_name, self.db_config.db_port))
+        except Exception as err:
+            print (err) '''
+
+        try:
+            os.write(fd, "mkdir \"%s\"\n"
+                         "mkdir \"%s\"\n"
+                         "\"%s\" -f \"%s\"\demande_\"%s\".shp -h \"%s\" -u \"%s\" -P \"%s\" \"%s\" public.vw_shape_demande "
+                         "--port \"%s\" \n"
+                         "\"%s\" -f \"%s\"\certificat_\"%s\".shp -h \"%s\" -u \"%s\" -P \"%s\" \"%s\" public.vw_shape_certificat "
+                         "--port \"%s\" \n" % (
+                     pathdir_demande, pathdir_certificat, saveShp_exe, pathdir_demande, self.db_config.db_name,
+                     self.db_config.db_host, self.db_config.db_user, self.db_config.db_pass, self.db_config.db_name, self.db_config.db_port, saveShp_exe,
+                     pathdir_certificat, self.db_config.db_name, self.db_config.db_host,self.db_config.db_user, self.db_config.db_pass,
+                     self.db_config.db_name, self.db_config.db_port))
+        except Exception as err:
+            print (err)
+        os.close(fd)
+
+        return bat

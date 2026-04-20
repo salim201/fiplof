@@ -1,0 +1,531 @@
+from unicodedata import name
+from GeometryLoader.PlofLayersCollection import PlofLayersCollection
+from PyQt4 import QtGui
+from PyQt4 import QtCore
+from UiLayerPreview import Ui_FormLayerPreview
+from qgis.gui import *
+from qgis.core import *
+#from qgis.core import  QgsLayoutItemLegend
+from models.ProjetCouche import ProjetCouche
+from PyQt4.QtCore import QFileInfo, QSize
+from PyQt4.Qt import QImage, QPainter, QFont
+from Configuration import DbConfig
+import globalvars
+import tempfile
+import os
+from qgis.core import QgsLegendRenderer, QgsComposerLegendStyle
+import psycopg2.extras
+
+
+from random import randint
+
+CERTIFICATE_LAYER_NAME = "Certificats"
+CURRENT_CERTIFICATE_LAYER_NAME = "Certificat en cause"
+
+class LayerPreview(QtGui.QWidget):
+    layersStyle = {
+        u'outline_width': u'0.3',
+        u'outline_color': u'244,0,0,255',
+        u'offset_unit': u'MM',
+        u'color': u'227,26,28,255',
+        u'outline_style': u'solid',
+        u'style': u'b_diagonal',
+        u'joinstyle': u'bevel',
+        u'outline_width_unit': u'MM',
+        u'border_width_map_unit_scale': u'0,0',
+        u'offset': u'0,0',
+        u'offset_map_unit_scale': u'0,0'
+    }
+    certificateStyle = {
+        u'outline_width': u'0.8',
+        u'outline_color': u'244,0,0,255',
+        u'offset_unit': u'MM',
+        u'color': u'28,26,227,255',
+        u'outline_style': u'solid',
+        u'style': u'b_diagonal',
+        u'joinstyle': u'bevel',
+        u'outline_width_unit': u'MM',
+        u'border_width_map_unit_scale': u'0,0',
+        u'offset': u'0,0',
+        u'offset_map_unit_scale': u'0,0'
+    }
+    titreStyles = {
+        u'outline_width': u'0.5', u'outline_color': u'255,255,0,255', u'offset_unit': u'MM',
+        u'color': u'255,255,0,75', u'outline_style': u'solid', u'style': u'b_fill',
+        u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+        u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+    }
+
+    cadastreStyles = {
+        u'outline_width': u'0.5', u'outline_color': u'0,191,255,255', u'offset_unit': u'MM',
+        u'color': u'0,191,255,75', u'outline_style': u'solid', u'style': u'b_fill',
+        u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+        u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+    }
+
+    demandefnStyles = {
+        u'outline_width': u'0.5', u'outline_color': u'238,130,238,255', u'offset_unit': u'MM',
+        u'color': u'238,130,238,75', u'outline_style': u'solid', u'style': u'b_fill',
+        u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+        u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+    }
+    tssStyles = {
+        u'outline_width': u'0.5', u'outline_color': u'198, 169, 105,255', u'offset_unit': u'MM',
+        u'color': u'198, 169, 105,75', u'outline_style': u'solid', u'style': u'b_fill',
+        u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+        u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+    }
+
+    WIDTH = 210.0
+    HEIGHT = 297.0
+    #HEIGHT = 2
+    MARGIN = 40
+
+    def __init__(self, connection, idcertificat):
+        QtGui.QWidget.__init__(self)
+        self.ui = Ui_FormLayerPreview()
+
+        self.layerLegend = ""
+        self.ui.setupUi(self)
+        self.connection = connection
+
+        self.raster_path, self.layer_raster, self.layer_shape, self.rect, self.canvas = None, None, None, None, None
+        self.toolPan, self.layer_valid = None, False
+        self.ui.spinBoxGridX.setReadOnly(True)
+        self.ui.spinBoxGridY.setReadOnly(True)
+        self.idcertificat = idcertificat
+        self.db_config = DbConfig.DbConfig()
+        self.area = 0
+        self.X = 0
+        self.Y = 0
+        self.cf_unique = self.getCfNumber()
+        self.scale_box_apercu = QgsScaleComboBox()
+        self.ui.horizontalLayout.addWidget(self.scale_box_apercu)
+        self.currentLayerGID = self.getLayerGid()
+        self.init_canvas()
+        self.scale_box_apercu.scaleChanged.connect(self.onScaleBoxChanged)
+        self.canvas.mapCanvasRefreshed.connect(self.onCanvasRefreshed)
+        self.init_layers()
+        raster = self.loadRaster()
+        shapes = self.loadShapes()
+        couchesTitres = self.loadCouchesTitres()
+        self.displayAllLayers(raster, shapes, couchesTitres)
+        self.registry = QgsMapLayerRegistry.instance()
+        self.zoomToCurrentShape()
+
+    def init_canvas(self):
+        self.canvas = QgsMapCanvas()
+        self.ui.verticalLayoutPreview.addWidget(self.canvas)
+        self.canvas.show()
+        self.toolPan = QgsMapToolPan(self.canvas)
+        self.canvas.setMapTool(self.toolPan)
+
+
+    def onScaleBoxChanged(self):
+        self.setCanvasZoomScale()
+
+    def onCanvasRefreshed(self):
+        self.setScaleBoxValue()
+
+    def setScaleBoxValue(self):
+        zoomScale = self.canvas.scale()
+        self.setCanvasMapUnits()
+        self.scale_box_apercu.setScale(float(1 / zoomScale))
+        self.setGridValue(zoomScale)
+
+    def setCanvasZoomScale(self):
+        zoomScale = 1 / self.scale_box_apercu.scale()
+        self.setCanvasMapUnits()
+        self.canvas.zoomScale(zoomScale)
+        self.setGridValue(zoomScale)
+
+    def setCanvasMapUnits(self):
+        self.canvas.mapUnits()
+        self.canvas.setMapUnits(QGis.Meters)
+
+    def setGridValue(self, scale):
+        gridValue = (scale / 10) / 2
+        self.ui.spinBoxGridX.setValue(gridValue)
+        self.ui.spinBoxGridY.setValue(gridValue)
+    
+    def init_layers(self):
+        couches = ProjetCouche.find_by_projet_commune(self.connection, globalvars.id_projet_commune)
+        for couche in couches:
+            if couche.type_couche == 'R':
+                self.raster_path = couche.fichier
+                break
+
+    def loadRaster(self):
+        if self.raster_path is None:
+            return
+        fileInfo = QFileInfo(self.raster_path)
+        baseName = fileInfo.baseName()
+        layer = QgsRasterLayer(self.raster_path, baseName)
+        if not layer.isValid():
+            print("Layer " + self.raster_path + " is not valid raster")
+            return None
+        QgsMapLayerRegistry.instance().addMapLayer(layer)
+        return layer
+
+    def loadShapes(self):
+        layers = []
+        standardVectors = self.loadStandardVectorsFromDatabase()
+        print (standardVectors)
+        certificatVector = self.loadCurrentVectorFromDatabase()
+        certificateLayer = self.addVectorToScene(certificatVector)
+        self.addStyleToLayer(certificateLayer, self.certificateStyle)
+        self.addLabelToLayer(certificateLayer, 'numerocertificat',True)
+        layers.append(certificateLayer)
+        for vector in standardVectors:
+            try:
+                layer = self.addVectorToScene(vector)
+            except Exception as err:
+                print(err)
+            print ("******Nom des couches******")
+            try:
+                print(layer.name())
+            except Exception as err:
+                print(err)
+            if layer is not None:
+                if str(layer.name()).strip().lower() == "certificats" or str(layer.name()).strip().lower() == "demandes parcelle":
+                    if not self.cf_unique:
+                        self.addLabelToLayer(layer, 'numerocertificat')
+                    self.addStyleToLayer(layer, self.layersStyle)
+                if str(layer.name()).strip().lower() == "titre":
+                    self.addLabelToLayer(layer, 'titres')
+                    self.addStyleToLayer(layer, self.titreStyles)
+                if str(layer.name()).strip().lower() == "certificat":
+                    #self.addLabelToLayer(layer, 'titres')
+                    self.addStyleToLayer(layer, self.layersStyle)
+                if str(layer.name()).strip().lower() == "cadastre":
+                    self.addLabelToLayer(layer, 'parcelle')
+                    self.addStyleToLayer(layer, self.cadastreStyles)
+                if str(layer.name()).strip().lower() == "demande fn":
+                    self.addLabelToLayer(layer, 'fn_fg')
+                    self.addStyleToLayer(layer, self.demandefnStyles)
+                if str(layer.name()).strip().lower() == "tss":
+                    self.addLabelToLayer(layer, 'fn_fg')
+                    self.addStyleToLayer(layer, self.tssStyles)
+                layers.append(layer)
+
+        return layers
+
+    def loadCouchesTitres(self):
+        layers = []
+        couches = ProjetCouche.find_by_projet_commune(self.connection, globalvars.id_projet_commune)
+        couchesTitres = filter(lambda couche: (couche.type_couche == 'S'), couches)
+        for couche in couchesTitres:
+            if couche.plofpaps != 1:                
+                layer = self.loadShapeFromFile(couche.fichier, couche.libelle, couche.couleur_bg, couche.remplissage)
+                if couche.show_label:
+                    self.addLabelToLayer(layer, couche.label_name)
+                layers.append(layer)
+        return layers
+
+
+    def loadShapeFromFile(self, filename, label, strokeColor, fillColor):
+        if filename is None or filename == "":
+            return None
+        layer = QgsVectorLayer(filename, label, "ogr")
+        crs = QgsCoordinateReferenceSystem(globalvars.EPSG_SCR, QgsCoordinateReferenceSystem.EpsgCrsId)
+        layer.setCrs(crs)
+        if not layer.isValid():
+            return None
+        QgsMapLayerRegistry.instance().addMapLayer(layer)
+        properties = {'color': '0,0,255,100', 'outline_color': '40,40,40,255', 'outline_width': '0.3'}
+        if strokeColor != "":
+            c1 = QtGui.QColor(strokeColor)
+            c2 = c1.darker(150)
+            r1 = str(c1.red()) + "," + str(c1.green()) + "," + str(c1.blue()) + ",100"
+            r2 = str(c2.red()) + "," + str(c2.green()) + "," + str(c2.blue()) + ",255"
+            if fillColor == 0 :
+                properties = {'color': r1, 'outline_color': r2, 'outline_width': '0.3'}
+            else :
+                properties = {'color': '255,0,0,0', 'outline_color': r2, 'outline_width': '0.3'}
+        my_symbol2 = QgsFillSymbolV2.createSimple(properties)
+        render_titre = layer.rendererV2()
+        if render_titre:
+            render_titre.setSymbol(my_symbol2)
+        QgsMapCanvasLayer(layer)
+        return layer
+
+
+    def addVectorToScene(self, layer):
+        if not layer.isValid():
+            return
+        self.layer_valid = True
+        print ("******Nom des couches added******")
+        try:
+            print(layer.name())
+            if layer.name() == "Certificat":
+                if layer.featureCount() == 1:
+                    self.cf_unique == True
+        except Exception as err:
+            print(err)
+        #for field in layer.pendingFields():
+            #print field.name(), field.value()
+        for elem in layer.getFeatures():
+            geom = elem.geometry()
+            attrs = elem.attributes()
+            idx = layer.fieldNameIndex('gid')
+            layer_gid = elem.attributes()[idx].toPyObject()
+            if layer_gid == self.currentLayerGID:
+                self.area = geom.area()
+            #    pt = geom.centroid().asPoint()
+            #    print "X="
+            #    print pt[0]
+            #    self.X = pt[0]
+            #    print "Y="
+            #    print pt[1]
+            #    self.Y = pt[1]
+        crs = QgsCoordinateReferenceSystem(globalvars.EPSG_SCR, QgsCoordinateReferenceSystem.EpsgCrsId)
+        layer.setCrs(crs)
+        layer.triggerRepaint()
+        QgsMapLayerRegistry.instance().addMapLayer(layer)
+        return layer
+
+    def getDataSourceURI(self):
+        uri = QgsDataSourceURI()
+        uri.setConnection(
+            self.db_config.db_host,
+            self.db_config.db_port,
+            self.db_config.db_name,
+            self.db_config.db_user,
+            self.db_config.db_pass
+        )
+        return uri
+
+    def loadStandardVectorsFromDatabase(self):
+        uri = self.getDataSourceURI()
+        vectors = []
+        layersCollection = PlofLayersCollection(globalvars.id_commune,"", self.idcertificat, self.cf_unique)
+        standardLayers = layersCollection.getStandardLayers()
+
+        for layer in standardLayers:
+            print('Conditions layers')
+            print(layer.dataSource.selectionCondition)
+            uri.setDataSource(layer.dataSource.schema, layer.dataSource.tableName, layer.dataSource.geometryFieldName, layer.dataSource.selectionCondition)
+            uri.setKeyColumn(layer.dataSource.keyFieldName)
+            vectorLayer = QgsVectorLayer(uri.uri(), layer.name, "postgres")
+            vectors.append(vectorLayer)
+        return vectors
+
+    def loadCurrentVectorFromDatabase(self):
+        uri = self.getDataSourceURI()
+        uri.setDataSource("public", "vw_certificat", "geom", "idcertificat=%s" % (self.idcertificat))
+        uri.setKeyColumn("gid")
+        return QgsVectorLayer(uri.uri(), CURRENT_CERTIFICATE_LAYER_NAME, "postgres")
+
+    def addStyleToLayer(self, layer, style):
+        if layer is None:
+            return
+        renderer = layer.rendererV2()
+        mySymbol2 = QgsFillSymbolV2.createSimple(style)
+        if renderer:
+            renderer.setSymbol(mySymbol2)
+
+    def addLabelToLayer(self, layer, labelColumn, isCurrentCF = False):
+        if layer is None:
+            return
+        if isCurrentCF == False:
+            layer.setCustomProperty("labeling/fieldName", labelColumn)
+            layer.setCustomProperty("labeling/placement", "OverPoint")
+            layer.setCustomProperty("labeling", "pal")
+            layer.setCustomProperty("labeling/enabled", "true")
+            layer.setCustomProperty("labeling/fontFamily", "Arial")
+            layer.setCustomProperty("labeling/fontSize", "18")
+        else:
+            layer.setCustomProperty("labeling/fieldName", labelColumn)
+            layer.setCustomProperty("labeling/placement", "OverPoint")
+            layer.setCustomProperty("labeling", "pal")
+            layer.setCustomProperty("labeling/enabled", "true")
+            layer.setCustomProperty("labeling/fontFamily", "Arial")
+            layer.setCustomProperty("labeling/fontSize", "26")         
+            layer.setCustomProperty("labeling/bufferDraw", "true")
+            layer.setCustomProperty("labeling/bufferSize", "2")
+            layer.setCustomProperty("labeling/bufferColor", '40,40,40,255')
+            
+
+    def displayAllLayers(self, raster, shapes, couchesTitres):
+        layers = []
+        for shape in shapes:
+            layers.append(QgsMapCanvasLayer(shape))
+        for titre in couchesTitres:
+            layers.append(QgsMapCanvasLayer(titre))
+        if raster is not None:
+            layers.append(QgsMapCanvasLayer(raster))
+        self.canvas.setLayerSet(layers)
+
+    def render(self):
+        if not self.layer_valid:
+            return None
+        font = QFont("Arial", 14)
+        map_renderer = self.canvas.mapRenderer()
+
+        #self.zoomToCurrentShape()
+        c = QgsComposition(map_renderer)
+        c.setPaperSize(self.WIDTH + self.MARGIN, self.HEIGHT + self.MARGIN)
+        map_renderer.setOutputSize(QSize(c.paperWidth(), c.paperHeight()), c.printResolution())
+
+        # map
+        composer_map = QgsComposerMap(c, self.MARGIN / 2, self.MARGIN / 4, self.WIDTH, self.HEIGHT)
+        composer_map.setFrameEnabled(True)
+        composer_map.setNewExtent(map_renderer.extent())
+        # print(composer_map.extent().yMaximum())
+        # composerMap.setFrameOutlineWidth(0)
+
+        self.setCanvasMapUnits()
+        scale = self.canvas.scale()
+        gridValue = (scale / 10) / 2
+
+        # grid
+        composer_map.setGridEnabled(True)
+        composer_map.setGridIntervalX(gridValue)
+        composer_map.setGridIntervalY(gridValue)
+        composer_map.setGridFrameStyle(QgsComposerMap.ExteriorTicks)
+        composer_map.setGridStyle(QgsComposerMap.Solid)
+        composer_map.setGridAnnotationFont(font)
+        composer_map.setShowGridAnnotation(True)
+        composer_map.setGridAnnotationPrecision(0)
+        composer_map.setGridAnnotationPosition(QgsComposerMap.OutsideMapFrame, QgsComposerMap.Left)
+        composer_map.setGridAnnotationDirection(QgsComposerMap.Vertical, QgsComposerMap.Left)
+        composer_map.setGridAnnotationPosition(QgsComposerMap.OutsideMapFrame, QgsComposerMap.Right)
+        composer_map.setGridAnnotationDirection(QgsComposerMap.Vertical, QgsComposerMap.Right)
+
+        #Add scale :
+        # add label
+        #lbl = QgsComposerLabel(c)
+        #lbl.setText("Echelle : 1 / %d" % scale)
+        #lbl.setItemPosition((self.MARGIN ), (self.HEIGHT + self.MARGIN / 2) - 10)
+        #lbl.adjustSizeToText()
+        #c.addComposerLabel(lbl)
+
+        legend = QgsComposerLegend(c)
+        layerGroup = QgsLayerTreeGroup()
+        legend_1 = QgsComposerLegend(c)
+        layerGroup_1 = QgsLayerTreeGroup()
+        print("----l.name()---")
+        layersToDisplay = filter(lambda l: (l.name() != CURRENT_CERTIFICATE_LAYER_NAME and l.name() != 'Fiscalite'  and str(l.name()).upper().find('IPSS') == -1   and str(l.name()).upper().find('PAPS') == -1 and str(l.name()).upper().find('PAPIER')  and str(l.name()).upper().find('LIMITE') == -1 ), self.canvas.layers())
+
+        # layersToDisplay = filter(lambda l: (
+        #              l.name() != 'Fiscalite' and str(
+        #         l.name()).upper().find('IPSS') == -1 and str(l.name()).upper().find('PAPS') == -1 and str(
+        #         l.name()).upper().find('PAPIER') and str(l.name()).upper().find('LIMITE') == -1), self.canvas.layers())
+        print("----layersToDisplay---")
+        print(layersToDisplay)
+        layer_counter = 0
+        for layer in layersToDisplay:
+            layer_counter = layer_counter + 1
+            if layer.type() == layer.VectorLayer:
+                if layer_counter <= 3:
+                    layerGroup.insertLayer(0, layer)
+                else:
+                    layerGroup_1.insertLayer(0, layer)
+        legend.modelV2().setRootGroup(layerGroup)
+        legend.setTitle('Legende :')
+        legend.setBackgroundEnabled(False)
+        legend.setSymbolHeight(2.0)
+        print("self.MARGIN")
+        print(self.MARGIN)
+
+        print("self.HEIGHT")
+        print(self.HEIGHT)
+
+        legend.setItemPosition((self.MARGIN / 2) + 100, (self.HEIGHT + self.MARGIN / 4) - 10)
+        c.addItem(legend)
+        if layer_counter > 3:
+            legend_1.modelV2().setRootGroup(layerGroup_1)
+            legend_1.setTitle('')
+            legend_1.setBackgroundEnabled(False)
+            legend_1.setSymbolHeight(2.0)
+            print("self.MARGIN")
+            print(self.MARGIN)
+
+            print("self.HEIGHT")
+            print(self.HEIGHT)
+
+            legend_1.setItemPosition((self.MARGIN / 2) + 160, (self.HEIGHT + self.MARGIN / 4) - 10)
+            c.addItem(legend_1)
+
+        scalebar = QgsComposerScaleBar(c)
+        scalebar.setStyle("Single Box")
+        scalebar.setUnits(QgsComposerScaleBar.Meters)
+        scalebar.setComposerMap(composer_map)
+        scalebar.setHeight(4)
+        scalebar.setFont(font)
+        scalebar.setItemPosition((self.MARGIN / 2), (self.HEIGHT + self.MARGIN / 2) + 5)
+        scalebar.applyDefaultSize()
+        c.addItem(scalebar)
+        
+        c.addComposerMap(composer_map)
+
+        # rendering
+        dpi = c.printResolution()
+        dpmm = dpi / 25.4
+        width = int(dpmm * c.paperWidth() / 4)
+        height = int(dpmm * c.paperHeight() / 4)
+        img = QImage(QSize(width, height), QImage.Format_ARGB32)
+        image_painter = QPainter(img)
+        c.renderPage(image_painter, 0)
+        image_painter.end()
+        temp_rast_path = os.path.join(tempfile.gettempdir(), str(randint(10000, 99999)) + ".png")
+        img.save(temp_rast_path, "png")
+        print("File generated in %s" % temp_rast_path)
+        return temp_rast_path
+
+    def gridX(self):
+        return self.ui.spinBoxGridX.value()
+
+    def gridY(self):
+        return self.ui.spinBoxGridY.value()
+
+    def deleteLayers(self):
+        for layer in self.canvas.layers():
+            QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
+    
+    def zoomToCurrentShape(self):
+        layers = QgsMapLayerRegistry.instance().mapLayersByName(CURRENT_CERTIFICATE_LAYER_NAME)
+        print(layers)
+        if len(layers) == 0:
+            return
+        currentLayer = layers[0]
+        currentLayer.select(self.currentLayerGID)
+
+        # renderTitre = currentLayer.rendererV2()
+        # style1 = {'color': '255,0,0,0', 'outline_color': '93,182,255,255', 'outline_width': '0.3'}
+        # mySymbol2 = QgsFillSymbolV2.createSimple(style1)
+        # if renderTitre:
+        #     renderTitre.setSymbol(mySymbol2)
+        #
+        # layerGid.setCustomProperty("labeling", "pal")
+        # layerGid.setCustomProperty("labeling/enabled", "true")
+        # layerGid.setCustomProperty("labeling/fontFamily", "Arial")
+        # layerGid.setCustomProperty("labeling/fontSize", "8")
+        # # layer.setCustomProperty("labeling/fontWeight", "Bold")
+        # layerGid.setCustomProperty("labeling/fieldName", 'numdemande')
+        # layerGid.setCustomProperty("labeling/placement", "OverPoint")
+
+        self.canvas.zoomToSelected(currentLayer)
+        self.canvas.setSelectionColor(QtGui.QColor("blue"))
+
+    def getLayerGid(self):
+        cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute("SELECT gid from vw_certificat WHERE idcertificat = %s", [int(self.idcertificat)])
+        row = cursor.fetchone()
+        return row[0]
+
+    def getCfNumber(self):
+        try:
+            cur = self.connection.cursor()
+            cur.execute("SELECT COUNT(*) FROM certificat")
+            res = cur.fetchone()
+            if res is not None:
+                if res[0] == 1:
+                    return True
+            else:
+                return False
+        except Exception as err:
+            print ("Erreur sur lecture nombre CF")
+            print(err)
+            self.connection.rollback()
+            return False

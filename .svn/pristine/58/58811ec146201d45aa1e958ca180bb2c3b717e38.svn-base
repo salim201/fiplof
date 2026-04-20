@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'ztc.ui'
+#
+# Created: Thu Jun 07 13:57:39 2018
+#      by: PyQt4 UI code generator 4.9.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.resize(431, 56)
+        self.horizontalGroupBox = QtGui.QGroupBox(Dialog)
+        self.horizontalGroupBox.setGeometry(QtCore.QRect(10, 10, 411, 34))
+        self.horizontalGroupBox.setObjectName(_fromUtf8("horizontalGroupBox"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.horizontalGroupBox)
+        self.horizontalLayout_2.setMargin(5)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.X = QtGui.QLabel(self.horizontalGroupBox)
+        self.X.setObjectName(_fromUtf8("X"))
+        self.horizontalLayout_2.addWidget(self.X)
+        self.lineEdit_2 = QtGui.QLineEdit(self.horizontalGroupBox)
+        self.lineEdit_2.setObjectName(_fromUtf8("lineEdit_2"))
+        self.horizontalLayout_2.addWidget(self.lineEdit_2)
+        self.label_2 = QtGui.QLabel(self.horizontalGroupBox)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.horizontalLayout_2.addWidget(self.label_2)
+        self.lineEdit = QtGui.QLineEdit(self.horizontalGroupBox)
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.horizontalLayout_2.addWidget(self.lineEdit)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.pushButton = QtGui.QPushButton(self.horizontalGroupBox)
+        self.pushButton.setText(_fromUtf8(""))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("icons/zoom.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton.setIcon(icon)
+        self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.horizontalLayout_2.addWidget(self.pushButton)
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.X.setText(QtGui.QApplication.translate("Dialog", "X:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Dialog", "Y:", None, QtGui.QApplication.UnicodeUTF8))
+

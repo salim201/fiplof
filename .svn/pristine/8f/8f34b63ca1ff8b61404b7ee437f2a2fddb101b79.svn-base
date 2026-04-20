@@ -1,0 +1,92 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'PopupInfosTitre.ui'
+#
+# Created: Thu Mar 14 07:08:59 2024
+#      by: PyQt4 UI code generator 4.10
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class Ui_INFORMATIONS(object):
+    def setupUi(self, INFORMATIONS):
+        INFORMATIONS.setObjectName(_fromUtf8("INFORMATIONS"))
+        INFORMATIONS.resize(343, 257)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/sig/icone/information.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        INFORMATIONS.setWindowIcon(icon)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(INFORMATIONS)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.titres = QtGui.QLineEdit(INFORMATIONS)
+        self.titres.setObjectName(_fromUtf8("titres"))
+        self.verticalLayout.addWidget(self.titres)
+        self.propriete = QtGui.QLineEdit(INFORMATIONS)
+        self.propriete.setObjectName(_fromUtf8("propriete"))
+        self.verticalLayout.addWidget(self.propriete)
+        self.sur_plan = QtGui.QLineEdit(INFORMATIONS)
+        self.sur_plan.setObjectName(_fromUtf8("sur_plan"))
+        self.verticalLayout.addWidget(self.sur_plan)
+        self.titre_r = QtGui.QLineEdit(INFORMATIONS)
+        self.titre_r.setObjectName(_fromUtf8("titre_r"))
+        self.verticalLayout.addWidget(self.titre_r)
+        self.parcelle = QtGui.QLineEdit(INFORMATIONS)
+        self.parcelle.setObjectName(_fromUtf8("parcelle"))
+        self.verticalLayout.addWidget(self.parcelle)
+        self.partie = QtGui.QLineEdit(INFORMATIONS)
+        self.partie.setObjectName(_fromUtf8("partie"))
+        self.verticalLayout.addWidget(self.partie)
+        self.feuille = QtGui.QLineEdit(INFORMATIONS)
+        self.feuille.setObjectName(_fromUtf8("feuille"))
+        self.verticalLayout.addWidget(self.feuille)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.line = QtGui.QFrame(INFORMATIONS)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName(_fromUtf8("line"))
+        self.verticalLayout_2.addWidget(self.line)
+        self.buttonsLayout = QtGui.QHBoxLayout()
+        self.buttonsLayout.setObjectName(_fromUtf8("buttonsLayout"))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.buttonsLayout.addItem(spacerItem)
+        self.pushButtonValider = QtGui.QPushButton(INFORMATIONS)
+        self.pushButtonValider.setObjectName(_fromUtf8("pushButtonValider"))
+        self.buttonsLayout.addWidget(self.pushButtonValider)
+        self.pushButtonAnnuler = QtGui.QPushButton(INFORMATIONS)
+        self.pushButtonAnnuler.setObjectName(_fromUtf8("pushButtonAnnuler"))
+        self.buttonsLayout.addWidget(self.pushButtonAnnuler)
+        self.pushButtonEditFisc = QtGui.QPushButton(INFORMATIONS)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/std/icone/if_pencil_14623.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButtonEditFisc.setIcon(icon1)
+        self.pushButtonEditFisc.setObjectName(_fromUtf8("pushButtonEditFisc"))
+        self.buttonsLayout.addWidget(self.pushButtonEditFisc)
+        self.verticalLayout_2.addLayout(self.buttonsLayout)
+
+        self.retranslateUi(INFORMATIONS)
+        QtCore.QMetaObject.connectSlotsByName(INFORMATIONS)
+
+    def retranslateUi(self, INFORMATIONS):
+        INFORMATIONS.setWindowTitle(_translate("INFORMATIONS", "Infos", None))
+        self.pushButtonValider.setText(_translate("INFORMATIONS", "Validé", None))
+        self.pushButtonAnnuler.setText(_translate("INFORMATIONS", "Annulé", None))
+        self.pushButtonEditFisc.setText(_translate("INFORMATIONS", "Editer", None))
+
+import icons_rc

@@ -1,0 +1,1 @@
+update groupe_acces set autorise = TRUE WHERE acces_id = 7 and groupe_id=10;

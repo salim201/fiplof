@@ -1,0 +1,1 @@
+ALTER TABLE public.parcelle_d DROP CONSTRAINT IF EXISTS uk_geom;

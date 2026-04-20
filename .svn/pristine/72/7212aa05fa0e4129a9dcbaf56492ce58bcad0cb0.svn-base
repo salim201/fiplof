@@ -1,0 +1,63 @@
+# coding: utf8
+from PyQt4.QtCore import QThread, SIGNAL, pyqtSignal
+# import ogrinfo
+import sys
+import os
+import os.path
+from qgis.core import *
+from PyQt4 import QtCore, QtGui
+from logs import xlsLogger
+import subprocess
+from Configuration import DbConfig
+import datetime
+import globalvars
+import hashlib
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+class AutoBackupThread(QThread):
+    messageAddedSignal = pyqtSignal(str)
+    doneSignal = pyqtSignal()
+
+    def __init__(self, pgdump, dirname, connection):
+        QThread.__init__(self)
+        self.filename, self.connection = None, connection
+        self.dirname = dirname
+        self.pgdump = pgdump
+        self.current_step = -1
+        self.db_config = DbConfig.DbConfig()
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        if self.filename == "":
+            self.emit(SIGNAL("alert(QString)"), "Veuillez choisir un dossier")
+            return
+
+        self.current_step = -1
+
+        self.emit(SIGNAL("stepInit(int)"), self.current_step + 1)
+
+        print self.dirname
+        try:
+            self.doneSignal.emit()
+        except Exception as err:
+            print(err)
+        print ('AFTER DONE SIGNALs')
+
+    def get_commune_name(self):
+        res = None
+        try:
+            cur = self.connection.cursor()
+            cur.execute("SELECT nomcommune from commune where idcommune = %s", (globalvars.id_commune,))
+            res = cur.fetchone()
+        except Exception as err:
+            print ("Erreur get nomcommune " + str(err))
+        if res is not None:
+            return str(res[0]).strip()
+        else:
+            return ""

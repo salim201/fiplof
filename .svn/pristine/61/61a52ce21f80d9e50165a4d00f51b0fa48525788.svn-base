@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>313</width>
+    <height>446</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QGroupBox" name="formGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>291</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Opposition</string>
+   </property>
+   <widget class="QLabel" name="dateDeLOppositionLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>30</y>
+      <width>103</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date de l'opposition *</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dateDeLOppositionLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>116</x>
+      <y>30</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dateDemandeLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>56</y>
+      <width>70</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date demande</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dateDemandeLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>116</x>
+      <y>56</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="typeDOppositionLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>82</y>
+      <width>83</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Type d'opposition</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="typeDOppositionComboBox">
+    <property name="geometry">
+     <rect>
+      <x>116</x>
+      <y>82</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>SUR LIMITE</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>SUR LES DROITS</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>108</y>
+      <width>53</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Description</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>116</x>
+      <y>108</y>
+      <width>165</width>
+      <height>76</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonDateOpp">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>30</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonDatedemande">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>56</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</iconset>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="formGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>210</y>
+     <width>291</width>
+     <height>171</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Reglement</string>
+   </property>
+   <widget class="QLabel" name="dateReglementLabel">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>32</y>
+      <width>74</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date reglement</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dateReglementLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>101</x>
+      <y>32</y>
+      <width>181</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="natureReglementLabel">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>58</y>
+      <width>84</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Nature reglement</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="natureReglementComboBox">
+    <property name="geometry">
+     <rect>
+      <x>101</x>
+      <y>58</y>
+      <width>181</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>ACQUIESCMENT SPONTANE</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>MAIN LEVEE SPONTANNEE</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>ACQUIESCEMENT APRES CONCILIATION</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>MAIN LEVEE  APRES CONCILIATION</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>SENTENCE ARBITRALE</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>DECISION DU TRIBUNAL</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>84</y>
+      <width>53</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Description</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_2">
+    <property name="geometry">
+     <rect>
+      <x>101</x>
+      <y>84</y>
+      <width>179</width>
+      <height>76</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonDateReglement">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>30</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</iconset>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>390</y>
+     <width>291</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="pushButtonEnregistrer">
+      <property name="text">
+       <string>Enregistrer</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButtonAnnuler">
+      <property name="text">
+       <string>Annuler</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

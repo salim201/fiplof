@@ -1,0 +1,203 @@
+# -*- coding: utf-8 -*-
+from PyQt4 import QtGui, Qt
+from .AddLayer import Ui_Dialog
+from models.ProjetCouche import ProjetCouche
+from Utils import Utils
+from osgeo import ogr
+import sys
+import globalvars
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+class AddLayerRun(QtGui.QDialog):
+    """docstring for AddLayerRun"""
+    def __init__(self, connection, idprojet_commune, couche_id=0):
+        super(AddLayerRun, self).__init__()
+        self.connection, self.idprojet_commune = connection, idprojet_commune
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.selected_color, self.couche_id = None, 0
+        self.selected_color_font = None
+        self.selected_color_stroke = None
+        self.init_actions()
+        self.ordre = 0
+        self.couche = None
+        self.ui.tabWidget.setCurrentIndex(0)
+        self.ui.label_12.setText("Aucun remplissage")
+
+        """if globalvars.has_z_certifiable:
+            self.ui.labelCertifiable.show()
+            self.ui.checkBoxCertifiable.show()
+        """
+
+        self.ui.labelCertifiable.hide()
+        self.ui.checkBoxCertifiable.hide()
+        if globalvars.groupe_id == 1 or globalvars.groupe_id == 13 or globalvars.groupe_id == 14 or globalvars.groupe_id == 12 or globalvars.groupe_id == 11:
+            self.ui.labelCertifiable.setEnabled(True)
+            self.ui.checkBoxCertifiable.setEnabled(True)
+
+        if couche_id:
+            couche = ProjetCouche.find_by_id(self.connection, couche_id)
+            if couche:
+                self.couche = couche
+                idx = 0
+                if couche.type_couche == 'R':
+                    idx = 1
+                self.selected_color = QtGui.QColor(couche.couleur_bg)
+                self.couche_id = couche.id
+                self.ui.lineEditLibelle.setText(couche.libelle)
+                self.ui.comboBoxType.setCurrentIndex(idx)
+                self.ui.pushButtonCouleur.setIcon(Utils.create_icon(QtGui.QColor(couche.couleur_bg)))
+                self.ui.lineEditFichier.setText(couche.fichier)
+                self.ordre = couche.ordre
+                self.ui.remplissage.setChecked(False if couche.remplissage == 0 else True)
+                self.ui.checkPlofPaps.setChecked(True if couche.plofpaps == 1 else False)
+                self.ui.checkBoxCertifiable.setChecked(True if couche.certifiable == 1 else False)
+                self.ui.pushButtonEnregistrer.setText("Enregistrer les Modifications")
+                self.load_metadata(self.couche.fichier)
+                self.ui.checkBoxLabel.setChecked(couche.show_label if couche.show_label is not None else False)
+                for i in range(0, self.ui.comboBoxLabel.count()):
+                    if str(self.ui.comboBoxLabel.itemText(i)) == self.couche.label_name:
+                        self.ui.comboBoxLabel.setCurrentIndex(i)
+                        break
+                if couche.font is not None:
+                    f = Qt.QFont()
+                    f.setFamily(couche.font)
+                    self.ui.fontComboBox.setCurrentFont(f)
+                self.ui.spinBoxFontSize.setValue(couche.font_size if couche.font_size is not None else 12)
+                self.ui.checkBoxMapUnit.setChecked(couche.font_size_map_unit if couche.font_size_map_unit is not None else False)
+                self.ui.pushButtonLabelColor.setIcon(Utils.create_icon(QtGui.QColor(couche.font_color)))
+                self.ui.checkBoxStroke.setChecked(couche.show_stroke if couche.show_stroke is not None else False)
+                self.ui.spinBoxStrokeWidth.setValue(couche.stroke_width if couche.stroke_width is not None else 0)
+                self.ui.pushButtonColorStroke.setIcon(Utils.create_icon(QtGui.QColor(couche.stroke_color)))
+                self.selected_color_stroke = QtGui.QColor(couche.stroke_color)
+                self.selected_color_font = QtGui.QColor(couche.font_color)
+
+    def init_actions(self):
+        self.ui.comboBoxType.currentIndexChanged.connect(self.comboboxtype_indexchanged)
+        self.ui.pushButtonAnnuler.clicked.connect(self.reject)
+        self.ui.pushButtonParcourir.clicked.connect(self.browse_file)
+        self.ui.pushButtonCouleur.clicked.connect(self.choose_color)
+        self.ui.pushButtonEnregistrer.clicked.connect(self.save)
+        self.ui.checkBoxLabel.stateChanged.connect(self.checkboxlabel_statechanged)
+        self.ui.checkBoxStroke.stateChanged.connect(self.checkboxstroke_statechanged)
+        self.ui.pushButtonLabelColor.clicked.connect(self.choose_color_font)
+        self.ui.pushButtonColorStroke.clicked.connect(self.choose_color_stroke)
+
+    def comboboxtype_indexchanged(self):
+        visible = self.ui.comboBoxType.currentIndex() == 0
+        self.ui.label_3.setVisible(visible)
+        self.ui.pushButtonCouleur.setVisible(visible)
+        self.ui.tabWidget.tabBar().setTabEnabled(1, visible)
+
+    def checkboxlabel_statechanged(self, s):
+        enabled = s == 2
+        self.ui.comboBoxLabel.setEnabled(enabled)
+        self.ui.groupBoxText.setEnabled(enabled)
+        self.ui.groupBoxStroke.setEnabled(enabled)
+
+    def checkboxstroke_statechanged(self, s):
+        enabled = s == 2
+        self.ui.spinBoxStrokeWidth.setEnabled(enabled)
+        self.ui.pushButtonColorStroke.setEnabled(enabled)
+
+    def load_metadata(self, filename):
+        self.ui.comboBoxLabel.clear()
+        datasource = ogr.Open(filename)
+        if datasource is None:
+            return
+        layer = datasource.GetLayer(0)
+        layer_defn = layer.GetLayerDefn()
+        for i in range(layer_defn.GetFieldCount()):
+            field_name = layer_defn.GetFieldDefn(i).GetName()
+            self.ui.comboBoxLabel.addItem(field_name)
+
+    def browse_file(self):
+        filename = QtGui.QFileDialog.getOpenFileName(self, "Choisissez un fichier")
+        if not filename:
+            return
+        self.ui.lineEditFichier.setText(filename)
+        self.load_metadata(str(filename))
+
+    def choose_color(self):
+        dialog = QtGui.QColorDialog()
+        if dialog.exec_():
+            self.selected_color = dialog.selectedColor()
+            self.ui.pushButtonCouleur.setIcon(Utils.create_icon(self.selected_color))
+
+    def choose_color_font(self):
+        dialog = QtGui.QColorDialog()
+        if dialog.exec_():
+            self.selected_color_font = dialog.selectedColor()
+            self.ui.pushButtonLabelColor.setIcon(Utils.create_icon(self.selected_color_font))
+
+    def choose_color_stroke(self):
+        dialog = QtGui.QColorDialog()
+        if dialog.exec_():
+            self.selected_color_stroke = dialog.selectedColor()
+            self.ui.pushButtonColorStroke.setIcon(Utils.create_icon(self.selected_color_stroke))
+
+    def save(self):
+
+        print('---Save add Layer Run')
+        try :
+
+            type_couche = 'S'
+            if self.ui.comboBoxType.currentIndex() == 1:
+                type_couche = 'R'
+                self.selected_color = QtGui.QColor('white')
+            if self.ui.lineEditLibelle.text().isEmpty():
+                self.ui.lineEditLibelle.setFocus()
+                return
+            if type_couche == 'S' and not self.selected_color:
+                self.ui.pushButtonCouleur.setFocus()
+                return
+            if self.ui.lineEditFichier.text().isEmpty():
+                self.ui.pushButtonParcourir.setFocus()
+                return
+            if (self.ui.remplissage.isChecked()):
+                r = 1
+            else :
+                r = 0
+
+            if (self.ui.checkPlofPaps.isChecked()):
+                PlofPaps = 1
+            else :
+                if str(self.ui.lineEditLibelle.text()).upper().find('LIMITE') != -1:
+                    PlofPaps = 2
+                else:
+                    PlofPaps = 0
+            print('---at Save add Layer Run')
+            if (self.ui.checkBoxCertifiable.isChecked()):
+                zCertifiable = 1
+            else:
+                zCertifiable = 0
+            print('--z certifiable done--')
+            p = ProjetCouche()
+            p.id = self.couche_id
+            p.libelle = str(self.ui.lineEditLibelle.text())
+            p.fichier = str(self.ui.lineEditFichier.text())
+            p.idprojet_commune = self.idprojet_commune
+            p.type_couche = type_couche
+            p.couleur_bg = str(self.selected_color.name()) if self.selected_color else "#FFFFFF"
+            p.ordre = self.ordre
+            p.show_label = self.ui.checkBoxLabel.isChecked()
+            p.font = str(self.ui.fontComboBox.currentFont().family())
+            p.font_size = self.ui.spinBoxFontSize.value()
+            p.font_size_map_unit = self.ui.checkBoxMapUnit.isChecked()
+            p.font_color = str(self.selected_color_font.name()) if self.selected_color_font else "#000000"
+            p.show_stroke = self.ui.checkBoxStroke.isChecked()
+            p.stroke_width = self.ui.spinBoxStrokeWidth.value()
+            p.stroke_color = str(self.selected_color_stroke.name()) if self.selected_color_stroke else "#000000"
+            p.label_name = str(self.ui.comboBoxLabel.currentText())
+            p.remplissage = int(r)
+            p.plofpaps = int(PlofPaps)
+            p.certifiable = int(zCertifiable)
+
+            if not p.id:
+                p.ordre = ProjetCouche.max_ordre_by_projet_commune(self.connection, self.idprojet_commune) + 1
+            p.save(self.connection)
+            self.accept()
+            print('---at end Save add Layer Run')
+        except Exception as e:
+            print(e)

@@ -1,0 +1,1 @@
+UPDATE public.groupe_acces SET autorise = TRUE WHERE acces_id = 76 AND groupe_id = 13;

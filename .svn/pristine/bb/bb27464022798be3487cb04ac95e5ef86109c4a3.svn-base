@@ -1,0 +1,6 @@
+UPDATE pg_database SET datallowconn = 'false' WHERE datname = 'tsaramandroso_test';
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE datname = 'tsaramandroso_test';
+UPDATE pg_database SET datallowconn = 'true' WHERE datname = 'tsaramandroso_test';
+\c tsaramandroso_test;

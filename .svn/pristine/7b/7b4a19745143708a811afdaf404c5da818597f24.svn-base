@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+import base64
+
+class Helper_crypt:
+    def __init__(self):
+        pass
+
+    # Méthode pour encoder une chaîne en Base64
+    def encode_base64(self, data):
+        """Encode une chaîne en base64."""
+        return base64.b64encode(data.encode('utf-8'))
+
+    # Méthode pour décoder une chaîne Base64
+    def decode_base64(self, encoded_data):
+        """Décode une chaîne base64."""
+        return base64.b64decode(encoded_data).decode('utf-8')
+
+    # Méthode pour chiffrer une chaîne avec le chiffre de César
+    def caesar_cipher_encrypt(self, text, shift):
+        result = ''
+        for char in text:
+            if char.isalpha():
+                shift_amount = 65 if char.isupper() else 97
+                result += chr((ord(char) + shift - shift_amount) % 26 + shift_amount)
+            else:
+                result += char  # Laisser les caractères non alphabétiques inchangés
+        return result
+
+    # Méthode pour déchiffrer une chaîne avec le chiffre de César
+    def caesar_cipher_decrypt(self, text, shift):
+        return self.caesar_cipher_encrypt(text, -shift)

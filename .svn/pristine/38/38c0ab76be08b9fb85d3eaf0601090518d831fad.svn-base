@@ -1,0 +1,357 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+	<meta http-equiv="Content-Type" content = "text/html;charset = utf-8"/>
+</head>
+<body>
+  <!--<p class="right">Takelaka________________</p>-->
+   <p class="right">Pejy faha :<span style="text-decoration:underline;">$num_page</span></p>
+  <p class="center">Kara-tany lah:<span style="text-decoration:underline;">$numCF</span></p>
+
+  <p class = "bold" >FIANDOHAN'NY KARA-TANY</p>
+    <table class="fullwidth border-all border-collapse">
+    <tr>
+      <td>Fangatahana faha: $numDmde  natao ny: $dateDmde</td>
+    </tr>
+    <tr>
+      <td>Fangatahana fanavahana avy amin'ny Kara-tany faha:________________ natao ny _______________</td>
+    </tr>    
+  </table>
+  
+  <p class = "bold" >I- MOMBAMOMBA NY TOMPONY</p>
+    <table class="fullwidth border-all border-collapse">
+	<thead>
+		<tr>
+			<th>N&deg;</th>
+			<th>Anarana sy fanampiny</th>
+			<th>Laharana Kara-panondro na Kopia sy toerana nakana azy</th>
+			<th>Daty sy toerana nahaterahana</th>
+			<th>Ray sy Reny niteraka</th>
+			<th>Manambady, Tsy manambady, Maty vady...</th>
+			<th>Adiresy</th>
+		</tr>
+	</thead>
+        <tbody>
+		{REPEAT $proprios:$p}
+      <tr>
+          <td>$p.numero</td>
+          <td>$p.nomprenom</td>
+          <td>$p.numpiece natao ny $p.datepiece tao $p.lieupiece</td>
+          <td>$p.datenaiss tao $p.lieunaiss</td>
+          <td>Ray: $p.nompere; Reny: $p.nommere</td>
+          <td>$p.matrimoniale</td>
+          <td>$p.adresse</td>
+      </tr>
+		{ENDREPEAT $proprios}
+    </tbody>   
+    </table>
+	
+  <p class = "bold" >II- MOMBAMOMBA NY TANY</p>
+    <table class="fullwidth border-all border-collapse">
+	<thead>
+		<tr>
+			<th rowspan = 2>Toerana misy ny tany</th>
+			<th rowspan = 2>Tan&agrave;na</th>
+			<th rowspan = 2>fokontany</th>
+			<th rowspan = 2>Kaominina</th>
+			<th colspan = 3>Habeny</th>
+			<!--<th colspan = 2>Mamaritra ny tany</th>-->
+		</tr>
+		
+
+	</thead>
+        <tbody>
+	  <tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td class = "bold">Ha</td>
+		<td class = "bold">a</td>
+		<td class = "bold">Ca</td>
+		<!--<td class = "bold">Avaratra</td>
+		<td>$nord</td>-->
+	  </tr>
+      <tr>
+          <td>$numCF</td>
+          <td>$hameau</td>
+          <td>$fokontany</td>
+          <td>$commune</td>
+          <td>$aireHa</td>
+          <td>$aireA</td>
+		  <td>$aireCa</td>
+		  <!--<td class = "bold">Atsimo</td>
+		  -->
+      </tr>
+      <tr>
+		  <td class = "bold">Mamaritra ny tany</td>
+		  <td class = "bold">Avaratra</td>
+		  <td class = "bold">Atsimo</td>
+		  <td class ="bold">Andrefana</td>
+		  <td class = "bold" colspan = 3>Atsinanana</td>
+		  <!--<td>$ouest</td>-->
+      </tr>
+      <tr>
+		  <td></td>
+		  <td>$nord</td>
+		  <td>$sud</td>
+		  <td>$ouest</td>
+		  <td colspan=3>$est</td>
+      </tr>
+    </tbody>   
+    </table>
+	
+	<br/>
+	<br/>
+  
+    <table class="fullwidth border-all border-collapse"> <!--Vasatra-->
+	<thead>
+		<tr>
+			<th rowspan = 2>VESATRA SY ZO VOALOHANY</th>
+			<th>Datin'ny Fitsirihana Ifotony: $dateRL </th>
+		</tr>
+	</thead>
+    <tbody>
+      <tr>
+			<td></td>
+		  <td class="center bold">Noraiketina tato anaty Rejisitra sy nankatoavina androany faha: __________________________</td>
+      </tr>
+	  <tr>
+			<td class = "enlarge">$charge</td>
+		  <td class ="enlarge">Ny Ben'ny Tan&agrave;na</td>
+      </tr>
+    </tbody>   
+    </table>
+	<br/>
+	<br/>
+
+	<p>Tsy maintsy hamarinin'ny solotenam-panjakana ny isan'ny pejy (Chef Distrika na D&eacute;l&eacute;gu&eacute;)</p>
+  <br>
+  <br>
+  <br>
+  <br>
+
+<!--	<p class = "right">Pejy _________ amin'ny pejy _______________</p>-->
+<!-- Nouvelle page -->
+<!-- <p class="right">Takelaka________________</p>
+  <p class="center">Kara-tany lah:________________</p>
+  
+    <table class="fullwidth border-all border-collapse">
+	<thead>
+		<tr>
+			<th>III- RAHARAHA NATAO TAORIAN'NY NAMOAHANA KARA-TANY</th>
+		</tr>
+    </table>
+	<br/>
+	<p class = "center bold">III-1- RAHARAHA ATAO MIKASIKA NY KARA-TANY MANONTOLO </p>
+    <table class="fullwidth border-all border-collapse">
+		<tr>
+			<th rowspan = 2>N&deg;</th>
+			<th rowspan = 2>Daty nanoratana</th>
+			<th rowspan = 2>ZAVATRA NATAO</th>
+			<th colspan = 2>TARATASY FIFANARAHANA</th>
+			<th rowspan = 2>Tombam-bidy</th>
+			<th colspan = 2>VOAKASIKA SY NY MOMBAMOMBA AZY</th>
+			<th rowspan = 2>Sarany Lah quittance</th>
+			<th rowspan = 2>Lah Kara-tany vaovao</th>
+			<th rowspan = 2>Sonia Maire</th>
+		</tr>
+			<td class = "bold">Daty</td>
+			<td class = "bold">Karazany sy laharany</td>
+			<td class = "bold">Tompony teo aloha</td>
+			<td class = "bold">Tompony ankehitriny</td>
+		<tr>
+		</tr>
+
+		<tr>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+		</tr>
+
+    </table>
+<br/>	
+<p class = "center bold">III-2- RAHARAHA ATAO MIKASIKA NY FANAMBARANA NA NY AMPAHANY AMIN'NY KARA-TANY </p>
+    <table class="fullwidth border-all border-collapse">
+		<tr>
+			<th rowspan = 2>N&deg;</th>
+			<th rowspan = 2>Daty nanoratana</th>
+			<th rowspan = 2>ZAVATRA NATAO</th>
+			<th colspan = 2>TARATASY FIFANARAHANA</th>
+			<th rowspan = 2>Tombam-bidy</th>
+			<th colspan = 2>VOAKASIKA SY NY MOMBAMOMBA AZY</th>
+			<th colspan = 3>Fihenana</th>
+			<th colspan = 3>Fitomboana</th>
+			<th colspan = 3>Vokatra</th>
+			<th rowspan = 2>Sarany Lah quittance</th>
+			<th rowspan = 2>Lah Kara-tany vaovao</th>
+			<th rowspan = 2>Sonia Maire</th>
+		</tr>
+			<td class = "bold">Daty</td>
+			<td class = "bold">Karazany sy laharany</td>
+			<td class = "bold">Tompony teo aloha</td>
+			<td class = "bold">Tompony ankehitriny</td>
+			<td class = "bold">Ha</td>
+			<td class = "bold">a</td>
+			<td class = "bold">Ca</td>
+			<td class = "bold">Ha</td>
+			<td class = "bold">a</td>
+			<td class = "bold">Ca</td>
+			<td class = "bold">Ha</td>
+			<td class = "bold">a</td>
+			<td class = "bold">Ca</td>-->
+			<!--<td class = "bold">Tompony ankehitriny</td>-->
+<!--		<tr>
+		</tr>
+		{REPEAT $rows:$r}
+		<tr>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+		</tr>
+		{ENDREPEAT $rows}
+    </table>
+	
+	<p>Tsy maintsy hamarinin'ny solotenam-panjakana ny isan'ny pejy (Chef Distrika na D&eacute;l&eacute;gu&eacute;)</p>
+	<p class = "right">Pejy _________ amin'ny pejy _______________</p>
+<!-- Nouvelle page -->
+
+<!--  <p class="right">Takelaka________________</p>
+  <p class="center">Kara-tany lah:________________</p>
+  
+      <table class="fullwidth border-all border-collapse">
+	<thead>
+		<tr>
+			<th>IV- TSY FAHAFAHANA MAMINDRA/ANTOKA SY TOMBONTSOA MANOKANA</th>
+		</tr>
+    </table>
+    <table class="fullwidth border-all border-collapse">
+		<tr>
+			<th rowspan = 2>N&deg;</th>
+			<th colspan = 2>TARATASY NIANDOHAN'NY VESATRA</th>
+			<th rowspan = 2>Mpampindrana</th>
+			<th rowspan = 2>Sandany</th>
+			<th rowspan = 2>Filazana ny fifanarahana</th>
+			<th>FANAFOANANA NY VESATRA</th>
+			<th rowspan = 2>Sarany / Lah quittance</th>
+			<th rowspan = 2>Sonia Maire</th>
+			<th colspan = 4>FIOVANA (Misolo, mihena, fanalavana fotoana, miala vesatra..)</th>
+			<th>FAHAFAHANA TANTERAKA</th>
+			<th rowspan = 2>Sarany / Lah quittance</th>
+			<th rowspan = 2>Sonia Maire</th>
+		</tr>
+			<td class = "center bold">Daty</td>
+			<td class = "center bold">Karazany sy laharany</td>
+			<td class = "center bold">Daty</td>
+			<td class = "center bold">Daty</td>
+			<td class = "center bold">Fiovana natao</td>
+			<td class = "center bold">Tompony ankehitriny (raha misolo)</td>
+			<td class = "center bold">Sandany niala</td>
+			<td class = "center bold">Daty</td>
+			<!--<td class = "bold">Tompony ankehitriny</td>-->
+<!--		<tr>
+		</tr>
+
+		<tr>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+		</tr>
+
+    </table>
+	
+	<br/>
+	
+      <table class="fullwidth border-all border-collapse">
+	<thead>
+		<tr>
+			<th>V- FAHAVEREZANA, FAHAPOTEHANA, FANOVANA KARA-TANY HO TITRA</th>
+		</tr>
+    </table>
+	
+    <table class="fullwidth border-all border-collapse">
+		<tr>
+			<th rowspan = 3>N&deg;</th>
+			<th colspan = 6>1-FANOLOANA KARA-TANY</th>
+			<th colspan = 7>2-FANOVANA KARA-TANY HO TITRA</th>
+		</tr>
+		<tr>
+			<td rowspan = 2 class = "center bold">Daty</td>
+			<td rowspan = 2 class = "center bold">Antony</td>
+			<td rowspan = 2 class = "center bold">Sarany / Lah quittance</td>
+			<td colspan = 2 class = "center bold">Kara-tany vaovao</td>
+			<td rowspan = 2 class = "center bold">Sonia Maire</td>
+			<td rowspan = 2 class = "center bold">Daty</td>
+			<td rowspan = 2 class = "center bold">Datin'ny Fanohanana</td>
+			<td rowspan = 2 class = "center bold">Mombamomba ny mpanohana</td>
+			<td rowspan = 2 class = "center bold">Sarany / Lah quittance</td>
+			<td colspan = 2 class = "center bold">Titra</td>
+			<td rowspan = 2 class = "center bold">Sonia Maire</td>
+			<!--<td class = "bold">Tompony ankehitriny</td>-->
+<!--		</tr>
+		<tr>
+			<td>Laharany</td>
+			<td>Daty</td>
+			<td>Laharany</td>
+			<td>Daty</td>
+		</tr>
+
+		<tr>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+			<td>data</td>
+		</tr>
+
+    </table>
+	
+</body>
+</html>-->

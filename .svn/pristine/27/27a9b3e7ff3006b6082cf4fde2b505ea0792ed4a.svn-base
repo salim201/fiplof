@@ -1,0 +1,3535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1186</width>
+    <height>435</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Configuration des Catégories</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../icons.qrc">
+    <normaloff>:/std/icone/category-group-icon.png</normaloff>:/std/icone/category-group-icon.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>I.F.T</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTabWidget" name="tabWidget_2">
+         <property name="styleSheet">
+          <string notr="true">QDateEdit, QLineEdit {
+font-size: 7pt
+}</string>
+         </property>
+         <property name="tabPosition">
+          <enum>QTabWidget::North</enum>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="tab_3">
+          <attribute name="title">
+           <string>Par Surface</string>
+          </attribute>
+          <widget class="QTableWidget" name="tableWidgetIFTSurface">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>9</x>
+             <y>9</y>
+             <width>960</width>
+             <height>231</height>
+            </rect>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
+           <row>
+            <property name="text">
+             <string>Catégorie 1</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 2</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 3</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 4</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 5</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 6</string>
+            </property>
+           </row>
+           <column>
+            <property name="text">
+             <string>Id</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Description</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Valeur</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Unité</string>
+            </property>
+           </column>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTSurfaceUniteC1">
+           <property name="geometry">
+            <rect>
+             <x>760</x>
+             <y>30</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTSurfaceUniteC2">
+           <property name="geometry">
+            <rect>
+             <x>760</x>
+             <y>60</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTSurfaceUniteC3">
+           <property name="geometry">
+            <rect>
+             <x>760</x>
+             <y>90</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTSurfaceUniteC4">
+           <property name="geometry">
+            <rect>
+             <x>760</x>
+             <y>120</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTSurfaceUniteC5">
+           <property name="geometry">
+            <rect>
+             <x>760</x>
+             <y>150</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTSurfaceUniteC6">
+           <property name="geometry">
+            <rect>
+             <x>760</x>
+             <y>180</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab_4">
+          <attribute name="title">
+           <string>Par Classe</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFTC6D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 3</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 4</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 1</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 6</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 5</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="3">
+            <widget class="QLabel" name="label_8">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe A</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 2</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4" colspan="3">
+            <widget class="QLabel" name="label_9">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe B</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="7">
+            <widget class="QLabel" name="label_19">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="14">
+            <widget class="QLabel" name="label_26">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5">
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6">
+            <widget class="QLabel" name="label_18">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="8">
+            <widget class="QLabel" name="label_20">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="9">
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="10">
+            <widget class="QLabel" name="label_22">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="11">
+            <widget class="QLabel" name="label_23">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="12">
+            <widget class="QLabel" name="label_24">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="13">
+            <widget class="QLabel" name="label_25">
+             <property name="text">
+              <string> Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="15">
+            <widget class="QLabel" name="label_27">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="13" colspan="3">
+            <widget class="QLabel" name="label_12">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classes E</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFTcA">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFTC4A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFTC2A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFTC3A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="10" colspan="3">
+            <widget class="QLabel" name="label_11">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe D</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7" colspan="3">
+            <widget class="QLabel" name="label_10">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe C</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFTC2A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFTC5A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFTC6A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFTC5A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFTC3A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFTC4A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFTC6A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFTC4B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFTC5B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFTC3B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFTC1C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFTC6B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFTC2B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal1A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal2A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal3A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal4A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal5A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal6A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal1B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal2B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal3B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal4B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal5B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal6B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal1C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal2C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal3C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal4C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal5C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal6C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal1D"/>
+           </item>
+           <item row="3" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal2D"/>
+           </item>
+           <item row="4" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal3D"/>
+           </item>
+           <item row="5" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal4D"/>
+           </item>
+           <item row="6" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal5D"/>
+           </item>
+           <item row="7" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal6D"/>
+           </item>
+           <item row="2" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal1E"/>
+           </item>
+           <item row="3" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal2E"/>
+           </item>
+           <item row="4" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal3E"/>
+           </item>
+           <item row="5" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal4E"/>
+           </item>
+           <item row="6" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal5E"/>
+           </item>
+           <item row="7" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal6E"/>
+           </item>
+           <item row="5" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFTC4D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFTC3D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFTC1D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFTC2D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFTC6C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFTC5C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFTC4C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFTC3C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFTC1C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFTC3C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFTC4C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFTC2C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFTC6C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFTC5C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFTC2C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFTC5D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFTC4D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFTC2D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFTC1D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFTC3D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFTC5D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFTC1E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFTC2E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFTC6D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFTC1A">
+             <property name="inputMask">
+              <string/>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFTC1A">
+             <property name="inputMask">
+              <string/>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFTC3E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFTC4E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFTC5E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFTC6E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFTC1E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFTC2E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFTC3E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFTC4E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFTC5E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFTC6E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFTC1B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFTC2B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFTC3B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFTC4B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFTC5B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFTC6B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="4" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFTcB">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="7" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFTcC">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="10" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFTcD">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="13" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFTcE">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="label">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Unité</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFTC1B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_9">
+          <attribute name="title">
+           <string>Par Valeur Venale</string>
+          </attribute>
+          <widget class="QTableWidget" name="tableWidgetIFTv_venale">
+           <property name="geometry">
+            <rect>
+             <x>9</x>
+             <y>9</y>
+             <width>960</width>
+             <height>231</height>
+            </rect>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
+           <row>
+            <property name="text">
+             <string>Catégorie 1</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 2</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 3</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 4</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 5</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 6</string>
+            </property>
+           </row>
+           <column>
+            <property name="text">
+             <string>Id</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Description</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Valeur</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Unité</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Taux (%)</string>
+            </property>
+           </column>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTV_venaleUniteC1">
+           <property name="geometry">
+            <rect>
+             <x>390</x>
+             <y>30</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTV_venaleUniteC2">
+           <property name="geometry">
+            <rect>
+             <x>390</x>
+             <y>60</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTV_venaleUniteC3">
+           <property name="geometry">
+            <rect>
+             <x>390</x>
+             <y>90</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTV_venaleUniteC4">
+           <property name="geometry">
+            <rect>
+             <x>390</x>
+             <y>120</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTV_venaleUniteC5">
+           <property name="geometry">
+            <rect>
+             <x>390</x>
+             <y>150</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFTV_venaleUniteC6">
+           <property name="geometry">
+            <rect>
+             <x>390</x>
+             <y>180</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab_5">
+          <attribute name="title">
+           <string>Par Consistance</string>
+          </attribute>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QTableWidget" name="tableWidgetIFTConsistance">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Id</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Consistance</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Prix (Ar)</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_11">
+          <attribute name="title">
+           <string>Minimum Impôts</string>
+          </attribute>
+          <widget class="QWidget" name="horizontalLayoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>200</x>
+             <y>40</y>
+             <width>461</width>
+             <height>171</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="label_55">
+              <property name="text">
+               <string>Minimum Impôts (Ar)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditMinIft"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>I.F.P.B</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QTabWidget" name="tabWidget_3">
+         <property name="styleSheet">
+          <string notr="true">QDateEdit, QLineEdit {
+font-size: 7pt
+}</string>
+         </property>
+         <property name="tabPosition">
+          <enum>QTabWidget::North</enum>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="tab_6">
+          <attribute name="title">
+           <string>Par Surface</string>
+          </attribute>
+          <widget class="QTableWidget" name="tableWidgetIFPBSurface">
+           <property name="geometry">
+            <rect>
+             <x>9</x>
+             <y>9</y>
+             <width>960</width>
+             <height>231</height>
+            </rect>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
+           <row>
+            <property name="text">
+             <string>Catégorie 1</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 2</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 3</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 4</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 5</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 6</string>
+            </property>
+           </row>
+           <column>
+            <property name="text">
+             <string>Id</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Description</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Valeur</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Valeur Avec Location</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Unité</string>
+            </property>
+           </column>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBSurfaceUniteC1">
+           <property name="geometry">
+            <rect>
+             <x>830</x>
+             <y>30</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBSurfaceUniteC2">
+           <property name="geometry">
+            <rect>
+             <x>830</x>
+             <y>60</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBSurfaceUniteC3">
+           <property name="geometry">
+            <rect>
+             <x>830</x>
+             <y>90</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBSurfaceUniteC4">
+           <property name="geometry">
+            <rect>
+             <x>830</x>
+             <y>120</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBSurfaceUniteC5">
+           <property name="geometry">
+            <rect>
+             <x>830</x>
+             <y>150</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBSurfaceUniteC6">
+           <property name="geometry">
+            <rect>
+             <x>830</x>
+             <y>180</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/a</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/ha</string>
+            </property>
+           </item>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab_7">
+          <attribute name="title">
+           <string>Par Classe</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_28">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 3</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_29">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 4</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_30">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 1</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_31">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 6</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_32">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 5</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="3">
+            <widget class="QLabel" name="label_33">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe A</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_34">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 2</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4" colspan="3">
+            <widget class="QLabel" name="label_35">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe B</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLabel" name="label_37">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_38">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="7">
+            <widget class="QLabel" name="label_39">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_40">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="14">
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5">
+            <widget class="QLabel" name="label_42">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6">
+            <widget class="QLabel" name="label_43">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="8">
+            <widget class="QLabel" name="label_44">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="9">
+            <widget class="QLabel" name="label_45">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="10">
+            <widget class="QLabel" name="label_46">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="11">
+            <widget class="QLabel" name="label_47">
+             <property name="text">
+              <string>Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="12">
+            <widget class="QLabel" name="label_48">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="13">
+            <widget class="QLabel" name="label_49">
+             <property name="text">
+              <string>Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="15">
+            <widget class="QLabel" name="label_50">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="13" colspan="3">
+            <widget class="QLabel" name="label_51">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classes E</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="10" colspan="3">
+            <widget class="QLabel" name="label_52">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe D</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7" colspan="3">
+            <widget class="QLabel" name="label_53">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe C</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal1A_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal2A_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal3A_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal4A_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal5A_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal6A_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal1B_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal2B_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal3B_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal4B_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal5B_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal6B_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal1C_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal2C_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal3C_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal4C_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal5C_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal6C_2">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal1D_2"/>
+           </item>
+           <item row="3" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal2D_2"/>
+           </item>
+           <item row="4" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal3D_2"/>
+           </item>
+           <item row="5" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal4D_2"/>
+           </item>
+           <item row="6" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal5D_2"/>
+           </item>
+           <item row="7" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal6D_2"/>
+           </item>
+           <item row="2" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal1E_2"/>
+           </item>
+           <item row="3" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal2E_2"/>
+           </item>
+           <item row="4" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal3E_2"/>
+           </item>
+           <item row="5" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal4E_2"/>
+           </item>
+           <item row="6" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal5E_2"/>
+           </item>
+           <item row="7" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal6E_2"/>
+           </item>
+           <item row="8" column="1" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFPBcA">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="4" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFPBcB">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="7" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFPBcC">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="10" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFPBcD">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="13" colspan="2">
+            <widget class="QComboBox" name="comboBoxUniteIFPBcE">
+             <item>
+              <property name="text">
+               <string>m2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>a</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ha</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pièces</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="label_54">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Unité</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC1A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFPBC1A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC2A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC3A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC4A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC5A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC6A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFPBC2A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFPBC3A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFPBC4A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFPBC5A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2">
+            <widget class="QLineEdit" name="lineEditFinIFPBC6A">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC1B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC2B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC3B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC4B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC5B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="4">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC6B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFPBC1B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFPBC2B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFPBC3B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFPBC4B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFPBC5B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="5">
+            <widget class="QLineEdit" name="lineEditFinIFPBC6B">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC1C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC2C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC3C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC4C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC5C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="7">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC6C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFPBC1C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFPBC2C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFPBC3C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFPBC4C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFPBC5C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="8">
+            <widget class="QLineEdit" name="lineEditFinIFPBC6C">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC1D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC2D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC3D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC4D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC5D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="10">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC6D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFPBC1D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFPBC2D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFPBC3D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFPBC4D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFPBC5D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="11">
+            <widget class="QLineEdit" name="lineEditFinIFPBC6D">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC1E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC2E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC3E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC4E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC5E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="13">
+            <widget class="QLineEdit" name="lineEditDebutIFPBC6E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFPBC1E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFPBC2E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFPBC3E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFPBC4E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFPBC5E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="14">
+            <widget class="QLineEdit" name="lineEditFinIFPBC6E">
+             <property name="inputMask">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_10">
+          <attribute name="title">
+           <string>Par Valeur Locative</string>
+          </attribute>
+          <widget class="QTableWidget" name="tableWidgetIFPBv_venale">
+           <property name="geometry">
+            <rect>
+             <x>9</x>
+             <y>9</y>
+             <width>960</width>
+             <height>231</height>
+            </rect>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>false</bool>
+           </attribute>
+           <row>
+            <property name="text">
+             <string>Catégorie 1</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 2</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 3</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 4</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 5</string>
+            </property>
+           </row>
+           <row>
+            <property name="text">
+             <string>Catégorie 6</string>
+            </property>
+           </row>
+           <column>
+            <property name="text">
+             <string>Id</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Description</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Valeur</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Valeur Avec Location</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Unité</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Taux (%)</string>
+            </property>
+           </column>
+           <item row="0" column="2">
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBV_venaleUniteC2">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>60</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/Pièces</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBV_venaleUniteC3">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>90</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/Pièces</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBV_venaleUniteC4">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>120</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/Pièces</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBV_venaleUniteC5">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>150</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/Pièces</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBV_venaleUniteC6">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>180</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/Pièces</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QComboBox" name="comboBoxIFPBV_venaleUniteC1">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>30</y>
+             <width>69</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Ar/m2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Ar/Pièces</string>
+            </property>
+           </item>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab_8">
+          <attribute name="title">
+           <string>Par Consistance</string>
+          </attribute>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QTableWidget" name="tableWidgetIFPBConsistance">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Id</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Consistance</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Prix (Ar)</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Prix Avec Location (Ar/Ha)</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_12">
+          <attribute name="title">
+           <string>Minimum Impôts</string>
+          </attribute>
+          <widget class="QWidget" name="horizontalLayoutWidget_2">
+           <property name="geometry">
+            <rect>
+             <x>160</x>
+             <y>50</y>
+             <width>431</width>
+             <height>161</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLabel" name="label_56">
+              <property name="text">
+               <string>Minimum Impôts (Ar)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditMinIfpb"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonAnnuler">
+       <property name="text">
+        <string>Annuler</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonOK">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Enregistrer les Modifications</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../icons.qrc">
+         <normaloff>:/std/icone/disk.png</normaloff>:/std/icone/disk.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEditDebutIFTC1A</tabstop>
+  <tabstop>lineEditFinIFTC1A</tabstop>
+  <tabstop>lineEditIFTVal1A</tabstop>
+  <tabstop>lineEditDebutIFTC1B</tabstop>
+  <tabstop>lineEditFinIFTC1B</tabstop>
+  <tabstop>lineEditIFTVal1B</tabstop>
+  <tabstop>lineEditDebutIFTC1C</tabstop>
+  <tabstop>lineEditFinIFTC1C</tabstop>
+  <tabstop>lineEditIFTVal1C</tabstop>
+  <tabstop>lineEditDebutIFTC1D</tabstop>
+  <tabstop>lineEditFinIFTC1D</tabstop>
+  <tabstop>lineEditIFTVal1D</tabstop>
+  <tabstop>lineEditDebutIFTC1E</tabstop>
+  <tabstop>lineEditFinIFTC1E</tabstop>
+  <tabstop>lineEditIFTVal1E</tabstop>
+  <tabstop>lineEditDebutIFTC2A</tabstop>
+  <tabstop>lineEditFinIFTC2A</tabstop>
+  <tabstop>lineEditIFTVal2A</tabstop>
+  <tabstop>lineEditDebutIFTC2B</tabstop>
+  <tabstop>lineEditFinIFTC2B</tabstop>
+  <tabstop>lineEditIFTVal2B</tabstop>
+  <tabstop>lineEditDebutIFTC2C</tabstop>
+  <tabstop>lineEditFinIFTC2C</tabstop>
+  <tabstop>lineEditIFTVal2C</tabstop>
+  <tabstop>lineEditDebutIFTC2D</tabstop>
+  <tabstop>lineEditFinIFTC2D</tabstop>
+  <tabstop>lineEditIFTVal2D</tabstop>
+  <tabstop>lineEditDebutIFTC2E</tabstop>
+  <tabstop>lineEditFinIFTC2E</tabstop>
+  <tabstop>lineEditIFTVal2E</tabstop>
+  <tabstop>lineEditDebutIFTC3A</tabstop>
+  <tabstop>lineEditFinIFTC3A</tabstop>
+  <tabstop>lineEditIFTVal3A</tabstop>
+  <tabstop>lineEditDebutIFTC3B</tabstop>
+  <tabstop>lineEditFinIFTC3B</tabstop>
+  <tabstop>lineEditIFTVal3B</tabstop>
+  <tabstop>lineEditDebutIFTC3C</tabstop>
+  <tabstop>lineEditFinIFTC3C</tabstop>
+  <tabstop>lineEditIFTVal3C</tabstop>
+  <tabstop>lineEditDebutIFTC3D</tabstop>
+  <tabstop>lineEditFinIFTC3D</tabstop>
+  <tabstop>lineEditIFTVal3D</tabstop>
+  <tabstop>lineEditDebutIFTC3E</tabstop>
+  <tabstop>lineEditFinIFTC3E</tabstop>
+  <tabstop>lineEditIFTVal3E</tabstop>
+  <tabstop>lineEditDebutIFTC4A</tabstop>
+  <tabstop>lineEditFinIFTC4A</tabstop>
+  <tabstop>lineEditIFTVal4A</tabstop>
+  <tabstop>lineEditDebutIFTC4B</tabstop>
+  <tabstop>lineEditFinIFTC4B</tabstop>
+  <tabstop>lineEditIFTVal4B</tabstop>
+  <tabstop>lineEditDebutIFTC4C</tabstop>
+  <tabstop>lineEditFinIFTC4C</tabstop>
+  <tabstop>lineEditIFTVal4C</tabstop>
+  <tabstop>lineEditDebutIFTC4D</tabstop>
+  <tabstop>lineEditFinIFTC4D</tabstop>
+  <tabstop>lineEditIFTVal4D</tabstop>
+  <tabstop>lineEditDebutIFTC4E</tabstop>
+  <tabstop>lineEditFinIFTC4E</tabstop>
+  <tabstop>lineEditIFTVal4E</tabstop>
+  <tabstop>lineEditDebutIFTC5A</tabstop>
+  <tabstop>lineEditFinIFTC5A</tabstop>
+  <tabstop>lineEditIFTVal5A</tabstop>
+  <tabstop>lineEditDebutIFTC5B</tabstop>
+  <tabstop>lineEditFinIFTC5B</tabstop>
+  <tabstop>lineEditIFTVal5B</tabstop>
+  <tabstop>lineEditDebutIFTC5C</tabstop>
+  <tabstop>lineEditFinIFTC5C</tabstop>
+  <tabstop>lineEditIFTVal5C</tabstop>
+  <tabstop>lineEditDebutIFTC5D</tabstop>
+  <tabstop>lineEditFinIFTC5D</tabstop>
+  <tabstop>lineEditIFTVal5D</tabstop>
+  <tabstop>lineEditDebutIFTC5E</tabstop>
+  <tabstop>lineEditFinIFTC5E</tabstop>
+  <tabstop>lineEditIFTVal5E</tabstop>
+  <tabstop>lineEditDebutIFTC6A</tabstop>
+  <tabstop>lineEditFinIFTC6A</tabstop>
+  <tabstop>lineEditIFTVal6A</tabstop>
+  <tabstop>lineEditDebutIFTC6B</tabstop>
+  <tabstop>lineEditFinIFTC6B</tabstop>
+  <tabstop>lineEditIFTVal6B</tabstop>
+  <tabstop>lineEditDebutIFTC6C</tabstop>
+  <tabstop>lineEditFinIFTC6C</tabstop>
+  <tabstop>lineEditIFTVal6C</tabstop>
+  <tabstop>lineEditDebutIFTC6D</tabstop>
+  <tabstop>lineEditFinIFTC6D</tabstop>
+  <tabstop>lineEditIFTVal6D</tabstop>
+  <tabstop>lineEditDebutIFTC6E</tabstop>
+  <tabstop>lineEditFinIFTC6E</tabstop>
+  <tabstop>lineEditIFTVal6E</tabstop>
+  <tabstop>comboBoxUniteIFTcA</tabstop>
+  <tabstop>comboBoxUniteIFTcB</tabstop>
+  <tabstop>comboBoxUniteIFTcC</tabstop>
+  <tabstop>comboBoxUniteIFTcD</tabstop>
+  <tabstop>comboBoxUniteIFTcE</tabstop>
+  <tabstop>lineEditDebutIFPBC1A</tabstop>
+  <tabstop>lineEditFinIFPBC1A</tabstop>
+  <tabstop>lineEditIFTVal1A_2</tabstop>
+  <tabstop>lineEditDebutIFPBC1B</tabstop>
+  <tabstop>lineEditFinIFPBC1B</tabstop>
+  <tabstop>lineEditIFTVal1B_2</tabstop>
+  <tabstop>lineEditDebutIFPBC1C</tabstop>
+  <tabstop>lineEditFinIFPBC1C</tabstop>
+  <tabstop>lineEditIFTVal1C_2</tabstop>
+  <tabstop>lineEditDebutIFPBC1D</tabstop>
+  <tabstop>lineEditFinIFPBC1D</tabstop>
+  <tabstop>lineEditIFTVal1D_2</tabstop>
+  <tabstop>lineEditDebutIFPBC1E</tabstop>
+  <tabstop>lineEditFinIFPBC1E</tabstop>
+  <tabstop>lineEditIFTVal1E_2</tabstop>
+  <tabstop>lineEditDebutIFPBC2A</tabstop>
+  <tabstop>lineEditFinIFPBC2A</tabstop>
+  <tabstop>lineEditIFTVal2A_2</tabstop>
+  <tabstop>lineEditDebutIFPBC2B</tabstop>
+  <tabstop>lineEditFinIFPBC2B</tabstop>
+  <tabstop>lineEditIFTVal2B_2</tabstop>
+  <tabstop>lineEditDebutIFPBC2C</tabstop>
+  <tabstop>lineEditFinIFPBC2C</tabstop>
+  <tabstop>lineEditIFTVal2C_2</tabstop>
+  <tabstop>lineEditDebutIFPBC2D</tabstop>
+  <tabstop>lineEditFinIFPBC2D</tabstop>
+  <tabstop>lineEditIFTVal2D_2</tabstop>
+  <tabstop>lineEditDebutIFPBC2E</tabstop>
+  <tabstop>lineEditFinIFPBC2E</tabstop>
+  <tabstop>lineEditIFTVal2E_2</tabstop>
+  <tabstop>lineEditDebutIFPBC3A</tabstop>
+  <tabstop>lineEditFinIFPBC3A</tabstop>
+  <tabstop>lineEditIFTVal3A_2</tabstop>
+  <tabstop>lineEditDebutIFPBC3B</tabstop>
+  <tabstop>lineEditFinIFPBC3B</tabstop>
+  <tabstop>lineEditIFTVal3B_2</tabstop>
+  <tabstop>lineEditDebutIFPBC3C</tabstop>
+  <tabstop>lineEditFinIFPBC3C</tabstop>
+  <tabstop>lineEditIFTVal3C_2</tabstop>
+  <tabstop>lineEditDebutIFPBC3D</tabstop>
+  <tabstop>lineEditFinIFPBC3D</tabstop>
+  <tabstop>lineEditIFTVal3D_2</tabstop>
+  <tabstop>lineEditDebutIFPBC3E</tabstop>
+  <tabstop>lineEditFinIFPBC3E</tabstop>
+  <tabstop>lineEditIFTVal3E_2</tabstop>
+  <tabstop>lineEditDebutIFPBC4A</tabstop>
+  <tabstop>lineEditFinIFPBC4A</tabstop>
+  <tabstop>lineEditIFTVal4A_2</tabstop>
+  <tabstop>lineEditDebutIFPBC4B</tabstop>
+  <tabstop>lineEditFinIFPBC4B</tabstop>
+  <tabstop>lineEditIFTVal4B_2</tabstop>
+  <tabstop>lineEditDebutIFPBC4C</tabstop>
+  <tabstop>lineEditFinIFPBC4C</tabstop>
+  <tabstop>lineEditIFTVal4C_2</tabstop>
+  <tabstop>lineEditDebutIFPBC4D</tabstop>
+  <tabstop>lineEditFinIFPBC4D</tabstop>
+  <tabstop>lineEditIFTVal4D_2</tabstop>
+  <tabstop>lineEditDebutIFPBC4E</tabstop>
+  <tabstop>lineEditFinIFPBC4E</tabstop>
+  <tabstop>lineEditIFTVal4E_2</tabstop>
+  <tabstop>lineEditDebutIFPBC5A</tabstop>
+  <tabstop>lineEditFinIFPBC5A</tabstop>
+  <tabstop>lineEditIFTVal5A_2</tabstop>
+  <tabstop>lineEditDebutIFPBC5B</tabstop>
+  <tabstop>lineEditFinIFPBC5B</tabstop>
+  <tabstop>lineEditIFTVal5B_2</tabstop>
+  <tabstop>lineEditDebutIFPBC5C</tabstop>
+  <tabstop>lineEditFinIFPBC5C</tabstop>
+  <tabstop>lineEditIFTVal5C_2</tabstop>
+  <tabstop>lineEditDebutIFPBC5D</tabstop>
+  <tabstop>lineEditFinIFPBC5D</tabstop>
+  <tabstop>lineEditIFTVal5D_2</tabstop>
+  <tabstop>lineEditDebutIFPBC5E</tabstop>
+  <tabstop>lineEditFinIFPBC5E</tabstop>
+  <tabstop>lineEditIFTVal5E_2</tabstop>
+  <tabstop>lineEditDebutIFPBC6A</tabstop>
+  <tabstop>lineEditFinIFPBC6A</tabstop>
+  <tabstop>lineEditIFTVal6A_2</tabstop>
+  <tabstop>lineEditDebutIFPBC6B</tabstop>
+  <tabstop>lineEditFinIFPBC6B</tabstop>
+  <tabstop>lineEditIFTVal6B_2</tabstop>
+  <tabstop>lineEditDebutIFPBC6C</tabstop>
+  <tabstop>lineEditFinIFPBC6C</tabstop>
+  <tabstop>lineEditIFTVal6C_2</tabstop>
+  <tabstop>lineEditDebutIFPBC6D</tabstop>
+  <tabstop>lineEditFinIFPBC6D</tabstop>
+  <tabstop>lineEditIFTVal6D_2</tabstop>
+  <tabstop>lineEditDebutIFPBC6E</tabstop>
+  <tabstop>lineEditFinIFPBC6E</tabstop>
+  <tabstop>lineEditIFTVal6E_2</tabstop>
+  <tabstop>comboBoxUniteIFPBcA</tabstop>
+  <tabstop>comboBoxUniteIFPBcB</tabstop>
+  <tabstop>comboBoxUniteIFPBcC</tabstop>
+  <tabstop>comboBoxUniteIFPBcD</tabstop>
+  <tabstop>comboBoxUniteIFPBcE</tabstop>
+  <tabstop>pushButtonAnnuler</tabstop>
+  <tabstop>pushButtonOK</tabstop>
+  <tabstop>tableWidgetIFPBConsistance</tabstop>
+  <tabstop>tableWidgetIFTConsistance</tabstop>
+  <tabstop>tableWidgetIFTSurface</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

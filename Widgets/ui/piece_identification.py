@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'piece_identification.ui'
+#
+# Created: Mon Dec 18 20:45:36 2017
+#      by: PyQt4 UI code generator 4.11.3
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class Ui_Form(object):
+    def setupUi(self, Form):
+        Form.setObjectName(_fromUtf8("Form"))
+        Form.resize(303, 237)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(Form)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.groupBox = QtGui.QGroupBox(Form)
+        self.groupBox.setObjectName(_fromUtf8("groupBox"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.groupBox)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.radioButtonCIN = QtGui.QRadioButton(self.groupBox)
+        self.radioButtonCIN.setChecked(True)
+        self.radioButtonCIN.setObjectName(_fromUtf8("radioButtonCIN"))
+        self.verticalLayout.addWidget(self.radioButtonCIN)
+        self.radioButtonActe = QtGui.QRadioButton(self.groupBox)
+        self.radioButtonActe.setObjectName(_fromUtf8("radioButtonActe"))
+        self.verticalLayout.addWidget(self.radioButtonActe)
+        self.radioButtonRien = QtGui.QRadioButton(self.groupBox)
+        self.radioButtonRien.setChecked(False)
+        self.radioButtonRien.setObjectName(_fromUtf8("radioButtonRien"))
+        self.verticalLayout.addWidget(self.radioButtonRien)
+        self.verticalLayout_2.addWidget(self.groupBox)
+        self.tabWidget = QtGui.QTabWidget(Form)
+        self.tabWidget.setEnabled(True)
+        self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
+        self.tab = QtGui.QWidget()
+        self.tab.setObjectName(_fromUtf8("tab"))
+        self.gridLayout = QtGui.QGridLayout(self.tab)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.label_3 = QtGui.QLabel(self.tab)
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.gridLayout.addWidget(self.label_3, 2, 0, 1, 1)
+        self.label_2 = QtGui.QLabel(self.tab)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 2)
+        self.lineEdit_4 = QtGui.QLineEdit(self.tab)
+        self.lineEdit_4.setEnabled(True)
+        self.lineEdit_4.setMaxLength(3)
+        self.lineEdit_4.setObjectName(_fromUtf8("lineEdit_4"))
+        self.gridLayout.addWidget(self.lineEdit_4, 0, 5, 1, 1)
+        self.lineEdit_3 = QtGui.QLineEdit(self.tab)
+        self.lineEdit_3.setEnabled(True)
+        self.lineEdit_3.setMaxLength(3)
+        self.lineEdit_3.setObjectName(_fromUtf8("lineEdit_3"))
+        self.gridLayout.addWidget(self.lineEdit_3, 0, 4, 1, 1)
+        self.lineEdit_2 = QtGui.QLineEdit(self.tab)
+        self.lineEdit_2.setEnabled(True)
+        self.lineEdit_2.setMaxLength(3)
+        self.lineEdit_2.setObjectName(_fromUtf8("lineEdit_2"))
+        self.gridLayout.addWidget(self.lineEdit_2, 0, 3, 1, 1)
+        self.label = QtGui.QLabel(self.tab)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 2)
+        self.lineEditLieuCIN = QtGui.QLineEdit(self.tab)
+        self.lineEditLieuCIN.setEnabled(True)
+        self.lineEditLieuCIN.setObjectName(_fromUtf8("lineEditLieuCIN"))
+        self.gridLayout.addWidget(self.lineEditLieuCIN, 2, 2, 1, 4)
+        self.lineEdit = QtGui.QLineEdit(self.tab)
+        self.lineEdit.setEnabled(True)
+        self.lineEdit.setMaxLength(3)
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.gridLayout.addWidget(self.lineEdit, 0, 2, 1, 1)
+        self.dateEditCIN = QtGui.QDateEdit(self.tab)
+        self.dateEditCIN.setEnabled(True)
+        self.dateEditCIN.setCalendarPopup(True)
+        self.dateEditCIN.setObjectName(_fromUtf8("dateEditCIN"))
+        self.gridLayout.addWidget(self.dateEditCIN, 1, 2, 1, 2)
+        self.tabWidget.addTab(self.tab, _fromUtf8(""))
+        self.tab_2 = QtGui.QWidget()
+        self.tab_2.setObjectName(_fromUtf8("tab_2"))
+        self.formLayout = QtGui.QFormLayout(self.tab_2)
+        self.formLayout.setObjectName(_fromUtf8("formLayout"))
+        self.label_4 = QtGui.QLabel(self.tab_2)
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_4)
+        self.lineEditNumeroActe = QtGui.QLineEdit(self.tab_2)
+        self.lineEditNumeroActe.setEnabled(True)
+        self.lineEditNumeroActe.setObjectName(_fromUtf8("lineEditNumeroActe"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.lineEditNumeroActe)
+        self.label_5 = QtGui.QLabel(self.tab_2)
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_5)
+        self.dateEditActe = QtGui.QDateEdit(self.tab_2)
+        self.dateEditActe.setEnabled(True)
+        self.dateEditActe.setCalendarPopup(True)
+        self.dateEditActe.setObjectName(_fromUtf8("dateEditActe"))
+        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.dateEditActe)
+        self.label_6 = QtGui.QLabel(self.tab_2)
+        self.label_6.setObjectName(_fromUtf8("label_6"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_6)
+        self.lineEditLieuActe = QtGui.QLineEdit(self.tab_2)
+        self.lineEditLieuActe.setEnabled(True)
+        self.lineEditLieuActe.setObjectName(_fromUtf8("lineEditLieuActe"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.lineEditLieuActe)
+        self.tabWidget.addTab(self.tab_2, _fromUtf8(""))
+        self.verticalLayout_2.addWidget(self.tabWidget)
+
+        self.retranslateUi(Form)
+        self.tabWidget.setCurrentIndex(0)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+        Form.setTabOrder(self.radioButtonCIN, self.radioButtonActe)
+        Form.setTabOrder(self.radioButtonActe, self.radioButtonRien)
+        Form.setTabOrder(self.radioButtonRien, self.lineEdit)
+        Form.setTabOrder(self.lineEdit, self.lineEdit_2)
+        Form.setTabOrder(self.lineEdit_2, self.lineEdit_3)
+        Form.setTabOrder(self.lineEdit_3, self.lineEdit_4)
+        Form.setTabOrder(self.lineEdit_4, self.dateEditCIN)
+        Form.setTabOrder(self.dateEditCIN, self.lineEditLieuCIN)
+        Form.setTabOrder(self.lineEditLieuCIN, self.tabWidget)
+        Form.setTabOrder(self.tabWidget, self.lineEditNumeroActe)
+        Form.setTabOrder(self.lineEditNumeroActe, self.dateEditActe)
+        Form.setTabOrder(self.dateEditActe, self.lineEditLieuActe)
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(_translate("Form", "Form", None))
+        self.groupBox.setTitle(_translate("Form", "Pièce d\'Identification", None))
+        self.radioButtonCIN.setText(_translate("Form", "CIN", None))
+        self.radioButtonActe.setText(_translate("Form", "Acte de Naissance", None))
+        self.radioButtonRien.setText(_translate("Form", "Rien", None))
+        self.label_3.setText(_translate("Form", "Lieu", None))
+        self.label_2.setText(_translate("Form", "Date", None))
+        self.label.setText(_translate("Form", "Numéro", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Form", "C.I.N", None))
+        self.label_4.setText(_translate("Form", "Numéro", None))
+        self.label_5.setText(_translate("Form", "Date", None))
+        self.label_6.setText(_translate("Form", "Lieu", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Form", "Acte de Naissance", None))
+

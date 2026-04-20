@@ -1,0 +1,1 @@
+﻿UPDATE public.consistance SET libelleconsistance = parcelleoubatiment WHERE TRIM(parcelleoubatiment) = 'TANIMBARY' OR TRIM(parcelleoubatiment) = 'ALA' OR TRIM(parcelleoubatiment) = 'TANIMBOLY';

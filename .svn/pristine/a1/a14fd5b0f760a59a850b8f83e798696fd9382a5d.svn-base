@@ -1,0 +1,1 @@
+SELECT setval('operationsub_id_seq', COALESCE ((SELECT MAX(id) FROM operationsub), 0) + 1, false);

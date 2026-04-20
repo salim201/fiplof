@@ -1,0 +1,63 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+</head>
+
+  <table  class="fullwidth border-all border-collapse center">
+      <tr>
+          <td colspan = "2" style="border-bottom:0"><p class="center bold" style="border:0">REPOBLIKAN'I MADAGASIKARA</p>
+          <p class="center italic" style="border:0">Fitiavana - Tanindrazana - Fandrosoana</p></td><td rowspan = "2"><p class="center bold" style="border:0">BIRAO IFOTON'NY FANANAN-TANY</p>
+      <h3 class="norm serif center" style="border:0">Fanamarinana fahavitan'ny peta-drindrina</h3>
+  <p class="center" style="border:0">Certificat d'affichage <br/>Suivant le d&eacute;cret d'application 2007-1109 de la loi 2006-031 du 24 Novembre 2006</p>
+      </td>
+
+    <tr>
+      <td><p class = "left" style="border:0">FARITRA: $faritra</p>
+      <p class = "left" style="border:0">DISTRIKA: $distrika</p>
+      <p class = "left" style="border:0">KAOMININA: $kaominina</p></td>
+    </tr>
+
+
+  </table>
+
+  <!--<p class="center bold">NY BEN'NY TANANA</p>-->
+  <br/>
+  <br/>
+  <p>Izaho .......................................................................................................................................................................................................................... <br/>
+      Ben'ny tanana eto amin'ny Kaominina  $kaominina <br/>
+      dia manamarina fa ny filazana fampahafantarana ny be sy ny maro amin'ny alalan'ny peta-drindrina, <br/>
+      araka ny fanapahana laharna faha <strong>$numDecision</strong> tamin'ny <strong>$daatedecision</strong> <br/>
+      mahakasika ireto fangatahana kara-tany mitondra laharana manaraka ireto:
+  </p>
+
+  <table class="fullwidth ">
+    <tbody>
+      {REPEAT $rows:$r}
+      <tr>
+
+          <td rowspan="6"> - &nbsp; $r.num</td>
+
+      </tr>
+      {ENDREPEAT $rows}
+    </tbody>
+
+  </table>
+
+
+  <p>dia natao peta-drindrina tao amin'ny fokontany: $fokontany<br/>
+      sy teto amin'ny kaominina: $kaominina <br/>
+      nandritra ny: $nbreJour andro, nanomboka ny $debutAffichage ka hatramin'ny $finAffichage
+      eo amin'ny toerana misy ireo tany.</p>
+  <p>Marihina fa, araka ny fandaminana dia peta-drindrina no misolo ny taratasy fampiantsoana ho an'ny rehetra manan-jo vokasika amin'ireo tany angatahana ireo</p>
+
+<br/>
+  <p class="center"><strong style="text-decoration:underline">Ny Filohan'ny Fokontany</strong>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <strong style="text-decoration:underline">Ny Ben'ny Tan&agrave;na</strong>
+  </p>
+
+</body>
+</html>

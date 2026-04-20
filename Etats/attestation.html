@@ -1,0 +1,64 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+</head>
+<body>
+<p class="center bold">REPOBLIKAN'I MADAGASIKARA</p>
+<p class="center italic">Fitiavana - Tanindrazana - Fandrosoana</p>
+<p class="center">BIRAO IFOTON'NY FANANAN-TANY</p>
+<table style="position:absolute; top: 0; width: 300">
+    <tr>
+        <td>FARITRA</td>
+        <td>: $faritra</td>
+    </tr>
+    <tr>
+        <td>DISTRIKA</td>
+        <td>: $distrika</td>
+    </tr>
+    <tr>
+        <td>KAOMININA</td>
+        <td>: $kaominina</td>
+    </tr>
+</table>
+<h1 class="center">BIRAO IFOTON'NY FANANAN-TANY</h1>
+<p class="big serif center">TARATASY FANAMARINANA TANY LAHARANA ...</p>
+<p class="center">(ATTESTATION DE PROPRIETE FONCIERE)</p>
+<p class="justify">
+    Izaho ..............................................................................................................
+    Ben'ny tanana kaominina <strong>$kaominina</strong> manao sonia eto ambany dia manamarina fa, araka ny taratasy sy
+    ny tahiry eo am-pelatanan'ny Birao Ifoton'ny Fananan-tany ny tany izay ao amin'ny Kaominina <strong>$kaominina</strong>,
+    Fokontany <strong>$fokontany</strong>, Vohitra <strong>$vohitra</strong>,
+    zana-bohitra ...................................................,
+    izay manana velarana: <strong>$superficie</strong> m<sup>2</sup> sy voafaritra ho toa izao manaraka izao:
+</p>
+<ol type="1">
+    {REPEAT $limites:$l}
+    <li><strong>$l.position</strong> : $l.description</li>
+    {ENDREPEAT $limites}
+    <li>-</li>
+    <li>-</li>
+</ol>
+
+<p class="margin-left-2">
+    Dia misoratra amin'ny anaran'I:
+    <ul>
+        {REPEAT $proprios:$r}
+        <li>
+        <strong>$r.nom</strong> <strong>$r.prenom</strong> tompon'ny karapanondro mitondra ny laharana <strong>$r.cin</strong>,
+        </li>
+        {ENDREPEAT $proprios}
+    </ul>
+</p>
+<p>Araka ny hita ao amin'ny rejistra ny tany ato amin'ny Birao Ifoton'ny Fananan-tany, io tany io izay tsy manana vesatra sy andraikitra </p>
+
+<p class="right">
+    Natao teto ...................................... androany faha ......................
+</p>
+<table class="fullwidth border-all border-collapse">
+    <tr>
+        <td class="padding-2" width="50%">Ny Tompon'andraikitra ny tahiry (AGF)</td>
+        <td class="padding-2">Ny Ben'ny Tanana</td>
+    </tr>
+</table>
+</body>
+</html>

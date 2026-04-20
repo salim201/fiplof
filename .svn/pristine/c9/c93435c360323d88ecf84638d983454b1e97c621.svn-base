@@ -1,0 +1,854 @@
+# coding: utf-8
+import os, os.path, sys
+from qgis.core import *
+from qgis.gui import *
+from PyQt4 import QtGui
+from PyQt4 import QtCore
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+from qgis.gui import *
+import globalvars, time, datetime, psycopg2
+from AreaConvert import AreaConvert
+from models.ProjetCouche import ProjetCouche
+from Utils import Utils
+
+from EditionCF import Ui_Dialog
+
+
+class EditionCFRun(QDialog):
+    def __init__(self, connection, parent, editionGeom = 0):
+        QDialog.__init__(self)
+        from Configuration import DbConfig
+        self.connection = connection
+        self.idsConsistance = []
+        self.currentConsistance = None
+        self.utils = Utils(self.connection)
+        self.editionGeom = editionGeom
+        self.tool = parent.tool
+        self.setModal(True)
+        self.db_config = DbConfig.DbConfig()
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.setWindowTitle("Edition de certificat foncier")
+
+        self.initDB()
+        self.initMasks()
+        self.parent = parent
+        self.numDemande = parent.numDemande
+        self.idCF = None
+        self.idsFokontany = []
+        self.idsHameau = []
+        self.nomFokontany = None
+        self.nomHameau = None
+        self.idAutreCharges = []
+        self.idServitude = []
+        self.idHypotheque = []
+        self.idPersPhysique = []
+        self.idPersMorale = []
+        self.limitesParcelle = []
+        self.chargercategorie()
+        self.canvas = parent.canvas
+        self.cLayer = self.parent.cLayer
+        #self.cLayer = self.canvas.currentLayer()
+        self.filenamepreview = ""
+        # self.idCertificat = parent.idCertificat
+        self.getCFById(parent.idCertificat)
+        from .ConsultationProprietaireRun import ConsultationProprietaireRun
+        self.proprietaires = ConsultationProprietaireRun(self.connection, parent.idCertificat, 1)
+        self.firstCallEnregProprio = True
+        self.enregProprio()
+
+        from .ListeLimitesRun import ListeLimitesRun
+        self.listeLimite = ListeLimitesRun(self.connection, parent.idCertificat, self)
+        from .ChargesRun import ChargesRun
+        self.charges = ChargesRun(self.connection, parent.idCertificat)
+        self.firstCallEnregCharge = True
+        self.enregCharges()
+        # from .ChargesRun import ChargesRun
+        # self.charges = ChargesRun(self.connection)
+        # self.setWindowTitle("Consultation d'un certificat foncier")
+        self.ui.btnSuppr.hide()
+        if globalvars.groupe_id == 10:
+            self.disableBottons()
+        if self.editionGeom == 1:
+            self.disableAll()
+            self.ui.btnEnreg.setText(u"Modifier la géométrie")
+        self.fillComboNumDemande()
+        #self.fillConsistance()
+        self.firstOnProprio = True
+        self.firstOnCharge = True
+        self.initActions()
+
+        self.raster_path, self.layer_raster, self.layer_shape, self.rect = None, None, None, None
+        # self.id_projet = self.parent.id_projet
+        self.init_layers()
+        self.load_raster()
+        self.init_canvas()
+
+    def chargercategorie(self):
+
+        sql = "SELECT idconsistance,libelleconsistance FROM consistance"
+        self.utils.fillComboWithSql(self.ui.comboBoxConsist, sql, "libelleconsistance", "idconsistance")
+
+    def init_layers(self):
+        couches = ProjetCouche.find_by_projet_commune(self.connection, globalvars.id_projet_commune)
+        for couche in couches:
+            if couche.type_couche == 'R':
+                self.raster_path = couche.fichier
+                break
+
+    def load_raster(self):
+        if self.raster_path is None:
+            return
+        fileInfo = QFileInfo(self.raster_path)
+        baseName = fileInfo.baseName()
+        layer = QgsRasterLayer(self.raster_path, baseName)
+        if not layer.isValid():
+            print("Layer " + self.raster_path + " is not valid raster")
+            return None
+        # QgsMapLayerRegistry.instance().addMapLayer(layer)
+        self.layer_raster = layer
+
+    def init_canvas(self):
+        style = {
+            u'outline_width': u'0.3',
+            u'outline_color': u'244,0,0,255',
+            u'offset_unit': u'MM',
+            u'color': u'227,26,28,255',
+            u'outline_style': u'solid',
+            u'style': u'b_diagonal',
+            u'joinstyle': u'bevel',
+            u'outline_width_unit': u'MM',
+            u'border_width_map_unit_scale': u'0,0',
+            u'offset': u'0,0',
+            u'offset_map_unit_scale': u'0,0'
+        }
+        self.cv = QgsMapCanvas()
+        # self.idparcelle;
+        # add canvas  ad form
+        self.ui.horizontalLayoutGeom.addWidget(self.cv)
+        self.cv.show()
+        uri = QgsDataSourceURI()
+        uri.setConnection(
+            self.db_config.db_host,
+            self.db_config.db_port,
+            self.db_config.db_name,
+            self.db_config.db_user,
+            self.db_config.db_pass
+        )
+        uri.setDataSource("public", "parcelle_d", "geom", "gid=%s" % (self.idParcelle,))
+        uri.setKeyColumn("gid")
+        layer = QgsVectorLayer(uri.uri(), "Demande", "postgres")
+        if not layer.isValid():
+            return
+        crs = QgsCoordinateReferenceSystem(globalvars.EPSG_SCR, QgsCoordinateReferenceSystem.EpsgCrsId)
+        layer.setCrs(crs)
+        symbol_layer = QgsFillSymbolV2.createSimple(style)
+        layer.rendererV2().setSymbol(symbol_layer)
+        QgsMapLayerRegistry.instance().addMapLayer(layer)
+        QgsMapLayerRegistry.instance().addMapLayer(self.layer_raster)
+        # self.cv.setLayerSet([QgsMapCanvasLayer(self.layer_raster)])
+        self.cv.setLayerSet([QgsMapCanvasLayer(layer), QgsMapCanvasLayer(self.layer_raster)])
+        self.cv.setExtent(layer.extent())
+
+    def initActions(self):
+        self.ui.btnProprietaire.clicked.connect(self.ouvrirProprio)
+        self.ui.btnCharges.clicked.connect(self.ouvrirListeCharge)
+        self.ui.btnRepere.clicked.connect(self.ouvrirLimites)
+        #self.ui.btnDetailDmd.clicked.connect(self.ouvrirDemande)
+        self.ui.btnFermer.clicked.connect(self.close)
+        self.ui.pushButton_2.clicked.connect(self.ouvrirOperations)
+        self.ui.pushButton_3.clicked.connect(self.ouvrirHistorique)
+        self.ui.comboBoxFokontany.currentIndexChanged.connect(self.fillHameau)
+        self.proprietaires.ui.pushButton_4.clicked.connect(self.enregProprio)
+        self.listeLimite.ui.btnValider.clicked.connect(self.getLimites)
+        self.charges.ui.btnValider.clicked.connect(self.enregCharges)
+        if self.editionGeom == 0:
+            self.ui.btnEnreg.clicked.connect(self.readInput)
+        else:
+            self.ui.btnEnreg.clicked.connect(self.editGeom)
+        #self.ui.btnFiscaliser.clicked.connect(self.fiscaliserCF)
+
+    def ouvrirProprio(self):
+        print "proprio"
+        self.proprietaires.show()
+        if self.firstOnProprio:
+            result = self.proprietaires.exec_()
+            self.firstOnProprio = False
+
+    def ouvrirListeCharge(self):
+        print "charges"
+        # self.charges.setDisabled(True)
+        #from .ConsultationChargesRun import ConsultationChargesRun
+        #self.charges = ConsultationChargesRun(self.connection, self.parent.idCertificat
+        self.charges.show()
+        if self.firstOnCharge:
+            result = self.charges.exec_()
+            self.firstOnCharge = False
+
+    def ouvrirLimites(self):
+        self.listeLimite.show()
+        result = self.listeLimite.exec_()
+
+    def ouvrirDemande(self):
+        print "demande"
+        from Demande.DetailsDemandeRunn import DetailsDemandeRunn
+        self.consDemande = DetailsDemandeRunn(self.parent)
+        # self.consDemande = DetailsDemandeRunn(parent))
+        self.consDemande.show()
+        result = self.consDemande.exec_()
+
+    def ouvrirOperations(self):
+        from .OperationRun import OperationRun
+        self.operation = OperationRun(self.connection, self)
+        self.operation.show()
+        result = self.operation.exec_()
+
+    def ouvrirHistorique(self):
+        from .HistoriqueRun import HistoriqueRun
+        self.historique = HistoriqueRun(self.connection, self)
+        self.historique.show()
+        result = self.historique.exec_()
+
+    def initDB(self):
+        self.cur = self.connection.cursor()
+        # revenir au fichier de depart
+
+    def getCFById(self, idCF):
+        print("IDCF")
+        print(idCF)
+        print idCF
+        self.cur.execute(
+            "SELECT c.typecertificat, c.numerocertificat, c.numerodemande, d.consistance,"
+            " p.etat, c.datereconnaissance, c.dateedition, c.datedelivrance, p.gid,"
+            " p.idhameau, ST_Area(p.geom), c.idfokontany , d.categorie  "
+            " FROM certificat c, parcelle_d p "
+            " INNER JOIN demande d ON d.gid = p.gid "
+            " WHERE p.idcertificat = c.idcertificat AND c.idcertificat = %s",
+            (idCF,))
+        result = self.cur.fetchone()
+        print('RESULT FROM CF')
+        print result
+        self.idCF = idCF
+        self.fillFields(result)
+        self.fillTerritoire(result[8])
+        self.idParcelle = int(result[8])
+        #self.filenamepreview = self.preview()
+        #os.chdir(self.resolve(".."))
+        #dr = os.getcwd()
+        #sys.path.append(os.path.dirname(dr))
+        #self.ui.labelGeom.setPixmap(QPixmap(self.filenamepreview))
+        # Vider les combobox
+        #self.ui.comboBoxFokontany.clear()
+        #self.ui.comboBoxHameau.clear()
+        #if result[0] is not None:
+            #print "Notifications"
+            #type  = str(result[0]).lower()
+            #print type
+            #text = str(self.ui.comboBoxTypeCert.currentText()).lower()
+            #print text
+            #print text
+            #i = 0
+            #while(i < self.ui.comboBoxTypeCert.count()):
+                #text = str(self.ui.comboBoxTypeCert.itemText(i)).strip()
+                #if text == type:
+                    #self.ui.comboBoxTypeCert.setCurrentIndex(i)
+                #i = i + 1
+            #print self.ui.comboBoxTypeCert.currentIndex()
+            #print "Fin notifications"
+
+        if result[10] is not None:
+            surfacem2 = round(result[10], 2)
+            self.ui.lineEditSurface.setText(str(surfacem2))
+            ac = AreaConvert()
+            # Area = ac.convertArea(float(data[4]), 'sqmeter', 'Ha')
+            Area = ac.convertArea(float(result[10]))
+            print Area
+            self.ui.lineEditHa.setText(str(Area['Ha']))
+            self.ui.lineEditA.setText(str(Area['a']))
+            self.ui.lineEditCa.setText(str(Area['Ca']))
+        if result[9] is not None:
+            print "id hameau"
+            print result[9]
+            print "fin id hameau"
+            self.getNomHameau(result[9])
+            self.fillHameau()
+
+        try:
+            self.ui.lineEditEtat.setText(str(result[3]))
+            cursor = self.connection.cursor()
+            # self.connection.cursor()
+            cursor.execute("SELECT *   FROM consistance  WHERE libelleconsistance=%s", [str(result[12])])
+            print("DATA FROM CONSISTANCE")
+            dm = cursor.fetchone()
+            print(dm)
+            self.utils.setComboValue(self.ui.comboBoxConsist, int(dm[0]))
+        except StandardError as e:
+            print e
+        # print result
+
+    def getNomHameau(self, idhameau):
+        # Hameaux
+        try:
+            self.cur.execute(
+                "SELECT h.nomhameau, h.idhameau, h.idfokontany, f.nomfokontany FROM hameau h, fokontany f WHERE h.idfokontany = f.idfokontany AND h.idhameau = %s",
+                (idhameau,))
+            hmx = self.cur.fetchone()
+            print hmx
+            if hmx is not None:
+                self.nomHameau = hmx[0]
+            else:
+                self.nomHameau = None
+                QMessageBox.warning(None, u"Attention!", u"Le hameau associé à ce certificat n'existe pas ou a été supprimé!")
+        except Exception as err:
+            print (err)
+            self.connection.rollback()
+        #self.ui.comboBoxHameau.addItem(hmx[0], hmx[1])
+        # Determiner le fokontany
+        #self.ui.comboBoxFokontany.addItem(hmx[3], hmx[2])
+    def fillHameau(self):
+        self.idsHameau[:] = []
+        self.ui.comboBoxHameau.clear()
+        print ("FILL Hameau")
+        # Hameaux
+        if self.ui.comboBoxFokontany.currentIndex() != -1:
+            idfokontany = self.idsFokontany[self.ui.comboBoxFokontany.currentIndex()]
+            self.cur.execute("SELECT h.nomhameau, h.idhameau FROM hameau h, fokontany f WHERE h.idfokontany = f.idfokontany AND f.idfokontany = %s", (idfokontany,))
+            hmx = self.cur.fetchall()
+            for hm in hmx:
+                self.ui.comboBoxHameau.addItem(hm[0], hm[1])
+                self.idsHameau.append(hm[1])
+            if self.nomHameau is not None:
+                self.ui.comboBoxHameau.setCurrentIndex(self.ui.comboBoxHameau.findText(self.nomHameau))
+            else:
+                self.ui.comboBoxHameau.setCurrentIndex(-1)
+        print "apres hameau"
+
+    def fillFields(self, data):
+        #self.clearAll()
+        date = datetime.datetime.now()
+        if data[0]:
+            if data[0] == "Certificat foncier":
+                self.ui.comboBoxTypeCert.setCurrentIndex(0)
+            elif data[0] == "Attestation de reconnaissance":
+                self.ui.comboBoxTypeCert.setCurrentIndex(1)
+        if data[1]:
+            self.ui.lineEditNumCert.setText(str(data[1]).strip())
+        if data[2]:
+            self.ui.comboBoxNumDemande.addItem(data[2])
+        if data[3]:
+            #self.ui.comboBoxConsist.addItem(data[3])
+            self.currentConsistance = data[3]
+        if data[4]:
+            self.ui.lineEditEtat.setText(data[4])
+        if data[5]:
+            self.ui.dateEditReconnaissance.setDate(data[5])
+        if data[6]:
+            #special PLAE
+            #self.ui.lineEditEdition.setText(data[6].strftime('%d/%m/%Y'))
+            self.ui.lineEditEdition.setText(date.strftime('%d/%m/%Y'))
+        if data[7]:
+            #special PLAE
+            #self.ui.dateEditDelivrance.setDate(data[7])
+            self.ui.dateEditDelivrance.setDate(date)
+
+            # Fokontany
+        try:
+            if data[11] != '':
+                self.cur.execute(
+                    "SELECT DISTINCT nomfokontany, idfokontany, codefokontany FROM fokontany WHERE idfokontany = %s",
+                    (data[11],))
+                fkts = self.cur.fetchone()
+                self.nomFokontany = fkts[0]
+        except StandardError as e:
+            print e
+
+    def fillTerritoire(self, idParcelle):
+        self.idsFokontany[:] = []
+        #self.ui.comboBoxFokontany.clear()
+        # Recuperer le nom de la commune
+        print "FILL TERRITOIRE"
+        dist = None
+        try:
+            self.cur.execute("SELECT nomcommune, codecommune FROM commune WHERE idcommune = %s",
+                             (globalvars.id_commune,))
+            com = self.cur.fetchone()
+            self.ui.comboBoxCommune.addItem(com[0])
+        except StandardError as e:
+            print e
+        # Recuperer le district
+        try:
+            self.cur.execute(
+                "SELECT d.nomdistrict, d.iddistrict, d.codedistrict FROM district d, commune c WHERE d.iddistrict = c.iddistrict AND c.idcommune = %s",
+                (globalvars.id_commune,))
+            dist = self.cur.fetchone()
+            self.ui.comboBoxDistrict.addItem(dist[0])
+        except StandardError as e:
+            print e
+        # Region
+        try:
+            self.cur.execute(
+                "SELECT r.nomregion FROM region r, district d WHERE d.idregion = r.idregion AND d.iddistrict = %s",
+                (dist[1],))
+            reg = self.cur.fetchone()
+            self.ui.comboBoxRegion.addItem(reg[0])
+        except StandardError as e:
+            print e
+
+        self.fillFokontany()
+            # Hameaux
+            # self.cur.execute("SELECT h.nomhameau, h.idhameau FROM hameau h, fokontany f WHERE h.idfokontany = f.idfokontany AND f.idfokontany = %s", (fkt[1],))
+            # hmx = self.cur.fetchall()
+            # for hm in hmx:
+            #    self.ui.comboBoxHameau.addItem(hm[0], hm[1])
+            # print "apres hameau"
+    def fillFokontany(self):
+        self.ui.comboBoxFokontany.clear()
+        try:
+            self.cur.execute("SELECT nomfokontany, idfokontany FROM fokontany WHERE idcommune = %s",(globalvars.id_commune, ) )
+            fkts = self.cur.fetchall()
+            for fkt in fkts:
+                print fkt
+                self.ui.comboBoxFokontany.addItem(fkt[0], fkt[1])
+                self.idsFokontany.append(fkt[1])
+
+            if self.nomFokontany is not None:
+                self.ui.comboBoxFokontany.setCurrentIndex(self.ui.comboBoxFokontany.findText(self.nomFokontany))
+        except StandardError as e:
+            print e
+        print "apres fokontany"
+
+    def clearAll(self):
+        #self.ui.comboBoxTypeCert.clear()
+        #self.ui.comboBoxHameau.clear()
+        self.ui.comboBoxFokontany.clear()
+        self.ui.comboBoxCommune.clear()
+        self.ui.comboBoxDistrict.clear()
+        self.ui.comboBoxRegion.clear()
+
+    def disableBottons(self):
+        self.ui.comboBoxRegion.setDisabled(True)
+        self.ui.comboBoxDistrict.setDisabled(True)
+        self.ui.comboBoxCommune.setDisabled(True)
+        self.ui.comboBoxFokontany.setDisabled(True)
+        self.ui.comboBoxHameau.setDisabled(True)
+        self.ui.comboBoxConsist.setDisabled(True)
+        self.ui.comboBoxTypeCert.setDisabled(True)
+        self.ui.dateEditDelivrance.setReadOnly(True)
+        self.ui.lineEditEdition.setReadOnly(True)
+        self.ui.dateEditReconnaissance.setReadOnly(True)
+        self.ui.lineEditEtat.setReadOnly(True)
+        self.ui.comboBoxNumDemande.setDisabled(True)
+        self.ui.lineEditNumCert.setReadOnly(True)
+        self.ui.dateEditInscriptionRegistre.setReadOnly(True)
+        self.ui.lineEditA.setReadOnly(True)
+        self.ui.lineEditCa.setReadOnly(True)
+        self.ui.lineEditHa.setReadOnly(True)
+        self.ui.lineEditSurface.setReadOnly(True)
+        self.ui.btnProprietaire.setDisabled(True)
+        self.ui.btnRepere.setDisabled(True)
+
+    def disableAll(self):
+        self.ui.comboBoxRegion.setDisabled(True)
+        self.ui.comboBoxDistrict.setDisabled(True)
+        self.ui.comboBoxCommune.setDisabled(True)
+        self.ui.comboBoxFokontany.setDisabled(True)
+        self.ui.comboBoxHameau.setDisabled(True)
+        self.ui.comboBoxConsist.setDisabled(True)
+        self.ui.comboBoxTypeCert.setDisabled(True)
+        self.ui.dateEditDelivrance.setReadOnly(True)
+        self.ui.lineEditEdition.setReadOnly(True)
+        self.ui.dateEditReconnaissance.setReadOnly(True)
+        self.ui.lineEditEtat.setReadOnly(True)
+        self.ui.comboBoxNumDemande.setDisabled(True)
+        self.ui.lineEditNumCert.setReadOnly(True)
+        self.ui.dateEditInscriptionRegistre.setReadOnly(True)
+        self.ui.lineEditA.setReadOnly(True)
+        self.ui.lineEditCa.setReadOnly(True)
+        self.ui.lineEditHa.setReadOnly(True)
+        self.ui.lineEditSurface.setReadOnly(True)
+
+    def fiscaliserCF(self):
+        from Fiplof.Saisie.InformationFiscaleRun import InformationFiscaleRun
+        infofisc = InformationFiscaleRun(self.connection, self.parent)
+        data = []
+        data[:] = []
+        data.append(self.ui.lineEditNumCert.text())
+        #data.append(self.ui.lineEditNumDmd.text())
+        data.append(self.idCF)
+        infofisc.initExtraData(data, 1)
+        infofisc.exec_()
+
+    def fillComboNumDemande(self):
+        #self.ui.comboBoxNumDemande.clear()
+        try:
+            self.cur.execute("SELECT numdemande FROM parcelle_d WHERE idcertificat IS NULL AND estfiscalite = 0 ")
+            data = self.cur.fetchall()
+            print data
+            for dt in data:
+                if dt[0] is not None:
+                    self.ui.comboBoxNumDemande.addItem(dt[0])
+            #Ajust the current index
+            #self.ui.comboBoxNumDemande.setCurrentIndex(self.ui.comboBoxNumDemande.findText()
+        except StandardError as e:
+            print e
+
+        self.ui.comboBoxNumDemande.setCurrentIndex(0)
+
+    def fillConsistance(self):
+        self.idsConsistance[:] = []
+        self.ui.comboBoxConsist.clear()
+        try:
+            self.cur.execute("SELECT idconsistance, libelleconsistance FROM consistance")
+            consistances = self.cur.fetchall()
+            for consistance in consistances:
+                print consistance[1]
+                self.ui.comboBoxConsist.addItem(consistance[1])
+                self.idsConsistance.append(consistance[0])
+        except StandardError as e:
+            print e
+
+        if self.ui.comboBoxConsist.count() > 0:
+            if self.currentConsistance is not None:
+                print self.ui.comboBoxConsist.findText(self.currentConsistance)
+                self.ui.comboBoxConsist.setCurrentIndex(self.ui.comboBoxConsist.findText(self.currentConsistance))
+
+    def enregProprio(self):
+        self.idPersPhysique = self.proprietaires.getProprioPhysique()
+        self.idPersMorale = self.proprietaires.getProprioMorale()
+        if not self.firstCallEnregProprio:
+            if self.proprietaires.getProprioPrincipale() is None:
+                QtGui.QMessageBox.critical(self.proprietaires, "Erreur",
+                                     u"Veuillez séléctionner un propriétaire representant")
+            else:
+                self.proprietaires.hide()
+        else:
+            self.firstCallEnregProprio = False
+
+    def getLimites(self):
+        #self.limitesParcelle = self.listeLimite.getAllLimites()
+        self.listeLimite.close()
+
+    def enregCharges(self):
+        self.idAutreCharges = self.charges.getIdAutreCharges()
+        self.idServitude = self.charges.getIdServitude()
+        self.idHypotheque = self.charges.getIdHypotheque()
+        if not self.firstCallEnregCharge:
+            self.charges.hide()
+        else:
+            self.firstCallEnregCharge = False
+
+######EDITION PROPREMENT DITE DES INFORMATIONS SUR LE CF#############
+    def readInput(self):
+        print "read input"
+        data = {}
+        data['typecertificat'] = unicode(self.ui.comboBoxTypeCert.currentText()).encode('utf-8')
+        data['numcertificat'] = unicode(self.ui.lineEditNumCert.text()).encode('utf-8')
+        data['numdemande'] = unicode(self.ui.comboBoxNumDemande.currentText()).encode('utf-8')
+        data['consistance'] = unicode(self.ui.comboBoxConsist.currentText()).encode('utf-8')
+        data['categorie'] = unicode(self.ui.lineEditEtat.text()).encode('utf-8')
+        data['etat'] = unicode(self.ui.lineEditEtat.text()).encode('utf-8')
+        data['datereconnaissance'] = datetime.date(self.ui.dateEditReconnaissance.date().year(), self.ui.dateEditReconnaissance.date().month(), self.ui.dateEditReconnaissance.date().day())
+        data['dateregistre'] = datetime.date(self.ui.dateEditInscriptionRegistre.date().year(), self.ui.dateEditInscriptionRegistre.date().month(), self.ui.dateEditInscriptionRegistre.date().day())
+        data['dateImpression'] = self.ui.lineEditEdition.text()
+        data['dateDelivrance'] = datetime.date(self.ui.dateEditDelivrance.date().year(), self.ui.dateEditDelivrance.date().month(), self.ui.dateEditDelivrance.date().day())
+
+        # FERMER LA FENETRE DES PROPRIETAIRES
+        #if self.etatOpposition == 0:
+        if self.ui.comboBoxHameau.currentIndex() != -1:
+            self.writeData(data)
+        else:
+            QMessageBox.critical(None, u"Erreur!", u"Vous devez choisir un hameau avant de pouvoir enregistrer le Certificat!")
+        #else:
+            #QMessageBox.critical(self,"Opposition non resolue","Il y a encore des oppositions non resolues sur cette demande")
+
+    def writeData(self, data):
+        print "writeData in edition CF 2022"
+        #idsCertificat = None
+        #get l'id fokontany
+        idfokontany = self.idsFokontany[self.ui.comboBoxFokontany.currentIndex()]
+
+        print idfokontany
+        try:
+            print data['numcertificat']
+            SQL = "UPDATE certificat SET numerocertificat = %s, numerodemande = %s, typecertificat = %s, datereconnaissance = %s, datecreation = %s, idfokontany = %s WHERE idcertificat = %s"
+            params = (data['numcertificat'].strip(), data['numdemande'].strip(), data['typecertificat'],  data['datereconnaissance'], data['dateregistre'], idfokontany, self.idCF)
+            self.cur.execute(SQL, params)
+            self.connection.commit()
+
+
+            SQL = "UPDATE demande SET consistance = %s, categorie = %s WHERE numdemande = %s"
+            demande = data['numdemande'].strip()
+            params = (data['categorie'].strip(), data['consistance'].strip(), demande)
+            self.cur.execute(SQL, params)
+            self.connection.commit()
+
+            #idsCertificat = self.cur.fetchone()
+        except psycopg2.Error as e:
+            # print e.pgcode
+            if e.pgcode == "23505":
+                QtGui.QMessageBox.critical(self, "Erreur", u"Ce numero de certificat éxiste déjà")
+                self.connection.rollback()
+
+        except StandardError as e:
+            print e
+            self.connection.rollback()
+
+        #self.cur.execute("SELECT idcertificat FROM certificat ORDER BY idcertificat DESC LIMIT 1 ")
+
+
+        #Enregistrement proprietaires personne physique
+        #Vider proprietaire avant reinsertion apres modification des proprietaires
+        print "Avant la suppression des proprietaires physiques"
+        try:
+            self.cur.execute("DELETE FROM proprietaireparcelle WHERE idparcelle = %s", (self.idParcelle,))
+            self.connection.commit()
+            print "Suppression des proprietaires  physiques"
+        except StandardError as e:
+            print(e)
+            self.connection.rollback()
+        print "CERTIFICAT"
+        i = 0
+        if len(self.idPersPhysique) > 0:
+            while i < len(self.idPersPhysique):
+                try:
+                    if self.idPersPhysique[i] == self.proprietaires.getProprioPrincipale():
+                        self.cur.execute("INSERT INTO proprietaireparcelle (idpersonne, idparcelle, representant, estcoproprietaire) VALUES (%s, %s, %s, %s)",
+                                         (self.idPersPhysique[i], self.idParcelle, True, False))
+                    elif self.idPersPhysique[i] == self.proprietaires.getProprioPrincipale(1):
+                        self.cur.execute(
+                            "INSERT INTO proprietaireparcelle (idpersonne, idparcelle, representant, estcoproprietaire) VALUES (%s, %s, %s, %s)",
+                            (self.idPersPhysique[i], self.idParcelle, False, True))
+                    else:
+                        self.cur.execute("INSERT INTO proprietaireparcelle (idpersonne, idparcelle, representant, estcoproprietaire) VALUES (%s, %s, %s, %s)", (self.idPersPhysique[i], self.idParcelle, False, False))
+                    self.connection.commit()
+                except StandardError as e:
+                    print e
+                    self.connection.rollback()
+                i = i + 1
+
+        print "id personne physique = " + str(self.idPersPhysique)
+        # Vider proprietaire morale avant reinsertion apres modification des proprietaires
+        try:
+            self.cur.execute("DELETE FROM personnemoraleparcelle_d WHERE idparcelle = %s", (self.idParcelle,))
+            self.connection.commit()
+            print "table proprio morale vide"
+        except StandardError as e:
+            print(e)
+            self.connection.rollback()
+
+        i = 0
+        if len(self.idPersMorale) > 0:
+            while i < len(self.idPersMorale):
+                try:
+                    self.cur.execute("INSERT INTO personnemoraleparcelle_d (idpersonne, idparcelle) VALUES (%s, %s)", (self.idPersMorale[i], self.idParcelle))
+                    self.connection.commit()
+                except StandardError as e:
+                    print e
+                    self.connection.rollback()
+                i = i + 1
+        print "idpersonne morale = " + str(self.idPersMorale)
+        #SUPPRESSION AVANT REINSERTION
+        try:
+            self.cur.execute("DELETE FROM autrechargesparcelle_d WHERE idparcelle = %s", (self.idParcelle,))
+            self.connection.commit()
+        except StandardError as e:
+            print e
+            self.connection.rollback()
+        i = 0
+        if len(self.idAutreCharges) > 0:
+            while i < len(self.idAutreCharges):
+                try:
+                    #self.cur.execute("UPDATE parcelle_d SET idcharge = %s WHERE gid = %s", (self.idAutreCharges[i], self.idParcelle))
+                    self.cur.execute("INSERT INTO autrechargesparcelle_d (idcharge, idparcelle) VALUES (%s, %s)", (self.idAutreCharges[i], self.idParcelle))
+                    self.connection.commit()
+                except StandardError as e:
+                    print e
+                    self.connection.rollback()
+                i = i + 1
+        print "id autres charges = " + str(self.idAutreCharges)
+        #SUPPRESSION AVANT REINSERTION
+        try:
+            self.cur.execute("DELETE FROM hypothequeparcelle_d WHERE idparcelle = %s", (self.idParcelle,))
+            self.connection.commit()
+        except StandardError as e:
+            print e
+            self.connection.rollback()
+        i = 0
+        if len(self.idHypotheque) > 0:
+
+            while i < len(self.idHypotheque):
+                try:
+                    #self.cur.execute("UPDATE parcelle_d SET idhypotheque = %s WHERE gid = %s",
+                                     #(self.idHypotheque[i], self.idParcelle))
+                    self.cur.execute("INSERT INTO hypothequeparcelle_d (idhypotheque, idparcelle) VALUES (%s, %s)",(self.idHypotheque[i], self.idParcelle) )
+                    self.connection.commit()
+                except StandardError as e:
+                    print e
+                    self.connection.rollback()
+                i = i + 1
+        print "id hypotheque = " + str(self.idHypotheque)
+        #SUPPRESSION AVANT REINSERTION
+        try:
+            self.cur.execute("DELETE FROM servitudeparcelle_d WHERE idparcelle = %s", (self.idParcelle,))
+            self.connection.commit()
+        except StandardError as e:
+            print e
+            self.connection.rollback()
+
+        i = 0
+        if len(self.idServitude) > 0:
+
+            while i < len(self.idServitude):
+                try:
+                    #self.cur.execute("UPDATE parcelle_d SET idservitude = %s WHERE gid = %s",
+                                     #"(self.idServitude[i], self.idParcelle))
+                    self.cur.execute("INSERT INTO servitudeparcelle_d (idservitude, idparcelle) VALUES (%s, %s)", (self.idServitude[i], self.idParcelle))
+                    self.connection.commit()
+                except StandardError as e:
+                    print e
+                    self.connection.rollback()
+                i = i + 1
+        print "id servitude = " + str(self.idServitude)
+#        i = 0
+#        if len(self.limitesParcelle) > 0:
+#            try:
+#                self.cur.execute("DELETE FROM limitesparcelle WHERE idparcelle = %s", (self.idParcelle,))
+#                self.connection.commit()
+#            except StandardError as e:
+#                print e
+#                self.connection.rollback()
+#            while i < len(self.limitesParcelle):
+#                try:
+#                    self.cur.execute("INSERT INTO limitesparcelle (idpointscardinaux, idparcelle, description) VALUES (%s, %s, %s)", (self.limitesParcelle[i][0], self.idParcelle ,self.limitesParcelle[i][2] ))
+#                    self.connection.commit()
+#                    i = i + 1
+#                except StandardError as e:
+#                    print e
+#                    self.connection.rollback()
+#                    i = i + 1
+#        print "id limites = " + str(self.limitesParcelle)
+
+        #A modifier plus tard
+        # = 4
+        # Mettre le hameau s'il existe
+        if self.ui.comboBoxHameau.currentIndex() != -1:
+            idhameau = self.idsHameau[self.ui.comboBoxHameau.currentIndex()]
+            try:
+                self.cur.execute("UPDATE parcelle_d SET idhameau = %s WHERE gid = %s", (idhameau,  self.idParcelle))
+                self.connection.commit()
+                self.refreshCanvas()
+            except StandardError as e:
+                print e
+                self.connection.rollback()
+
+
+        try:
+            self.cur.execute("UPDATE parcelle_d SET idcertificat = %s WHERE gid = %s", (self.idCF,  self.idParcelle))
+            self.connection.commit()
+            self.refreshCanvas()
+        except StandardError as e:
+            print e
+            self.connection.rollback()
+
+        #Ecriture dans le journal
+        print "idcertificat = " + str(self.idCF)
+        from Projet.journalRunn import journal
+        journal = journal(self.connection)
+        print "idcertificat = " + str(self.idCF)
+        journal.inserToJournal(globalvars.id_user, self.idCF, u"Certificat", u"Modifiaction des informations d'un certificat foncier")
+        msgBox = QMessageBox()
+        msgBox.setText("Modification du certificat reussi")
+        msgBox.show()
+        msgBox.exec_()
+        self.parent.showAll()
+        self.close()
+    #################FIN###################3
+
+    def refreshCanvas(self):
+
+        for layer in self.canvas.layers():
+            if layer.type() == layer.VectorLayer:
+                layer.removeSelection()
+                layer.triggerRepaint()
+
+        self.canvas.refresh()
+
+    def preview(self): ####----utile pour afficher la geometrie ---####
+        print "preview"
+        sql = "SELECT ST_AsPNG(" \
+                "ST_AsRaster(" \
+                "ST_Buffer(geom, 10),200,200,ARRAY['8BUI', '8BUI', '8BUI'], ARRAY[118,154,118], ARRAY[0,0,0]" \
+                ")) png " \
+                "from parcelle_d WHERE gid=%s"
+            #        cursor = connection.cursor()
+        #print sql
+        cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        #print "apres creation cursor"
+        cursor.execute("SET bytea_output TO escape")
+        #print "excute voaloany"
+        cursor.execute(sql, (self.idParcelle,))
+        #print "Avant ouverture du fichier"
+        row = cursor.fetchone()
+        filename = "preview.png"
+        try:
+            #print "ouverture fichier"
+            f = open(filename, "wb")
+            f.write(row['png'])
+            f.close()
+        except StandardError as e:
+            print e
+        cursor.close()
+        return filename
+
+    def editGeom(self):
+        # Ecriture dans le journal
+        from Projet.journalRunn import journal
+        journal = journal(self.connection)
+        journal.inserToJournal(globalvars.id_user, self.idCF, u"Certificat",
+                               u"Edition de la géometrie d'un Certificat")
+        # fin ecritude dans le journal
+        self.close()
+        try:
+            self.parent.close()
+        except:
+            pass
+
+        renderTitre = self.cLayer.rendererV2()
+        style1 = {'color': '255,0,0,0', 'outline_color': '93,182,255,255', 'outline_width': '0.3'}
+        mySymbol2 = QgsFillSymbolV2.createSimple(style1)
+        if renderTitre:
+            renderTitre.setSymbol(mySymbol2)
+
+        self.cLayer.setCustomProperty("labeling", "pal")
+        self.cLayer.setCustomProperty("labeling/enabled", "true")
+        self.cLayer.setCustomProperty("labeling/fontFamily", "Arial")
+        self.cLayer.setCustomProperty("labeling/fontSize", "8")
+        # layer.setCustomProperty("labeling/fontWeight", "Bold")
+        self.cLayer.setCustomProperty("labeling/fieldName",'numdemande')
+        self.cLayer.setCustomProperty("labeling/placement", "OverPoint")
+        self.reloadCanvas()
+        self.canvas.setMapTool(self.tool)
+        self.parent.activateChangeOngeom.setEnabled(True)
+
+    def reloadCanvas(self):
+        print " reload canvas "
+        canvas = self.canvas
+        for layer in canvas.layers():
+            if layer.type() == layer.VectorLayer:
+                layer.removeSelection()
+                layer.triggerRepaint()
+
+    def resolve(self, name, basepath=None):
+        if not basepath:
+            basepath = os.path.dirname(os.path.realpath(__file__))
+        return os.path.join(basepath, name)
+
+    def __del__(self):
+        self.cur.close()
+        #self.charges.close()
+        #self.proprietaires.close()
+
+    def initMasks(self):
+        validatorNumCertificat = QRegExpValidator(globalvars.regexpNumCertificat)
+        self.ui.lineEditNumCert.setValidator(validatorNumCertificat)

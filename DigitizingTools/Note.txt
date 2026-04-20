@@ -1,0 +1,15 @@
+#322*6#
+QgsRubberBand.addGeometry(QgsGeometry, QgsVectorLayer): not enough arguments
+
+
+Une erreur est apparue lors de l'exécution du code Python :
+
+
+Traceback (most recent call last):
+  File "C:\Users\User\.qgis2\python\plugins\DigitizingTools\tools\dtsplitfeature.py", line 55, in digitizingFinished
+    selIds = self.editLayer.selectedFeatureIds()
+AttributeError: 'QgsVectorLayer' object has no attribute 'selectedFeatureIds'
+
+-TraceDigitize -- Snapp
+-Fusion base sur la selection des geometry
+-Poygone automatique - CAD-Tools

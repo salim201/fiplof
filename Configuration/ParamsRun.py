@@ -1,0 +1,88 @@
+# coding: utf8
+from PyQt4 import Qt, QtGui
+from .Params import Ui_Params
+from ConfigParser import SafeConfigParser
+import os, sys
+import psycopg2
+import psycopg2.extras
+
+
+class ParamsRun(Qt.QDialog):
+    def __init__(self):
+        Qt.QDialog.__init__(self)
+
+        self.ui = Ui_Params()
+        self.ui.setupUi(self)
+        self.setWindowTitle(u"Options FIPLOF")
+        self.parser = SafeConfigParser()
+        self.parser.read(self.resolve("params.ini"))
+        self.auto_save_path = self.parser.get('params', 'auto_save_path')
+        self.online_interco = self.parser.get('params', 'online_interco')
+        self.has_z_certifiable = self.parser.get('params', 'has_z_certifiable')
+        self.dirname = None
+        self.fillFields()
+
+        self.ui.checkBoxZCertifiable.stateChanged.connect(self.checkBoxStateChange)
+        self.ui.checkBoxOnLineInterco.stateChanged.connect(self.checkBoxStateChange)
+        self.ui.pushButtonEnregistrer.clicked.connect(self.saveConfig)
+        self.ui.pushButtonFermer.clicked.connect(self.close)
+        self.ui.toolButtonParcourir.clicked.connect(self.browseFile)
+
+    def fillFields(self):
+        if self.auto_save_path == 'Null':
+            self.auto_save_path = os.path.expanduser('~')
+            self.ui.lineEditPathAutoSave.setText(self.auto_save_path)
+        else:
+            self.ui.lineEditPathAutoSave.setText(self.auto_save_path)
+
+        if self.has_z_certifiable == 'False':
+            self.ui.checkBoxZCertifiable.setChecked(False)
+        elif self.has_z_certifiable == 'True':
+            self.ui.checkBoxZCertifiable.setChecked(True)
+        else:
+            self.ui.checkBoxZCertifiable.setChecked(False)
+
+        if self.online_interco == 'False':
+            self.ui.checkBoxOnLineInterco.setChecked(False)
+        elif self.online_interco == 'True':
+            self.ui.checkBoxOnLineInterco.setChecked(True)
+        else:
+            self.ui.checkBoxOnLineInterco.setChecked(False)
+
+    def saveConfig(self):
+        if os.path.exists(str(self.ui.lineEditPathAutoSave.text())):
+            self.auto_save_path = str(self.ui.lineEditPathAutoSave.text())
+        else:
+            QtGui.QMessageBox.warning(self, 'Attention!', u"Le dossier que vous avez choisi n'existe pas ou est inaccessible!")
+            self.auto_save_path = os.path.expanduser('~')
+
+        self.editFile()
+
+    def checkBoxStateChange(self):
+        if self.ui.checkBoxOnLineInterco.isChecked():
+            self.online_interco = 'True'
+        else:
+            self.online_interco = 'False'
+        if self.ui.checkBoxZCertifiable.isChecked():
+            self.has_z_certifiable = 'True'
+        else:
+            self.has_z_certifiable = 'False'
+
+    def editFile(self):
+        self.parser.set('params', 'auto_save_path',self.auto_save_path)
+        self.parser.set('params', 'has_z_certifiable', self.has_z_certifiable)
+        self.parser.set('params', 'online_interco', self.online_interco)
+        with open(self.resolve('params.ini'), 'wb') as configFile:
+            self.parser.write(configFile)
+        QtGui.QMessageBox.information(self, 'informartion', u"Modification réussi!")
+        self.close()
+
+    def browseFile(self):
+        self.dirname = QtGui.QFileDialog.getExistingDirectory(self, "Choisissez un dossier de sauvegarde")
+        self.ui.lineEditPathAutoSave.setText(self.dirname)
+
+    def resolve(self, name, basepath=None):
+        if not basepath:
+            basepath = os.path.dirname(os.path.realpath(__file__))
+        return os.path.join(basepath, name)
+

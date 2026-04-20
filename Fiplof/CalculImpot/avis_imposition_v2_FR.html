@@ -1,0 +1,132 @@
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="pdf.css" />
+	<meta http-equiv="Content-Type" content="text/html" ; charset="UTF-8">
+</head>
+<style>
+
+
+
+</style>
+
+<body>
+	<div class="center" style="border:0px solid black; margin:auto; width:30%; text-align:left;top: 0;">
+		<p class="left"><span class="bold">REPUBLIQUE DE MADAGASCAR</span> <br>
+		<span class="italic">Fitiavana - Tanindrazana - Fandrosoana</span>
+		</p>
+		<p class="left"><span class="bold">AVIS D'IMPOSITION</span> <br>
+			Selon les déclarations faites par MR/MME : <br>
+			$maire <br>
+			et les données dont dispose les services de la commune, vos impôts pour l'année $anneavis <br>
+			($anneavis,)
+		</p>
+	</div>
+	<div style="position:absolute; top: 0; width: 300;border:0px solid">
+		<p>Commune de : $commune <br>
+			N° : $ref <br>
+			NR : $NR
+		</p>
+		<p>
+			Nom: $nom_c <br>
+			Prénom: $prenom_c <br>
+			CIN: $cin_c<br>
+			Adresse: $adr_c <br>
+			Fokontany: $fkt_c
+		</p>
+	</div>
+
+	<br>
+
+	<table class="fullwidth border-collapse center">
+		<thead>
+			<tr>
+				<td class="bordered">
+					<p class="center bold">N°</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold">Type de propriété</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold">Emplacement</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold">Catégorie / Surface</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold">Tarif d'imposition</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold">Impôt antérieur </p>
+				</td>
+				<td class="bordered">
+					<p class="center bold" style="border:0">Impôt $anneavis</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold" style="border:0">Total</p>
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+		{REPEAT $infoimpot:$info}
+			<tr>
+
+					<td class="bordered">
+						<p class="center">$info.num</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.type_ppt</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.emplacement</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.calcul</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.tarif</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.impot_anterieur</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.impot_anneeencours</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.sstotal</p>
+					</td>
+
+			</tr>
+		{ENDREPEAT $infoimpot}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="7" class="right bold"> NET A PAYER</td>
+				<td class="bordered"> $total </td>
+			</tr>
+		</tfoot>
+	</table>
+    <table style="width:100%">
+        <tr>
+            <td>
+                <p class="left">
+                    Arrêtée la présente imposition à la somme de : <i> $lettre </i> Ariary <br>
+			        Vous êtes prié de vous acquiter de la somme due auprès du bureau de la commune, dans les <span class="bold">trois mois</span>
+		        </p>
+            </td>
+            <td>
+                <p class="right">Date : $date</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p class="left"> Visa du Centre Fiscal</p>
+            </td>
+            <td>
+                <p class="right">Le Maire de la commune</p>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+import psycopg2
+import psycopg2.extras
+
+class ConnectRemoteModel:
+
+    def __init__(self):
+        print  "eto "
+        self.curRemote=None
+        self.connectRemote=None
+
+    @staticmethod
+    def connectToRemote(self,paramConnection):
+        try:
+            print "mandalo eto"
+            self.connectRemote = psycopg2.connect(
+                user=paramConnection[2],
+                password=paramConnection[3],
+                host=paramConnection[0],
+                port=paramConnection[1],
+                database=paramConnection[4]
+            )
+            return self.connectRemote
+        except (Exception, psycopg2.Error) as error:
+            print ("Erreur lors de la connexion à PostgreSQL", error)
+            return False
+
+'''
+ self.curRemote = self.connectRemote.cursor()
+ # Afficher la version de PostgreSQL
+            self.curRemote.execute("SELECT version();")
+            version = self.curRemote.fetchone()
+            print("Version : ", version, "\n")
+
+            # fermeture de la connexion à la base de données
+            self.curRemote.close()
+            self.connectRemote.close()
+            print("La connexion PostgreSQL est fermée")'''

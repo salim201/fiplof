@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1027</width>
+    <height>678</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Transformation Groupée Demande en CF</string>
+  </property>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>951</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>RECHERCHE</string>
+   </property>
+   <widget class="QPushButton" name="pushButtonRechercher">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>150</y>
+      <width>353</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Recherher</string>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="dateEditDatedcision">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>378</x>
+      <y>124</y>
+      <width>535</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>195</x>
+      <y>72</y>
+      <width>177</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Hameau</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxdateDecision">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>127</y>
+      <width>176</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditNumeroDemande">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>378</x>
+      <y>20</y>
+      <width>535</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>195</x>
+      <y>46</y>
+      <width>177</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fokontany</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>195</x>
+      <y>98</y>
+      <width>177</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Num Décision</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>195</x>
+      <y>124</y>
+      <width>177</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date Décision</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxHameau">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>378</x>
+      <y>72</y>
+      <width>535</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxNumDemande">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>23</y>
+      <width>176</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>195</x>
+      <y>20</y>
+      <width>177</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>N° Demande</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxFkt">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>49</y>
+      <width>176</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBoxFokontany">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>378</x>
+      <y>46</y>
+      <width>535</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxNumdecision">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>101</y>
+      <width>176</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxHameau">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>75</y>
+      <width>176</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditNumdecision">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>378</x>
+      <y>98</y>
+      <width>535</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxCocherTous">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>200</y>
+     <width>825</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cocher tous</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidgetDemande">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>220</y>
+     <width>1001</width>
+     <height>421</height>
+    </rect>
+   </property>
+   <column>
+    <property name="text">
+     <string/>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>iddemande</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Num demande</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Date Demande</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Num Décision</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Date Décision</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Catégorie</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Consistance</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Date RL</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>idFKT</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>CQE</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QProgressBar" name="progressBarlisting">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>651</y>
+     <width>871</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="value">
+    <number>24</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonTransformer">
+   <property name="geometry">
+    <rect>
+     <x>900</x>
+     <y>650</y>
+     <width>111</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TRANSFORMER</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,601 @@
+# -*- coding: utf-8 -*-
+from PyQt4 import QtCore, QtGui
+from qgis.core import *
+from qgis.gui import *
+from PyQt4 import QtCore, QtGui
+from qgis.core import *
+from qgis.gui import *
+
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import *
+import globalvars
+
+from .OperationsSubsequentes import Ui_Dialog
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+class OperationsSubsequentes(QtGui.QDialog):
+    def __init__(self, connection, canvas, parent):
+        QtGui.QDialog.__init__(self)
+        # Set up the user interface from Designer.
+        self.ui = Ui_Dialog()
+        self.parent = parent
+        self.tool = self.parent.tool
+        self.idCf  = None
+        self.numCf =  []
+        self.geomId = None
+        self.title = ""
+        self.typeOp = 0
+        self.id_projet = self.parent.id_projet
+#       print self.parent.txt
+        self.ui.setupUi(self)
+        self.connection = connection
+        self.canvas = canvas
+        self.parent = parent
+        self.layer = self.parent.cLayer
+        self.actionSplit = self.parent.ui.actionSplit
+        self.idActe = 0
+        self.IdActeDeces = 0
+        self.IdActePrivee = 0
+        self.idDecision = 0
+        self.IdActePublic = 0
+        self.acte = ''
+        self.idCertificat = []
+        self.idGeom = []
+        self.selectItem = ""
+        self.acte = 'public'
+
+        self.details = []
+        self.initActions()
+        from .ChoixTypeActeRun import ChoixTypeActe
+        self.choixtype = ChoixTypeActe(self)
+        #from Certificat.GestionProprietaireRun import GestionProprietaireRun
+        #self.proprio = GestionProprietaireRun(self.connection)
+
+    def initActions(self):
+        self.ui.btnCahrgerActe.clicked.connect(self.chargerActe)
+        self.ui.btnRechercher.clicked.connect(self.rechercheCertificat)
+        self.ui.btnAjouter.clicked.connect(self.ajouterCF)
+        self.ui.btnLancerOperation.clicked.connect(self.LancerOperation)
+        self.ui.btnDetailActe.clicked.connect(self.detailActe)
+        self.ui.btnEnlever.clicked.connect(self.removeSelectCF)
+        self.ui.listWidget.itemClicked.connect(self.Clicked)
+
+        self.loadTypeOperationSubsequente()
+
+        validator = QtGui.QDoubleValidator()
+        self.ui.lineEditCout1.setValidator(validator)
+        self.ui.lineEditCout2.setValidator(validator)
+
+        self.ui.dateEditDepotDemande.setDisplayFormat("dd/MM/yyyy")
+        self.ui.dateEditDepotDemande.setDate(QDate.currentDate())
+
+        self.ui.dateEditInscriptionRegistre.setDisplayFormat("dd/MM/yyyy")
+        self.ui.dateEditInscriptionRegistre.setDate(QDate.currentDate())
+
+        #self.ui.textEdit.setSelectionBehavior(1)
+
+    def Clicked(self,item):
+        self.selectItem = item.text()
+        #QMessageBox.information(self, "ListWidget", "You clicked: " + item.text())
+
+    def removeSelectCF(self):
+        from PyQt4.QtGui import *
+        from PyQt4.QtCore import *
+        from PyQt4.QtGui import QDialog, QListWidgetItem
+        from PyQt4 import QtGui, Qt
+        print "currentText"
+        if self.selectItem == "":
+            QMessageBox.information(self, "Liste CF", "Veuillez selectionner un CF à enlever ")
+            return
+        else :
+            nb = self.ui.listWidget.count()
+            if ((self.ui.comboTypeOperation.currentIndex() == 2) or (self.ui.comboTypeOperation.currentIndex() == 5)):
+                self.ui.btnAjouter.setEnabled(True)
+            else:
+                if (self.ui.comboTypeOperation.currentIndex() == 7):
+                    if nb >= 2:
+                        self.ui.btnAjouter.setEnabled(False)
+                    else:
+                        self.ui.btnAjouter.setEnabled(True)
+                else:
+                    self.ui.btnAjouter.setEnabled(True)
+
+            self.ui.listWidget.takeItem(self.ui.listWidget.currentRow())
+
+        #print self.ui.comboNumCertificat.currentText()
+    def detailActe(self):
+        print " self.idActe IN"
+        print self.IdActeDeces
+
+        if int(self.IdActeDeces) != 0 :
+            self.idActe = self.IdActeDeces
+            self.acte = 'deces'
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT *  FROM actedeces where idactedeces = %s",[int(self.IdActeDeces)])
+            dm = cursor.fetchone()
+            self.details = dm
+            from .ActeDecesRun import ActeDeces
+            actedeces = ActeDeces(self)
+            actedeces.exec_()
+            print dm
+
+        if int(self.choixtype.IdActePublic) != 0:
+            self.idActe = self.choixtype.IdActePublic
+            print "self self.IdActePublic"
+            print self.choixtype.IdActePublic
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT *  FROM actepublic where idactepublic = %s", [int(self.choixtype.IdActePublic)])
+            dm = cursor.fetchone()
+            self.details = dm
+
+            from .ActePublicsRun import ActePublic
+            actePublic = ActePublic(self)
+            actePublic.exec_()
+
+            print dm
+
+
+        if int(self.choixtype.IdActePrivee) != 0 :
+            self.acte = 'privee'
+            self.idActe = self.choixtype.IdActePrivee
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT *  FROM acteprive where idacteprive = %s", [int(self.choixtype.IdActePrivee)])
+            dm = cursor.fetchone()
+            self.details = dm
+            from .ActePriveRun import ActePrive
+            actePrivee = ActePrive(self)
+            actePrivee.exec_()
+        #QtGui.QMessageBox.warning(self, "FIPLOF", str(self.idActe))
+
+    def LancerOperation(self):
+        print " self.ui.comboTypeOperation.currentIndex()"
+
+
+        if int(self.choixtype.IdActePrivee) != 0 :
+            self.acte = 'privee'
+            self.idActe = self.choixtype.IdActePrivee
+
+        if int(self.choixtype.IdActePublic) != 0:
+            self.idActe = self.choixtype.IdActePublic
+            self.acte = 'public'
+        if int(self.IdActeDeces) != 0 :
+            self.idActe = self.IdActeDeces
+            self.acte = 'deces'
+
+        print self.IdActeDeces
+        print self.ui.comboTypeOperation.currentIndex()
+        numCF = []
+        self.typeOp = self.ui.comboTypeOperation.currentIndex()
+        self.idActe = self.idActe
+
+        print "remove"
+        nb = self.ui.listWidget.count()
+        i = 0
+        while i < nb:
+            item = self.ui.listWidget.item(i)
+            if item == None:
+                print "NoneType iz"
+            else:
+                print " item.data() "
+                print item.data(0).toString()
+                numCF.append(item.data(0).toString())
+            # print item.getText()
+            i = i + 1
+        #numCF = self.ui.textEdit.toPlainText()
+        #numCF = numCF.split('\n')
+        self.numCf = numCF
+        print "len CF"
+        print len(numCF)
+
+        if self.idActe == 0 :
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Veuillez charger acte")
+            return
+
+
+        if self.ui.lineEditCout1.text() == "":
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Veuillez remplir ce champ")
+            self.ui.lineEditCout1.setFocus(Qt.Qt.OtherFocusReason)
+            return True
+        #if self.ui.textEdit.text() == "":
+        #    QtGui.QMessageBox.warning(self, "FIPLOF", "Veuillez remplir ce champ")
+        #    self.ui.textEdit.setFocus(Qt.Qt.OtherFocusReason)
+        #    return False
+
+        if self.ui.lineEditCout2.text() == "":
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Veuillez remplir ce champ")
+            self.ui.lineEditCout2.setFocus(Qt.Qt.OtherFocusReason)
+            return True
+
+        if len(self.numCf) >= 1:
+            print "continue"
+        else :
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Veuillez ajouter le Certificat en cause ")
+            self.ui.textEdit.setFocus(Qt.Qt.OtherFocusReason)
+            return False
+
+        print "LEN self.numCf"
+        print len(self.numCf)
+
+        if self.ui.comboTypeOperation.currentIndex() == 7:
+            if len(self.numCf) <= 1 :
+                QtGui.QMessageBox.warning(self, "FIPLOF", "Au moins  ajouter deux certificats pour l'échange")
+                self.ui.textEdit.setFocus(Qt.Qt.OtherFocusReason)
+                return False
+        if self.ui.comboTypeOperation.currentIndex() == 8:
+            if len(self.numCf) <= 1:
+                QtGui.QMessageBox.warning(self, "FIPLOF", "Au moins  ajouter deux certificats pour la fusion")
+                self.ui.textEdit.setFocus(Qt.Qt.OtherFocusReason)
+                return False
+        print "self.ui.textEdit"
+        #print self.ui.textEdit.toPlainText()
+        #print numCF[0]
+        #print numCF[1]
+        #print self.ui.textEdit.text()
+        if len(self.numCf) >= 1 :
+            i = 0
+            n = len(self.numCf)
+            while(i < n):
+                print " numCF[i]"
+                print numCF[i]
+                cursor = self.connection.cursor()
+                cursor.execute("SELECT *  FROM certificat where numerocertificat =%s ",[str(numCF[i])])
+                rs = cursor.fetchone()
+                self.numD = rs[1]
+                self.idCertificat.append(rs[8])
+                #self.idCertificat = rs[8] # idcertificat
+                print "RS cf"
+                print rs
+
+                idcf = rs[8]
+                cursor.execute("SELECT *  FROM parcelle_d where idcertificat =%s ", [int(idcf)])
+                row = cursor.fetchone()
+
+                #test existance idfokontany dans CF
+                if rs[9] is None:
+                    QtGui.QMessageBox.critical(self, "FIPLOF", "Ny Karatany laharana " + rs[0] + "dia tsy misy fokontany sy hameau mifandray aminy.\nMidira ao amin'ny menu 'Certificat Foncier -> Certificat -> Edition -> Edition des informations' \nary Ampifandraiso amin'ny Fokontany sy Hameau ilay Karatany tompoko!")
+                    return
+
+                #TEST EXISTENCE IDFOKONTANY DANS DEMANDE
+                tmp_idfkt = None
+                try:
+                    cursor.execute(
+                        "SELECT idfokontany FROM demande WHERE gid = (SELECT gid  FROM parcelle_d where idcertificat =%s)",
+                        [int(idcf)])
+                    tmp_idfkt = cursor.fetchone()
+                except Exception as Err:
+                    print("Erreur de lecture info fokontany demnade " + Err)
+                    self.connection.rollback()
+
+                if tmp_idfkt is None:
+                    QtGui.QMessageBox.critical(self, "FIPLOF", "Ny Fangatahana " + rs[1] + " izay mifandray amin'ny karatany " + rs[
+                        0] + "dia tsy misy fokontany mifandray aminy ato anaty FIPLOF.\nMidira ao amin'ny menu 'Certificat Foncier -> Demande de certificat -> Edition -> Edition des informations' \nary ampifandraiso amin'ny fokontany sy hameau ilay Fangatahana tompoko!")
+                    return
+                else:
+                    if len(tmp_idfkt) < 1:
+                        QtGui.QMessageBox.critical(self, "FIPLOF",
+                                                   "Ny Fangatahana " + rs[1] + " izay mifandray amin'ny karatany " + rs[
+                                                       0] + "dia tsy misy fokontany mifandray aminy ato anaty FIPLOF.\nMidira ao amin'ny menu 'Certificat Foncier -> Demande de certificat -> Edition -> Edition des informations' \nary ampifandraiso amin'ny fokontany sy hameau ilay Fangatahana tompoko!")
+                        return
+                #  fin test existence fkt damande
+                # Test existence demandeur
+                dmdr = None
+                try:
+                    cursor.execute(
+                        "SELECT idpersonne FROM avoir_demande WHERE idparcelle = (SELECT gid  FROM parcelle_d where idcertificat =%s)",
+                        [int(idcf)])
+                    dmdr = cursor.fetchall()
+                except Exception as Err:
+                    print("Erreur de lecture info demandeur " + Err)
+                    self.connection.rollback()
+                if dmdr is None:
+                    QtGui.QMessageBox.critical(self, "FIPLOF", "Ny Fangatahana " + rs[1] + " izay mifandray amin'ny karatany " + rs[
+                        0] + "dia tsy misy tompony mifandray aminy ato anaty FIPLOF.\nMidira ao amin'ny menu 'Certificat Foncier -> Demande de certificat -> Edition -> Edition des informations' \nary Asio tompony ilay Fangatahana tompoko!")
+                    return
+                else:
+                    if len(dmdr) < 1:
+                        QtGui.QMessageBox.critical(self, "FIPLOF",
+                                                   "Ny Fangatahana " + rs[1] + " izay mifandray amin'ny karatany " +
+                                                   rs[
+                                                       0] + "dia tsy misy tompony mifandray aminy ato anaty FIPLOF.\nMidira ao amin'ny menu 'Certificat Foncier -> Demande de certificat -> Edition -> Edition des informations' \nary Asio tompony ilay Fangatahana tompoko!")
+                        return
+
+                #Test existence proprio
+                pp = None
+                try:
+                    cursor.execute("SELECT idpersonne FROM proprietaireparcelle WHERE idparcelle = (SELECT gid  FROM parcelle_d where idcertificat =%s)", [int(idcf)])
+                    pp = cursor.fetchall()
+                except Exception as Err:
+                    print ("Erreur de lecture info proprio " + Err)
+                    self.connection.rollback()
+                if pp is None:
+                    QtGui.QMessageBox.critical(self, "FIPLOF", "Ny karatany " + rs[0] + "dia tsy misy tompony mifandray aminy ato anaty FIPLOF.\nMidira ao amin'ny menu 'Certificat Foncier -> Certificat -> Edition -> Edition des informations' \nary Asio tompony ilay Karatany tompoko!")
+                    return
+                else:
+                    if len(pp) < 1:
+                        QtGui.QMessageBox.critical(self, "FIPLOF", "Ny karatany " + rs[0] + "dia tsy misy tompony mifandray aminy ato anaty FIPLOF.\nMidira ao amin'ny menu 'Certificat Foncier -> Certificat -> Edition -> Edition des informations' \nary Asio tompony ilay Karatany tompoko!\nRaha tsy fantatrao ny tompony dia jereo avy any information anaty demande sao misy ao.\nRaha tsy misy ao dai savao ny rejistra taratasy.")
+                        return
+                #VERIFICATION SI POSSIBLITE DE PROBLEME DE FREGLAGE COMPTEUR
+                if (self.ui.comboTypeOperation.currentIndex() == 2) or (self.ui.comboTypeOperation.currentIndex() == 5 ) or (self.ui.comboTypeOperation.currentIndex() == 8 ):
+                    next_num_demande_existe = self.check_if_next_elt_exists(element_type="demande")
+                    if next_num_demande_existe:
+                        QtGui.QMessageBox.critical(self, "FIPLOF", "Regleo ny compteur demande fa misy numero mifanitsaka raha alefa ito operation ito.")
+                        return
+                    next_num_cf_existe = self.check_if_next_elt_exists(element_type="certificat")
+                    if next_num_cf_existe:
+                        QtGui.QMessageBox.critical(self, "FIPLOF",
+                                                   "Regleo ny compteur certificat fa misy numero mifanitsaka raha alefa ito operation ito.")
+                        return
+
+                #idCf = self.numD.split('-')
+                idgeom = row[0] # idparcelle
+                self.idGeom.append(idgeom)
+                #self.idGeom = idgeom
+                print idgeom
+                i = i + 1
+            #self.geomId = rs[0]
+
+
+            canvas = self.canvas
+            #cLayer = self.canvas.currentLayer()
+            cLayer = self.layer
+            self.close()
+            #for layer in canvas.layers():
+            #    if layer.type() == layer.VectorLayer:
+            #        layer.removeSelection()
+
+            #canvas.refresh()
+            #cLayer.select(int(idgeom))
+            #canvas.zoomToSelected(cLayer)
+            #zoomToGeom
+
+        else :
+            print "None"
+
+
+        if self.ui.comboTypeOperation.currentIndex() == 0:
+            from .proprioMutationRun import proprioMutation
+            self.title = "Mutation par décès"
+            self.typeOp = 0
+            proprioMutation = proprioMutation(self)
+            proprioMutation.exec_()
+
+        if self.ui.comboTypeOperation.currentIndex() == 1:
+            from .VenteTotaleRun import VenteTotaleRun
+            self.title = "Vente Total"
+            self.typeOp = 1
+            venteTotal = VenteTotaleRun(self)
+            venteTotal.exec_()
+
+        if self.ui.comboTypeOperation.currentIndex() == 3:
+            from .VenteTotaleRun import VenteTotaleRun
+            self.title = " Vente partielle en restant dans l'indivision"
+            self.typeOp = 3
+            venteTotal = VenteTotaleRun(self, True)
+            venteTotal.exec_()
+
+        if self.ui.comboTypeOperation.currentIndex() == 4:
+            from .VenteTotaleRun import VenteTotaleRun
+            self.typeOp = 4
+            self.title = "Donation totale d'un certificat "
+
+            venteTotal = VenteTotaleRun(self)
+            venteTotal.exec_()
+
+
+        if self.ui.comboTypeOperation.currentIndex() == 5:
+            self.parent.ui.actionSplit.setEnabled(True)
+            self.parent.NumeroCF = numCF[0]
+
+        if self.ui.comboTypeOperation.currentIndex() == 6:
+            from .VenteTotaleRun import VenteTotaleRun
+            self.typeOp = 6
+            self.title = "Donation partielle en restant dans l'indivision"
+            venteTotal = VenteTotaleRun(self, True)
+            venteTotal.exec_()
+
+        if self.ui.comboTypeOperation.currentIndex() == 7:
+            print " comboTypeOperation "
+            from .EchangeTotalRun import EchangeTotalRun
+            echangeTotal = EchangeTotalRun(self)
+            echangeTotal.exec_()
+
+        #if self.ui.comboTypeOperation.currentIndex() == 8:
+        #    from .PartageCFRun import PartageCFRun
+        #    self.typeOp = 8
+        #    self.title = "Partage des certificats sans morcellement"
+        #    vente = PartageCFRun(self)
+        #    vente.exec_()
+
+
+
+        #if self.ui.comboTypeOperation.currentIndex() == 9:
+        #    #from .PartageCFRun import PartageCFRun
+        #    self.typeOp = 9
+        #    self.title = "Partage avec distraction"
+        #    self.parent.ui.actionSplit.setEnabled(True)
+        #    self.parent.NumeroCF = numCF[0]
+
+        if self.ui.comboTypeOperation.currentIndex() == 8:
+            # from .PartageCFRun import PartageCFRun
+            self.typeOp = 10
+            self.title = "Fusion des certificats"
+            self.parent.ui.actionMerge.setEnabled(True)
+            #self.parent.NumeroCF = numCF[0]
+            self.parent.NumeroCF = self.numCf
+
+
+        if self.ui.comboTypeOperation.currentIndex() == 2:
+            self.parent.ui.actionSplit.setEnabled(True)
+            self.typeOp = 2
+
+            self.parent.NumeroCF = numCF[0]
+            self.parent.typeOp = self.ui.comboTypeOperation.currentIndex()
+            self.parent.idActe = self.idActe
+            self.parent.acte = self.acte
+
+            #from .ProprioRun import Proprio
+            #Prop = Proprio(self)
+            #Prop.exec_()
+        return True
+
+    def ajouterCF(self):
+        import sys
+        from PyQt4.QtGui import *
+        self.numCf = self.ui.comboNumCertificat.currentText()
+        #self.ui.textEdit.setText(self.numCf)
+        item = QListWidgetItem(self.numCf)
+        nb = self.ui.listWidget.count()
+        if ((self.ui.comboTypeOperation.currentIndex() == 2) or (self.ui.comboTypeOperation.currentIndex() == 5)):
+            if nb == 1 :
+                QMessageBox.information(self, "Liste CF", "Veuillez supprimer le CF dans la liste ")
+                self.ui.btnAjouter.setEnabled(False)
+                return
+            if nb == 0 :
+                self.ui.btnAjouter.setEnabled(True)
+                self.ui.listWidget.addItem(item)
+        else :
+            if (self.ui.comboTypeOperation.currentIndex() == 7):
+
+                if nb >= 2:
+                    self.ui.btnAjouter.setEnabled(False)
+                else:
+                    self.ui.btnAjouter.setEnabled(True)
+                    self.ui.listWidget.addItem(item)
+            else :
+                self.ui.listWidget.addItem(item)
+
+
+
+        #listWidget.addItem(item)
+        print self.ui.comboNumCertificat.currentIndex()
+
+
+    def loadTypeOperationSubsequente(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT *  FROM typeoperationsubsequente ")
+        dm = cursor.fetchall()
+        for row in dm:
+            self.ui.comboTypeOperation.addItem(_fromUtf8(row[1]), row[0])
+
+    def chargerActe(self):
+        print "chargerActe"
+        print self.ui.comboTypeOperation.currentIndex()
+        if self.ui.comboTypeOperation.currentIndex() == 0:
+            from .ListeActeDecesRun import ListeActeDeces
+            listeacte = ListeActeDeces(self)
+            listeacte.exec_()
+        elif 1 <= self.ui.comboTypeOperation.currentIndex() <= 3 or 7 <= self.ui.comboTypeOperation.currentIndex() <= 9:
+            print "Charger acte ici"
+            self.choixtype.exec_()
+        elif 4 <= self.ui.comboTypeOperation.currentIndex() <= 6:
+            self.choixtype.exec_()
+            """
+            from .ListeActePublicsRun import ListeActePublics
+            listeacte = ListeActePublics(self)
+            listeacte.exec_()
+            """
+       # elif self.ui.comboTypeOperation.currentIndex() == 10:
+
+    def rechercheCertificat(self):
+        from Certificat.RechercheCFRun import RechercheCFRun
+
+        rechercheCF = RechercheCFRun(self.connection,self.canvas, self.parent,self)
+        rechercheCF.exec_()
+
+    def get_prefixe(self):
+        cursor = self.connection.cursor()
+        # Recuperer le district
+        prefixe = ""
+        print("************GET INFO DISTRICT****************")
+        try:
+            cursor.execute(
+                "SELECT d.nomdistrict, d.iddistrict, d.codedistrict FROM district d, commune c WHERE d.iddistrict = c.iddistrict AND c.idcommune = %s",
+                (globalvars.id_commune,))
+            dist = cursor.fetchone()
+        except StandardError as e:
+            print e
+            self.connection.rollback()
+        print (dist[2])
+            # Recuperer le nom de la commune
+        try:
+            cursor.execute("SELECT * FROM commune WHERE idcommune = %s",
+                             (globalvars.id_commune,))
+            com = cursor.fetchone()
+        except StandardError as e:
+            print e
+            self.connection.rollback()
+        print (com[9])
+        if len(str(com[9])) < 2:
+            code_guichet = "0"+str(com[9])
+        else:
+            code_guichet = str(com[9])
+
+        code_district = str(dist[2]).strip()
+
+        prefixe = code_district + '-' + code_guichet
+
+        return prefixe
+
+    def check_if_next_elt_exists(self, element_type = "certificat"):
+        prefixe = self.get_prefixe()
+        print (prefixe)
+        cursor = self.connection.cursor()
+        # Recuperer le district
+        try:
+            cursor.execute("SELECT cptcertificat, cptdemande FROM commune WHERE idcommune = %s",
+                           (globalvars.id_commune,))
+            com = cursor.fetchone()
+        except StandardError as e:
+            print e
+            self.connection.rollback()
+        if element_type == "certificat":
+            num_nex_cert = prefixe+"-KT-"+str(com[0])
+            print ("***************NUM NEXT CF***********************")
+            print (num_nex_cert)
+            try:
+                cursor.execute("SELECT idcertificat FROM certificat WHERE TRIM(numerocertificat) = %s",
+                               (num_nex_cert,))
+                cf = cursor.fetchone()
+            except StandardError as e:
+                print e
+                self.connection.rollback()
+            if cf is not None:
+                if len(cf) > 0:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        if element_type == "demande":
+            num_nex_demande = prefixe + "-F-" + str(com[1])
+            print("***************NUM NEXT DEMANDE***********************")
+            print(num_nex_demande)
+            try:
+                cursor.execute("SELECT iddemande FROM demande WHERE TRIM(numdemande) = %s",
+                               (num_nex_demande,))
+                dmd = cursor.fetchone()
+            except StandardError as e:
+                print e
+                self.connection.rollback()
+
+            if dmd is not None:
+                if len(dmd) > 0:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+    def disableActionSplit(self):
+        self.parent.ui.actionSplit.setEnabled(False)
+
+    def disableActionMerge(self):
+        self.parent.ui.actionMerge.setEnabled(False)
+
+
+
+

@@ -1,0 +1,1 @@
+ALTER TABLE public.parcelle_d ADD COLUMN csv_id character varying(32);

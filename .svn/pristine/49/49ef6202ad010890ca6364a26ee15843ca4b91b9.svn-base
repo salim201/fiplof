@@ -1,0 +1,81 @@
+import hashlib
+
+from PyQt4 import QtGui
+
+import globalvars
+from main import Ui_MainWindow
+from models.Acces import Acces
+from models.GroupeAcces import GroupeAcces
+
+
+class AccessManager:
+    ui = None  # type: Ui_MainWindow
+    access = None  # type: list[Acces]
+    groupe_access = None  # type: list[GroupeAcces]
+
+    def __init__(self, ui, connection):
+        self.ui, self.connection = ui, connection
+        model_groupe_access = GroupeAcces(self.connection)
+        model_access = Acces(self.connection)
+        self.groupe_access = model_groupe_access.find_by_gid(globalvars.groupe_id)
+        self.access = model_access.find_all()
+        h = hashlib.sha256(str(globalvars.groupe_id)).hexdigest().upper()
+        self.is_admin = (h == globalvars.GROUPE_ADMIN_ID)
+
+    def apply_rules(self):
+        self.ui.actionGestion_des_Groupes.setVisible(self.is_admin)
+        self.ui.menuG_rer_Utilisateurs.setEnabled(self.is_admin)
+
+        #********DEMANDES************************************************
+        self.activate_widget("DEMANDE/CREATE", self.ui.action_Creation)
+        self.activate_widget("DEMANDE/CREATE", self.ui.actionNouveauDmd)
+        self.activate_widget("DEMANDE/READ", self.ui.action_Consultation)
+        self.activate_widget("DEMANDE/EDIT_INFO", self.ui.actionEdition_des_Informations)
+        self.activate_widget("DEMANDE/EDIT_GEO", self.ui.actionEditions_de_la_Geometrie)
+        self.activate_widget("DEMANDE/LISTIN_IMPORT", self.ui.actionImport_listing)
+        self.activate_widget("DEMANDE/DATE_ATTRIB", self.ui.actionAttribution_des_dates)
+        self.activate_widget("DEMANDE/OPPOSITION", self.ui.actionOppositions)
+
+        #****************FIN  DEMANDES*****************************************
+
+        #*****************CERTFICAT******************************************
+        self.activate_widget("CERTIFICAT/CREATE", self.ui.action_Creation_Certificat_Recherche)
+        self.activate_widget("CERTIFICAT/READ", self.ui.action_Creation_Certificat_Consultation)
+        self.activate_widget("CERTIFICAT/READ", self.ui.action_ConsultationCertificat)
+        self.activate_widget("CERTIFICAT/ATTESTATION", self.ui.actionAttestation_2)
+        self.activate_widget("CERTIFICAT/ANNULATION", self.ui.actionAnnulation_Certificat)
+        self.activate_widget("CERTIFICAT/EDIT_INFO", self.ui.actionEdition_des_informations)
+        self.activate_widget("CERTIFICAT/EDIT_GEO", self.ui.actionEdition_de_la_geometrie)
+        self.activate_widget("CERTIFICAT/TRANSFO_GROUPEE", self.ui.actionTransformation_group_e)
+        #**************FIN CERTIFICAT**************************************************
+
+        self.activate_widget("PERSONNE_PHYSIQUE/READ", self.ui.action_Physique)
+        self.activate_widget("PERSONNE_MORALE/READ", self.ui.action_Morale)
+        self.activate_widget("OPERATIONS_SUBSEQUENTES", self.ui.menuOp_rations_subs_quentes)
+
+        self.activate_widget("IMPOT_FONCIER/CREATE", self.ui.menu_Saisie_Des_Donn_es)
+        self.activate_widget("IMPOT_FONCIER/CALCUL", self.ui.menuCalcul_Impots)
+        self.activate_widget("IMPOT_FONCIER/PARAMETRES", self.ui.menuParam_tres)
+        self.activate_widget("IMPOT_FONCIER/REGISTRE", self.ui.actionRegistre_Demande)
+        self.activate_widget("IMPOT_FONCIER/BENEFICIAIRES", self.ui.actionListes_des_b_n_ficiaires)
+        self.activate_widget("IMPOT_FONCIER/AFFICHAGE", self.ui.actionAffichage)
+
+        self.activate_widget("IMPORT_EXPORT/IMPORT", self.ui.actionImportDb)
+        self.activate_widget("IMPORT_EXPORT/EXPORT", self.ui.actionExport)
+        self.activate_widget("IMPORT_EXPORT/IMPORT_PLOF", self.ui.actionImport)
+        self.activate_widget("IMPORT_EXPORT/IMPORT_FIPLOF", self.ui.actionImport_FIPLOF)
+
+    def activate_widget(self, menu_name, widget):
+        # type: (str, QtGui.QWidget) -> object
+        if self.is_admin:
+            widget.setEnabled(True)
+            return
+        fa = filter(lambda a: a.nom == menu_name, self.access)
+        if len(fa) == 0:
+            widget.setEnabled(False)
+            return
+        fg = filter(lambda a:
+                    a.groupe_id == globalvars.groupe_id
+                    and a.acces_id == fa[0].id
+                    and a.autorise, self.groupe_access)
+        widget.setEnabled((len(fg) > 0) or self.is_admin)

@@ -1,0 +1,63 @@
+from PyQt4 import QtGui, Qt
+from .Consistances import Ui_Dialog
+from .EditConsistanceRun import EditConsistanceRun
+from PgCrud import PgSql, PgColumn
+
+
+class ConsistanceBatRun(Qt.QDialog):
+    def __init__(self, connection):
+        Qt.QDialog.__init__(self)
+        self.connection = connection
+        self.pgsql = PgSql.Table(self.connection, "consistance_batiment")
+        self.pgsql.addColumn("id", "Id", True, PgColumn.ColumnType.INTEGER)
+        self.pgsql.addColumn("consistance", "Consistance")
+        self.pgsql.addColumn("mombamombanytany", "Momba Ny Trano")
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.initActions()
+        self.refresh()
+
+    def initActions(self):
+        self.ui.pushButtonFermer.clicked.connect(self.reject)
+        self.ui.pushButtonNouveau.clicked.connect(self.nouveau)
+        self.ui.pushButtonModifier.clicked.connect(self.modifier)
+        self.ui.pushButtonSupprimer.clicked.connect(self.supprimer)
+        self.ui.tableWidget.itemSelectionChanged.connect(self.tableSelected)
+        self.ui.tableWidget.cellDoubleClicked.connect(self.modifier)
+
+    def refresh(self):
+        self.pgsql.fillTable(self.ui.tableWidget, [], "id")
+
+    def nouveau(self):
+        dialog = EditConsistanceRun(self.connection, 0, True)
+        if dialog.exec_():
+            self.refresh()
+
+    def modifier(self):
+        uid = self.pgsql.getSelectedId(self.ui.tableWidget)
+        if uid is None:
+            return
+        dialog = EditConsistanceRun(self.connection, uid, True)
+        if dialog.exec_():
+            self.refresh()
+
+    def supprimer(self):
+        uid = self.pgsql.getSelectedId(self.ui.tableWidget)
+        if uid is None:
+            return
+        reply = Qt.QMessageBox.question(self, "Confirm", "Voulez-vous supprimer la consistance ?",
+                                     Qt.QMessageBox.Yes | Qt.QMessageBox.No, Qt.QMessageBox.No)
+        if reply == Qt.QMessageBox.No:
+            return
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute("DELETE FROM consistance_batiment WHERE id=%s", (uid,))
+            self.connection.commit()
+        except:
+            self.connection.rollback()
+        cursor.close()
+        self.refresh()
+
+    def tableSelected(self):
+        self.ui.pushButtonModifier.setEnabled(True)
+        self.ui.pushButtonSupprimer.setEnabled(True)

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CreationDemande</class>
+ <widget class="QDialog" name="CreationDemande">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>580</width>
+    <height>409</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Demande certificat</string>
+  </property>
+  <widget class="QGroupBox" name="formGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>281</width>
+     <height>144</height>
+    </rect>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>8</x>
+      <y>10</y>
+      <width>85</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Numero Demande</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dateDemandeLabel">
+    <property name="geometry">
+     <rect>
+      <x>8</x>
+      <y>36</y>
+      <width>70</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date demande</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dateDemandeLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>129</x>
+      <y>36</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="inputMask">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dateDeReconnaissanceLabel">
+    <property name="geometry">
+     <rect>
+      <x>8</x>
+      <y>62</y>
+      <width>115</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date de reconnaissance</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dateDeReconnaissanceLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>129</x>
+      <y>62</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="consistanceLabel">
+    <property name="geometry">
+     <rect>
+      <x>8</x>
+      <y>88</y>
+      <width>58</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Consistance</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="consistanceComboBox">
+    <property name="geometry">
+     <rect>
+      <x>129</x>
+      <y>88</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="coutLabel">
+    <property name="geometry">
+     <rect>
+      <x>8</x>
+      <y>114</y>
+      <width>23</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cout</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="coutLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>129</x>
+      <y>114</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEditDemande">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>10</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="formGroupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>220</y>
+     <width>281</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout_2">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <property name="leftMargin">
+     <number>7</number>
+    </property>
+    <property name="topMargin">
+     <number>9</number>
+    </property>
+    <property name="rightMargin">
+     <number>15</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="regionLabel">
+      <property name="text">
+       <string>Region</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="lineEditRegion"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="districtLabel">
+      <property name="text">
+       <string>District</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="lineEditDistrict"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="communeLabel">
+      <property name="text">
+       <string>Commune</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="communeComboBox"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="fokontanyLabel">
+      <property name="text">
+       <string>Fokontany</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="fokontanyComboBox"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>350</y>
+     <width>281</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="pushButton_4">
+      <property name="text">
+       <string>Creer demande</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_5">
+      <property name="text">
+       <string>Annuler</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>10</y>
+     <width>261</width>
+     <height>391</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>160</y>
+     <width>281</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>8</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <property name="bottomMargin">
+     <number>8</number>
+    </property>
+    <item>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Rejeter</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>Oppositions</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_6">
+      <property name="text">
+       <string>Demandeurs</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

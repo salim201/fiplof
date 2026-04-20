@@ -1,0 +1,200 @@
+# coding: utf-8
+from PyQt4 import QtCore, QtGui
+import psycopg2
+import re
+from psycopg2 import extras
+
+
+class Utils:
+    def __init__(self, connection):
+        self.connection = connection
+
+    @staticmethod
+    def getTableWidgetCellIntvalue(tablewidget, i, j):
+        item = tablewidget.item(i, j)
+        if item is None:
+            return 0
+        t = item.text()
+        v = 0
+        try:
+            v = int(t)
+        except:
+            v = 0
+        return v
+
+    @staticmethod
+    def getTableWidgetCellFloatValue(tablewidget, i, j):
+        item = tablewidget.item(i, j)
+        if item is None:
+            return 0
+        t = item.text()
+        v = 0
+        try:
+            v = float(t)
+        except:
+            v = 0.0
+        return v
+
+    @staticmethod
+    def getTableWidgetCellStrValue(tablewidget, i, j):
+        item = tablewidget.item(i, j)
+        if item is None:
+            return ""
+        return unicode(item.text()).encode('utf-8')
+
+    @staticmethod
+    def getTableWidgetSelectedId(tablewidget, col=0):
+        # type: (QtGui.QTableWidget, list[Condition]) -> str
+        indexes = tablewidget.selectedIndexes()  # type: list[QtCore.QModelIndex]
+        if len(indexes) == 0:
+            return None
+        r = indexes[0].row()
+        t = tablewidget.item(r, col).text()
+        v = 0
+        try:
+            v = int(t)
+        except:
+            v = 0
+        return v
+
+    @staticmethod
+    def getLineEditIntValue(lineedit):
+        t = lineedit.text()
+        v = 0
+        try:
+            v = int(t)
+        except:
+            v = 0
+        return v
+
+    @staticmethod
+    def getLineEditDateValue(lineedit):
+        t = lineedit.text()
+        return t
+
+    @staticmethod
+    def setTableWidgetColumnReadOnly(tablewidget, j):
+        rows = tablewidget.rowCount()
+        for i in range(rows):
+            item = tablewidget.item(i, j)
+            if item is None:
+                continue
+            item.setFlags(item.flags() ^ QtCore.Qt.ItemIsEditable)
+
+    @staticmethod
+    def resizeTableWidgetColumn(tablewidget, cols, w):
+        headerView = tablewidget.horizontalHeader()
+        headerView.setResizeMode(QtGui.QHeaderView.Stretch)
+        for j in cols:
+            headerView.setResizeMode(j, QtGui.QHeaderView.Interactive)
+            headerView.resizeSection(j, w)
+
+    def fillComboWithSql(self, combowidget, sql, column, idcolumn):
+        # type: (QtGui.QComboBox, str) -> None
+        cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        rows = []
+        combowidget.clear()
+        try:
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+            cursor.close()
+        except Exception as e:
+            print(e)
+            self.connection.rollback()
+        for i in rows:
+            combowidget.addItem(i[column], i[idcolumn])
+
+    @staticmethod
+    def getComboValue(combo):
+        index = combo.currentIndex()
+        return Utils.getComboValueAt(combo, index)
+
+    @staticmethod
+    def getComboValueAt(combo, index):
+        data = combo.itemData(index)
+        if "toInt" in dir(data):
+            return data.toInt()[0]
+        if data is None:
+            return 0
+        return data
+
+    @staticmethod
+    def setComboValue(combo, value):
+        for i in range(0, combo.count()):
+            data = Utils.getComboValueAt(combo, i)
+            if(value == data):
+                combo.setCurrentIndex(i)
+                break
+
+    @staticmethod
+    def getComboText(combo):
+        index = combo.currentText()
+        return str(index)
+
+    @staticmethod
+    def alert(msg, title="Plof"):
+        QtGui.QMessageBox.information(None, title, msg)
+
+    @staticmethod
+    def emptyifnull(tab, index):
+        if tab is None:
+            return ""
+        if index in dir(tab):
+            return getattr(tab, index)
+        return ""
+
+    @staticmethod
+    def create_icon(color, size=32):
+        try:
+            color1 = color
+            color2 = color.darker(150)
+            icon = QtGui.QIcon()
+            pixmap = QtGui.QPixmap(size, size)
+            painter = QtGui.QPainter(pixmap)
+            pen = QtGui.QPen()
+            pen.setColor(color2)
+            painter.setPen(pen)
+            painter.setBrush(color2)
+            painter.drawRect(0, 0, size, size)
+            painter.setBrush(color1)
+            painter.drawRect(1, 1, size - 2, size - 2)
+            painter.end()
+            icon.addPixmap(pixmap)
+            return icon
+        except Exception as e:
+            print(e)
+        return None
+
+    @staticmethod
+    def area_to_str(m2):
+        if m2 >= 10000:
+            return "%s ha %s" % (int(m2/10000), Utils.area_to_str(m2 % 10000))
+        if m2 >= 100:
+            return "%s a %s" % (int(m2/100), Utils.area_to_str(m2 % 100))
+        if m2 > 0:
+            return "%.2f ca" % (m2,)
+        return ""
+
+    @staticmethod
+    def date_format(d, src_separator='-', dst_separator='/'):
+        t = d.split(src_separator)
+        t.reverse()
+        return dst_separator.join(t)
+
+    @staticmethod
+    def has_lowercase(string):
+        return re.search("[a-z]", string) is not None
+
+    @staticmethod
+    def has_uppercase(string):
+        return re.search("[A-Z]", string) is not None
+
+    @staticmethod
+    def has_number(string):
+        return re.search("\d", string) is not None
+
+    @staticmethod
+    def has_specialcharacters(string):
+        return re.search("\W", string) is not None
+
+

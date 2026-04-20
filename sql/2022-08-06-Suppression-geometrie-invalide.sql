@@ -1,0 +1,17 @@
+-- Suppression avoir_demande
+  --delete from avoir_demande where idparcelle IN (select gid from parcelle_d
+  --where (st_isvalid(geom)) <> True);
+-- Suppression certificat
+    --delete from certificat where numerodemande IN (select numdemande from demande where gid IN (select gid from parcelle_d where (st_isvalid(geom)) <> True));
+-- Suppression demande
+--delete from demande where gid IN (select gid from parcelle_d
+  --where (st_isvalid(geom)) <> True);
+-- Suppression limites
+    --delete from limitesparcelle where idparcelle IN (select gid from parcelle_d
+  --where (st_isvalid(geom)) <> True);
+-- Suppression proprietaireparcelle
+   --delete from proprietaireparcelle where idparcelle IN (select gid from parcelle_d
+  --where (st_isvalid(geom)) <> True);
+ -- Suppression parcelle_d
+--delete from parcelle_d where gid IN (select gid from parcelle_d
+  --where (st_isvalid(geom)) <> True);

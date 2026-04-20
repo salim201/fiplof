@@ -1,0 +1,1 @@
+ALTER TABLE personne ADD ogr_id character varying (32);

@@ -1,0 +1,205 @@
+# -*- coding: utf-8 -*-
+import os
+import sys
+import os
+import os.path
+from os.path import expanduser
+from qgis.core import *
+from qgis.gui import *
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import *
+from .Configurations import Ui_Dialog
+from PyQt4.QtGui import *
+import psycopg2
+import psycopg2.extras
+from PyQt4.QtCore import *
+from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui, Qt
+from PyQt4 import Qt, QtGui
+from Helpers import Helper_crypt
+import globalvars
+import time
+import datetime, globalvars
+from datetime import date
+from Utils import Utils
+from Configuration import DbConfig
+from plof import Plof
+from ConfigParser import SafeConfigParser
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class ConfigurationsRun(QtGui.QDialog):
+    def __init__(self,parent,connection):
+        QtGui.QDialog.__init__(self)
+        # Set up the user interface from Designer.
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.parent = parent
+        self.connection = connection
+        self.setWindowTitle("Options d'interconnexion")
+        self.dirname = ''
+        self.crypt_helper = Helper_crypt.Helper_crypt()
+        self.ui.groupBoxBackup.setVisible(False)
+        if globalvars.groupe_id != 10:
+            self.ui.groupBoxBackup.setVisible(True)
+        self.initActions()
+        self.getAllConfigFromDB()
+
+    def initActions(self):
+        self.ui.pushButtonFermer.clicked.connect(self.close)
+        self.ui.pushButtonEnregistrer.clicked.connect(self.insertDataToTable)
+        self.ui.toolButtonParcourir.clicked.connect(self.browseFile)
+        self.ui.pushButtonTestConnexRemote.clicked.connect(self.testerConnexRemote)
+        self.ui.pushButtonTestConnexBackup.clicked.connect(self.testerConnexBackup)
+
+    def getAllConfigFromDB(self):
+        row = None
+        try:
+            cur = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            cur.execute("SELECT * FROM public.configuration WHERE id_configuration=(SELECT MIN(id_configuration) FROM configuration)")
+            row = cur.fetchone()
+            cur.close()
+        except Exception as err:
+            print ("Erreur lors de la lecture de la configuration! " + str(err))
+            self.connection.rollback()
+        if row is not None:
+            self.showDataOnInterface(row)
+
+    def showDataOnInterface(self, row):
+        i = 0
+        for col in row:
+            if col is None:
+                row[i] = ''
+            i = i + 1
+        #Config for remote
+        self.ui.lineEditHostRemote.setText(str(row['host_remote']).strip())
+        self.ui.lineEditPortRemote.setText(str(row['port_remote']).strip())
+        self.ui.lineEditUserRemote.setText(str(row['user_remote']).strip())
+        self.ui.lineEditPasswordRemote.setText(self.crypt_helper.caesar_cipher_decrypt(str(row['password_remote']).strip(),5))
+        self.ui.lineEditNomBaseRemote.setText(str(row['dbname_remote']).strip())
+        #Config for backup
+        self.ui.lineEditHostBackup.setText(str(row['host_backup']).strip())
+        self.ui.lineEditPortBackup.setText(str(row['port_backup']).strip())
+        self.ui.lineEditUserBackup.setText(str(row['user_backup']).strip())
+        self.ui.lineEditPasswordBackup.setText(self.crypt_helper.caesar_cipher_decrypt(str(row['password_backup']).strip(),5))
+        self.ui.lineEditNomBaseBackup.setText(str(row['dbname_backup']).strip())
+
+        if str(row['auto_save_path']) == '':
+            row['auto_save_path'] = os.path.expanduser('~')
+
+        self.ui.lineEditPathAutosave.setText(str(row['auto_save_path']).strip())
+
+        self.ui.checkBoxHasZoneCertifiable.setChecked(row['has_z_certifiable'])
+        self.ui.checkBoxOnlineInterco.setChecked(row['online_interco'])
+
+    def testerConnexRemote(self):
+        #tester la connection
+        try:
+            test_connection = psycopg2.connect(database=str(self.ui.lineEditNomBaseRemote.text()).strip(), user=str(self.ui.lineEditUserRemote.text()).strip(),
+                                           password=str(self.ui.lineEditPasswordRemote.text()).strip(), host=str(self.ui.lineEditHostRemote.text()).strip())
+            QtGui.QMessageBox.information(self,'Test de connexion', u"Connexion réussi à la base distante")
+        except Exception as err:
+            QtGui.QMessageBox.critical(self,'Erreur de connexion', str(err))
+
+    def testerConnexBackup(self):
+        #tester la connection
+        try:
+            test_connection = psycopg2.connect(database=str(self.ui.lineEditNomBaseBackup.text()).strip(), user=str(self.ui.lineEditUserBackup.text()).strip(),
+                                           password=str(self.ui.lineEditPasswordBackup.text()).strip(), host=str(self.ui.lineEditHostBackup.text()).strip())
+            QtGui.QMessageBox.information(self,'Test de connexion', u"Connexion réussi à la base de sauvegarde")
+        except Exception as err:
+            QtGui.QMessageBox.critical(self,'Erreur de connexion', str(err))
+
+
+    def getRowsNumber(self):
+        res = 0
+        try:
+            cur = self.connection.cursor()
+            cur.execute(
+                "SELECT COUNT(*) FROM public.configuration")
+            res = cur.fetchone()[0]
+            cur.close()
+        except Exception as err:
+            print("Erreur lors de la lecture de la configuration! " + str(err))
+            self.connection.rollback()
+        return res
+
+    def insertDataToTable(self):
+        data = {}
+        data['host_remote'] = str(self.ui.lineEditHostRemote.text()).strip()
+        data['port_remote'] = str(self.ui.lineEditPortRemote.text()).strip()
+        data['user_remote'] = str(self.ui.lineEditUserRemote.text()).strip()
+        password_remote = str(self.ui.lineEditPasswordRemote.text()).strip()
+        data['password_remote'] = self.crypt_helper.caesar_cipher_encrypt(password_remote,5)
+        data['dbname_remote'] = str(self.ui.lineEditNomBaseRemote.text()).strip()
+
+        data['host_backup'] = str(self.ui.lineEditHostBackup.text()).strip()
+        data['port_backup'] = str(self.ui.lineEditPortBackup.text()).strip()
+        data['user_backup'] = str(self.ui.lineEditUserBackup.text()).strip()
+        password_backup = str(self.ui.lineEditPasswordBackup.text()).strip()
+        data['password_backup'] = self.crypt_helper.caesar_cipher_encrypt(password_backup,5)
+        data['dbname_backup'] = str(self.ui.lineEditNomBaseBackup.text()).strip()
+
+        data['auto_save_path'] = str(self.ui.lineEditPathAutosave.text()).strip()
+
+        data['has_z_certifiable'] = self.ui.checkBoxHasZoneCertifiable.isChecked()
+        data['online_interco'] = self.ui.checkBoxOnlineInterco.isChecked()
+
+        if self.getRowsNumber() == 0:
+            try:
+                cur = self.connection.cursor()
+                cur.execute ("INSERT INTO public.configuration "
+                             "(host_remote, port_remote, user_remote, password_remote, dbname_remote, host_backup, port_backup, user_backup, password_backup, dbname_backup, auto_save_path, "
+                             "has_z_certifiable, online_interco) "
+                             "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                             (data['host_remote'],data['port_remote'],data['user_remote'],
+                              data['password_remote'],data['dbname_remote'],data['host_backup'],
+                              data['port_backup'],data['user_backup'],data['password_backup'],
+                              data['dbname_backup'], data['auto_save_path'], data['has_z_certifiable'], data['online_interco']))
+                self.connection.commit()
+                QtGui.QMessageBox.information(None, "Info", u"Paramètres enregistrées")
+                self.close()
+            except Exception as err:
+                print ("Erreur lors de l'insertion " + str(err))
+                QtGui.QMessageBox.critical(None, "Erreur", u"Erreur d'enregistrement")
+                self.connection.rollback()
+        else:
+            try:
+                cur = self.connection.cursor()
+                cur.execute ("UPDATE public.configuration SET "
+                             "host_remote = %s, port_remote = %s,"
+                             " user_remote = %s, password_remote = %s,"
+                             " dbname_remote = %s, host_backup = %s, "
+                             "port_backup = %s, user_backup = %s, "
+                             "password_backup = %s, dbname_backup = %s, "
+                             "auto_save_path = %s, has_z_certifiable = %s, online_interco = %s "
+                             "WHERE id_configuration=(SELECT MIN(id_configuration) FROM configuration)",
+                             (data['host_remote'],data['port_remote'],data['user_remote'],
+                              data['password_remote'],data['dbname_remote'],data['host_backup'],
+                              data['port_backup'],data['user_backup'],data['password_backup'],
+                              data['dbname_backup'], data['auto_save_path'], data['has_z_certifiable'], data['online_interco']))
+                self.connection.commit()
+                QtGui.QMessageBox.information(None, "Info", u"Paramètres enregistrées")
+                self.close()
+            except Exception as err:
+                print ("Erreur lors de l'update " + str(err))
+                QtGui.QMessageBox.critical(None, "Erreur", u"Erreur d'enregistrement")
+                self.connection.rollback()
+
+    def browseFile(self):
+        self.dirname = QtGui.QFileDialog.getExistingDirectory(self, "Choisissez un dossier de sauvegarde")
+        self.ui.lineEditPathAutosave.setText(self.dirname)
+
+

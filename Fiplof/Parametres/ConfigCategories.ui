@@ -1,0 +1,2098 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1216</width>
+    <height>347</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>I.F.T</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTabWidget" name="tabWidget_2">
+         <property name="styleSheet">
+          <string notr="true">QDateEdit, QLineEdit {
+font-size: 7pt
+}</string>
+         </property>
+         <property name="tabPosition">
+          <enum>QTabWidget::North</enum>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="tab_3">
+          <attribute name="title">
+           <string>Par Surface</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QTableWidget" name="tableWidgetIFTSurface">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <row>
+              <property name="text">
+               <string>Catégorie 1</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 2</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 3</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 4</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 5</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 6</string>
+              </property>
+             </row>
+             <column>
+              <property name="text">
+               <string>Id</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Description</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Valeur (Ar/Ha)</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_4">
+          <attribute name="title">
+           <string>Par Classe</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 3</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 4</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 1</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 6</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 5</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="3">
+            <widget class="QLabel" name="label_8">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe A</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 2</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4" colspan="3">
+            <widget class="QLabel" name="label_9">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe B</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLabel" name="label_16">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="7">
+            <widget class="QLabel" name="label_19">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="14">
+            <widget class="QLabel" name="label_26">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5">
+            <widget class="QLabel" name="label_17">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6">
+            <widget class="QLabel" name="label_18">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="8">
+            <widget class="QLabel" name="label_20">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="9">
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="10">
+            <widget class="QLabel" name="label_22">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="11">
+            <widget class="QLabel" name="label_23">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="12">
+            <widget class="QLabel" name="label_24">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="13">
+            <widget class="QLabel" name="label_25">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="15">
+            <widget class="QLabel" name="label_27">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="13" colspan="3">
+            <widget class="QLabel" name="label_12">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classes E</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="10" colspan="3">
+            <widget class="QLabel" name="label_11">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe D</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7" colspan="3">
+            <widget class="QLabel" name="label_10">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe C</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb1A">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin1A"/>
+           </item>
+           <item row="2" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb1B"/>
+           </item>
+           <item row="2" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin1B"/>
+           </item>
+           <item row="2" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb1C"/>
+           </item>
+           <item row="2" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin1C"/>
+           </item>
+           <item row="2" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb1D"/>
+           </item>
+           <item row="2" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin1D"/>
+           </item>
+           <item row="2" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb1E"/>
+           </item>
+           <item row="2" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin1E"/>
+           </item>
+           <item row="3" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb2A">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin2A"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb3A">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb4A">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb5A">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb6A">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin3A"/>
+           </item>
+           <item row="5" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin4A"/>
+           </item>
+           <item row="6" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin5A"/>
+           </item>
+           <item row="7" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin6A"/>
+           </item>
+           <item row="3" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb2B"/>
+           </item>
+           <item row="3" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin2B"/>
+           </item>
+           <item row="4" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb3B"/>
+           </item>
+           <item row="4" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin3B"/>
+           </item>
+           <item row="5" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb4B"/>
+           </item>
+           <item row="5" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin4B"/>
+           </item>
+           <item row="6" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb5B"/>
+           </item>
+           <item row="7" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb6B"/>
+           </item>
+           <item row="6" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin5B"/>
+           </item>
+           <item row="7" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin6B"/>
+           </item>
+           <item row="3" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb2C"/>
+           </item>
+           <item row="3" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin2C"/>
+           </item>
+           <item row="4" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb3C"/>
+           </item>
+           <item row="4" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin3C"/>
+           </item>
+           <item row="5" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb4C"/>
+           </item>
+           <item row="5" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin4C"/>
+           </item>
+           <item row="6" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb5C"/>
+           </item>
+           <item row="6" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin5C"/>
+           </item>
+           <item row="7" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb6C"/>
+           </item>
+           <item row="7" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin6C"/>
+           </item>
+           <item row="3" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb2D"/>
+           </item>
+           <item row="4" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb3D"/>
+           </item>
+           <item row="3" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin2D"/>
+           </item>
+           <item row="4" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin3D"/>
+           </item>
+           <item row="5" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb4D"/>
+           </item>
+           <item row="5" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin4D"/>
+           </item>
+           <item row="6" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb5D"/>
+           </item>
+           <item row="6" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin5D"/>
+           </item>
+           <item row="7" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb6D"/>
+           </item>
+           <item row="7" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin6D"/>
+           </item>
+           <item row="3" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb2E"/>
+           </item>
+           <item row="4" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb3E"/>
+           </item>
+           <item row="5" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb4E"/>
+           </item>
+           <item row="6" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb5E"/>
+           </item>
+           <item row="7" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb6E"/>
+           </item>
+           <item row="3" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin2E"/>
+           </item>
+           <item row="4" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin3E"/>
+           </item>
+           <item row="5" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin4E"/>
+           </item>
+           <item row="6" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin5E"/>
+           </item>
+           <item row="7" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin6E"/>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal1A">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal2A">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal3A">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal4A">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal5A">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal6A">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal1B">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal2B">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal3B">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal4B">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal5B">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal6B">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal1C">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal2C">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal3C">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal4C">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal5C">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal6C">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal1D"/>
+           </item>
+           <item row="3" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal2D"/>
+           </item>
+           <item row="4" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal3D"/>
+           </item>
+           <item row="5" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal4D"/>
+           </item>
+           <item row="6" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal5D"/>
+           </item>
+           <item row="7" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal6D"/>
+           </item>
+           <item row="2" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal1E"/>
+           </item>
+           <item row="3" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal2E"/>
+           </item>
+           <item row="4" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal3E"/>
+           </item>
+           <item row="5" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal4E"/>
+           </item>
+           <item row="6" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal5E"/>
+           </item>
+           <item row="7" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal6E"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_5">
+          <attribute name="title">
+           <string>Par Consistance</string>
+          </attribute>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QTableWidget" name="tableWidgetIFTConsistance">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Id</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Consistance</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Prix (Ar)</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>I.F.P.B</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QTabWidget" name="tabWidget_3">
+         <property name="styleSheet">
+          <string notr="true">QDateEdit, QLineEdit {
+font-size: 7pt
+}</string>
+         </property>
+         <property name="tabPosition">
+          <enum>QTabWidget::North</enum>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="tab_6">
+          <attribute name="title">
+           <string>Par Surface</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QTableWidget" name="tableWidgetIFPBSurface">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <row>
+              <property name="text">
+               <string>Catégorie 1</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 2</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 3</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 4</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 5</string>
+              </property>
+             </row>
+             <row>
+              <property name="text">
+               <string>Catégorie 6</string>
+              </property>
+             </row>
+             <column>
+              <property name="text">
+               <string>Id</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Description</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Valeur (Ar/Ha)</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Valeur Avec Location (Ar/Ha)</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_7">
+          <attribute name="title">
+           <string>Par Classe</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_28">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 3</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_29">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 4</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_30">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 1</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_31">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 6</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_32">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 5</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="3">
+            <widget class="QLabel" name="label_33">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe A</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_34">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Catégorie 2</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4" colspan="3">
+            <widget class="QLabel" name="label_35">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe B</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLabel" name="label_37">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_38">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="7">
+            <widget class="QLabel" name="label_39">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_40">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="14">
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5">
+            <widget class="QLabel" name="label_42">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6">
+            <widget class="QLabel" name="label_43">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="8">
+            <widget class="QLabel" name="label_44">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="9">
+            <widget class="QLabel" name="label_45">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="10">
+            <widget class="QLabel" name="label_46">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="11">
+            <widget class="QLabel" name="label_47">
+             <property name="text">
+              <string>Date Fin</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="12">
+            <widget class="QLabel" name="label_48">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="13">
+            <widget class="QLabel" name="label_49">
+             <property name="text">
+              <string>Date Début</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="15">
+            <widget class="QLabel" name="label_50">
+             <property name="text">
+              <string>Valeur (Ar)</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="13" colspan="3">
+            <widget class="QLabel" name="label_51">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classes E</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="10" colspan="3">
+            <widget class="QLabel" name="label_52">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe D</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="7" colspan="3">
+            <widget class="QLabel" name="label_53">
+             <property name="font">
+              <font>
+               <pointsize>7</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #808080;
+color: white;
+padding: 5px</string>
+             </property>
+             <property name="text">
+              <string>Classe C</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb1A_2">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin1A_2"/>
+           </item>
+           <item row="2" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb1B_2"/>
+           </item>
+           <item row="2" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin1B_2"/>
+           </item>
+           <item row="2" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb1C_2"/>
+           </item>
+           <item row="2" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin1C_2"/>
+           </item>
+           <item row="2" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb1D_2"/>
+           </item>
+           <item row="2" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin1D_2"/>
+           </item>
+           <item row="2" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb1E_2"/>
+           </item>
+           <item row="2" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin1E_2"/>
+           </item>
+           <item row="3" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb2A_2">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin2A_2"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb3A_2">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb4A_2">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb5A_2">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QDateEdit" name="dateEditIFTDeb6A_2">
+             <property name="calendarPopup">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin3A_2"/>
+           </item>
+           <item row="5" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin4A_2"/>
+           </item>
+           <item row="6" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin5A_2"/>
+           </item>
+           <item row="7" column="2">
+            <widget class="QDateEdit" name="dateEditIFTFin6A_2"/>
+           </item>
+           <item row="3" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb2B_2"/>
+           </item>
+           <item row="3" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin2B_2"/>
+           </item>
+           <item row="4" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb3B_2"/>
+           </item>
+           <item row="4" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin3B_2"/>
+           </item>
+           <item row="5" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb4B_2"/>
+           </item>
+           <item row="5" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin4B_2"/>
+           </item>
+           <item row="6" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb5B_2"/>
+           </item>
+           <item row="7" column="4">
+            <widget class="QDateEdit" name="dateEditIFTDeb6B_2"/>
+           </item>
+           <item row="6" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin5B_2"/>
+           </item>
+           <item row="7" column="5">
+            <widget class="QDateEdit" name="dateEditIFTFin6B_2"/>
+           </item>
+           <item row="3" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb2C_2"/>
+           </item>
+           <item row="3" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin2C_2"/>
+           </item>
+           <item row="4" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb3C_2"/>
+           </item>
+           <item row="4" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin3C_2"/>
+           </item>
+           <item row="5" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb4C_2"/>
+           </item>
+           <item row="5" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin4C_2"/>
+           </item>
+           <item row="6" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb5C_2"/>
+           </item>
+           <item row="6" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin5C_2"/>
+           </item>
+           <item row="7" column="7">
+            <widget class="QDateEdit" name="dateEditIFTDeb6C_2"/>
+           </item>
+           <item row="7" column="8">
+            <widget class="QDateEdit" name="dateEditIFTFin6C_2"/>
+           </item>
+           <item row="3" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb2D_2"/>
+           </item>
+           <item row="4" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb3D_2"/>
+           </item>
+           <item row="3" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin2D_2"/>
+           </item>
+           <item row="4" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin3D_2"/>
+           </item>
+           <item row="5" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb4D_2"/>
+           </item>
+           <item row="5" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin4D_2"/>
+           </item>
+           <item row="6" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb5D_2"/>
+           </item>
+           <item row="6" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin5D_2"/>
+           </item>
+           <item row="7" column="10">
+            <widget class="QDateEdit" name="dateEditIFTDeb6D_2"/>
+           </item>
+           <item row="7" column="11">
+            <widget class="QDateEdit" name="dateEditIFTFin6D_2"/>
+           </item>
+           <item row="3" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb2E_2"/>
+           </item>
+           <item row="4" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb3E_2"/>
+           </item>
+           <item row="5" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb4E_2"/>
+           </item>
+           <item row="6" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb5E_2"/>
+           </item>
+           <item row="7" column="13">
+            <widget class="QDateEdit" name="dateEditIFTDeb6E_2"/>
+           </item>
+           <item row="3" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin2E_2"/>
+           </item>
+           <item row="4" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin3E_2"/>
+           </item>
+           <item row="5" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin4E_2"/>
+           </item>
+           <item row="6" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin5E_2"/>
+           </item>
+           <item row="7" column="14">
+            <widget class="QDateEdit" name="dateEditIFTFin6E_2"/>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal1A_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal2A_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal3A_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal4A_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal5A_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="3">
+            <widget class="QLineEdit" name="lineEditIFTVal6A_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal1B_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal2B_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal3B_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal4B_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal5B_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="6">
+            <widget class="QLineEdit" name="lineEditIFTVal6B_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal1C_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal2C_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal3C_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal4C_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal5C_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="9">
+            <widget class="QLineEdit" name="lineEditIFTVal6C_2">
+             <property name="inputMask">
+              <string>999999</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal1D_2"/>
+           </item>
+           <item row="3" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal2D_2"/>
+           </item>
+           <item row="4" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal3D_2"/>
+           </item>
+           <item row="5" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal4D_2"/>
+           </item>
+           <item row="6" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal5D_2"/>
+           </item>
+           <item row="7" column="12">
+            <widget class="QLineEdit" name="lineEditIFTVal6D_2"/>
+           </item>
+           <item row="2" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal1E_2"/>
+           </item>
+           <item row="3" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal2E_2"/>
+           </item>
+           <item row="4" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal3E_2"/>
+           </item>
+           <item row="5" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal4E_2"/>
+           </item>
+           <item row="6" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal5E_2"/>
+           </item>
+           <item row="7" column="15">
+            <widget class="QLineEdit" name="lineEditIFTVal6E_2"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_8">
+          <attribute name="title">
+           <string>Par Consistance</string>
+          </attribute>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QTableWidget" name="tableWidgetIFPBConsistance">
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Id</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Consistance</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Prix (Ar)</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Prix Avec Location (Ar/Ha)</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonAnnuler">
+       <property name="text">
+        <string>Annuler</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonOK">
+       <property name="text">
+        <string>OK</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>dateEditIFTDeb1A</tabstop>
+  <tabstop>dateEditIFTFin1A</tabstop>
+  <tabstop>lineEditIFTVal1A</tabstop>
+  <tabstop>dateEditIFTDeb1B</tabstop>
+  <tabstop>dateEditIFTFin1B</tabstop>
+  <tabstop>lineEditIFTVal1B</tabstop>
+  <tabstop>dateEditIFTDeb1C</tabstop>
+  <tabstop>dateEditIFTFin1C</tabstop>
+  <tabstop>lineEditIFTVal1C</tabstop>
+  <tabstop>dateEditIFTDeb1D</tabstop>
+  <tabstop>dateEditIFTFin1D</tabstop>
+  <tabstop>lineEditIFTVal1D</tabstop>
+  <tabstop>dateEditIFTDeb1E</tabstop>
+  <tabstop>dateEditIFTFin1E</tabstop>
+  <tabstop>lineEditIFTVal1E</tabstop>
+  <tabstop>dateEditIFTDeb2A</tabstop>
+  <tabstop>dateEditIFTFin2A</tabstop>
+  <tabstop>lineEditIFTVal2A</tabstop>
+  <tabstop>dateEditIFTDeb2B</tabstop>
+  <tabstop>dateEditIFTFin2B</tabstop>
+  <tabstop>lineEditIFTVal2B</tabstop>
+  <tabstop>dateEditIFTDeb2C</tabstop>
+  <tabstop>dateEditIFTFin2C</tabstop>
+  <tabstop>lineEditIFTVal2C</tabstop>
+  <tabstop>dateEditIFTDeb2D</tabstop>
+  <tabstop>dateEditIFTFin2D</tabstop>
+  <tabstop>lineEditIFTVal2D</tabstop>
+  <tabstop>dateEditIFTDeb2E</tabstop>
+  <tabstop>dateEditIFTFin2E</tabstop>
+  <tabstop>lineEditIFTVal2E</tabstop>
+  <tabstop>dateEditIFTDeb3A</tabstop>
+  <tabstop>dateEditIFTFin3A</tabstop>
+  <tabstop>lineEditIFTVal3A</tabstop>
+  <tabstop>dateEditIFTDeb3B</tabstop>
+  <tabstop>dateEditIFTFin3B</tabstop>
+  <tabstop>lineEditIFTVal3B</tabstop>
+  <tabstop>dateEditIFTDeb3C</tabstop>
+  <tabstop>dateEditIFTFin3C</tabstop>
+  <tabstop>lineEditIFTVal3C</tabstop>
+  <tabstop>dateEditIFTDeb3D</tabstop>
+  <tabstop>dateEditIFTFin3D</tabstop>
+  <tabstop>lineEditIFTVal3D</tabstop>
+  <tabstop>dateEditIFTDeb3E</tabstop>
+  <tabstop>dateEditIFTFin3E</tabstop>
+  <tabstop>lineEditIFTVal3E</tabstop>
+  <tabstop>dateEditIFTDeb4A</tabstop>
+  <tabstop>dateEditIFTFin4A</tabstop>
+  <tabstop>lineEditIFTVal4A</tabstop>
+  <tabstop>dateEditIFTDeb4B</tabstop>
+  <tabstop>dateEditIFTFin4B</tabstop>
+  <tabstop>lineEditIFTVal4B</tabstop>
+  <tabstop>dateEditIFTDeb4C</tabstop>
+  <tabstop>dateEditIFTFin4C</tabstop>
+  <tabstop>lineEditIFTVal4C</tabstop>
+  <tabstop>dateEditIFTDeb4D</tabstop>
+  <tabstop>dateEditIFTFin4D</tabstop>
+  <tabstop>lineEditIFTVal4D</tabstop>
+  <tabstop>dateEditIFTDeb4E</tabstop>
+  <tabstop>dateEditIFTFin4E</tabstop>
+  <tabstop>lineEditIFTVal4E</tabstop>
+  <tabstop>dateEditIFTDeb5A</tabstop>
+  <tabstop>dateEditIFTFin5A</tabstop>
+  <tabstop>lineEditIFTVal5A</tabstop>
+  <tabstop>dateEditIFTDeb5B</tabstop>
+  <tabstop>dateEditIFTFin5B</tabstop>
+  <tabstop>lineEditIFTVal5B</tabstop>
+  <tabstop>dateEditIFTDeb5C</tabstop>
+  <tabstop>dateEditIFTFin5C</tabstop>
+  <tabstop>lineEditIFTVal5C</tabstop>
+  <tabstop>dateEditIFTDeb5D</tabstop>
+  <tabstop>dateEditIFTFin5D</tabstop>
+  <tabstop>lineEditIFTVal5D</tabstop>
+  <tabstop>dateEditIFTDeb5E</tabstop>
+  <tabstop>dateEditIFTFin5E</tabstop>
+  <tabstop>lineEditIFTVal5E</tabstop>
+  <tabstop>dateEditIFTDeb6A</tabstop>
+  <tabstop>dateEditIFTFin6A</tabstop>
+  <tabstop>lineEditIFTVal6A</tabstop>
+  <tabstop>dateEditIFTDeb6B</tabstop>
+  <tabstop>dateEditIFTFin6B</tabstop>
+  <tabstop>lineEditIFTVal6B</tabstop>
+  <tabstop>dateEditIFTDeb6C</tabstop>
+  <tabstop>dateEditIFTFin6C</tabstop>
+  <tabstop>lineEditIFTVal6C</tabstop>
+  <tabstop>dateEditIFTDeb6D</tabstop>
+  <tabstop>dateEditIFTFin6D</tabstop>
+  <tabstop>lineEditIFTVal6D</tabstop>
+  <tabstop>dateEditIFTDeb6E</tabstop>
+  <tabstop>dateEditIFTFin6E</tabstop>
+  <tabstop>lineEditIFTVal6E</tabstop>
+  <tabstop>dateEditIFTDeb1A_2</tabstop>
+  <tabstop>dateEditIFTFin1A_2</tabstop>
+  <tabstop>lineEditIFTVal1A_2</tabstop>
+  <tabstop>dateEditIFTDeb1B_2</tabstop>
+  <tabstop>dateEditIFTFin1B_2</tabstop>
+  <tabstop>lineEditIFTVal1B_2</tabstop>
+  <tabstop>dateEditIFTDeb1C_2</tabstop>
+  <tabstop>dateEditIFTFin1C_2</tabstop>
+  <tabstop>lineEditIFTVal1C_2</tabstop>
+  <tabstop>dateEditIFTDeb1D_2</tabstop>
+  <tabstop>dateEditIFTFin1D_2</tabstop>
+  <tabstop>lineEditIFTVal1D_2</tabstop>
+  <tabstop>dateEditIFTDeb1E_2</tabstop>
+  <tabstop>dateEditIFTFin1E_2</tabstop>
+  <tabstop>lineEditIFTVal1E_2</tabstop>
+  <tabstop>dateEditIFTDeb2A_2</tabstop>
+  <tabstop>dateEditIFTFin2A_2</tabstop>
+  <tabstop>lineEditIFTVal2A_2</tabstop>
+  <tabstop>dateEditIFTDeb2B_2</tabstop>
+  <tabstop>dateEditIFTFin2B_2</tabstop>
+  <tabstop>lineEditIFTVal2B_2</tabstop>
+  <tabstop>dateEditIFTDeb2C_2</tabstop>
+  <tabstop>dateEditIFTFin2C_2</tabstop>
+  <tabstop>lineEditIFTVal2C_2</tabstop>
+  <tabstop>dateEditIFTDeb2D_2</tabstop>
+  <tabstop>dateEditIFTFin2D_2</tabstop>
+  <tabstop>lineEditIFTVal2D_2</tabstop>
+  <tabstop>dateEditIFTDeb2E_2</tabstop>
+  <tabstop>dateEditIFTFin2E_2</tabstop>
+  <tabstop>lineEditIFTVal2E_2</tabstop>
+  <tabstop>dateEditIFTDeb3A_2</tabstop>
+  <tabstop>dateEditIFTFin3A_2</tabstop>
+  <tabstop>lineEditIFTVal3A_2</tabstop>
+  <tabstop>dateEditIFTDeb3B_2</tabstop>
+  <tabstop>dateEditIFTFin3B_2</tabstop>
+  <tabstop>lineEditIFTVal3B_2</tabstop>
+  <tabstop>dateEditIFTDeb3C_2</tabstop>
+  <tabstop>dateEditIFTFin3C_2</tabstop>
+  <tabstop>lineEditIFTVal3C_2</tabstop>
+  <tabstop>dateEditIFTDeb3D_2</tabstop>
+  <tabstop>dateEditIFTFin3D_2</tabstop>
+  <tabstop>lineEditIFTVal3D_2</tabstop>
+  <tabstop>dateEditIFTDeb3E_2</tabstop>
+  <tabstop>dateEditIFTFin3E_2</tabstop>
+  <tabstop>lineEditIFTVal3E_2</tabstop>
+  <tabstop>dateEditIFTDeb4A_2</tabstop>
+  <tabstop>dateEditIFTFin4A_2</tabstop>
+  <tabstop>lineEditIFTVal4A_2</tabstop>
+  <tabstop>dateEditIFTDeb4B_2</tabstop>
+  <tabstop>dateEditIFTFin4B_2</tabstop>
+  <tabstop>lineEditIFTVal4B_2</tabstop>
+  <tabstop>dateEditIFTDeb4C_2</tabstop>
+  <tabstop>dateEditIFTFin4C_2</tabstop>
+  <tabstop>lineEditIFTVal4C_2</tabstop>
+  <tabstop>dateEditIFTDeb4D_2</tabstop>
+  <tabstop>dateEditIFTFin4D_2</tabstop>
+  <tabstop>lineEditIFTVal4D_2</tabstop>
+  <tabstop>dateEditIFTDeb4E_2</tabstop>
+  <tabstop>dateEditIFTFin4E_2</tabstop>
+  <tabstop>lineEditIFTVal4E_2</tabstop>
+  <tabstop>dateEditIFTDeb5A_2</tabstop>
+  <tabstop>dateEditIFTFin5A_2</tabstop>
+  <tabstop>lineEditIFTVal5A_2</tabstop>
+  <tabstop>dateEditIFTDeb5B_2</tabstop>
+  <tabstop>dateEditIFTFin5B_2</tabstop>
+  <tabstop>lineEditIFTVal5B_2</tabstop>
+  <tabstop>dateEditIFTDeb5C_2</tabstop>
+  <tabstop>dateEditIFTFin5C_2</tabstop>
+  <tabstop>lineEditIFTVal5C_2</tabstop>
+  <tabstop>dateEditIFTDeb5D_2</tabstop>
+  <tabstop>dateEditIFTFin5D_2</tabstop>
+  <tabstop>lineEditIFTVal5D_2</tabstop>
+  <tabstop>dateEditIFTDeb5E_2</tabstop>
+  <tabstop>dateEditIFTFin5E_2</tabstop>
+  <tabstop>lineEditIFTVal5E_2</tabstop>
+  <tabstop>dateEditIFTDeb6A_2</tabstop>
+  <tabstop>dateEditIFTFin6A_2</tabstop>
+  <tabstop>lineEditIFTVal6A_2</tabstop>
+  <tabstop>dateEditIFTDeb6B_2</tabstop>
+  <tabstop>dateEditIFTFin6B_2</tabstop>
+  <tabstop>lineEditIFTVal6B_2</tabstop>
+  <tabstop>dateEditIFTDeb6C_2</tabstop>
+  <tabstop>dateEditIFTFin6C_2</tabstop>
+  <tabstop>lineEditIFTVal6C_2</tabstop>
+  <tabstop>dateEditIFTDeb6D_2</tabstop>
+  <tabstop>dateEditIFTFin6D_2</tabstop>
+  <tabstop>lineEditIFTVal6D_2</tabstop>
+  <tabstop>dateEditIFTDeb6E_2</tabstop>
+  <tabstop>dateEditIFTFin6E_2</tabstop>
+  <tabstop>lineEditIFTVal6E_2</tabstop>
+  <tabstop>pushButtonOK</tabstop>
+  <tabstop>pushButtonAnnuler</tabstop>
+  <tabstop>tableWidgetIFTSurface</tabstop>
+  <tabstop>tabWidget_3</tabstop>
+  <tabstop>tableWidgetIFTConsistance</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>tableWidgetIFPBSurface</tabstop>
+  <tabstop>tabWidget_2</tabstop>
+  <tabstop>tableWidgetIFPBConsistance</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

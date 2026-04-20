@@ -1,0 +1,897 @@
+# -*- coding: utf-8 -*-
+import os
+import sys
+import os
+import os.path
+from PyQt4 import QtCore, QtGui
+from qgis.core import *
+from qgis.gui import *
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import *
+from .FusionCF import Ui_Dialog
+
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+from PyQt4 import QtGui, Qt
+from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui, Qt
+from PyQt4 import Qt, QtGui
+import globalvars
+import time
+import datetime, globalvars
+import datetime
+from datetime import date
+
+from models.ProjetCouche import ProjetCouche
+import globalvars
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class FusionRun(QtGui.QDialog):
+    def __init__(self,parent):
+        QtGui.QDialog.__init__(self)
+        # Set up the user interface from Designer.
+        self.ui = Ui_Dialog()
+        self.parent = parent
+        self.personne = []
+        self.numCf = self.parent.NumeroCF
+        self.cLayer = self.parent.cLayer
+        self.parcelleMerge = self.parent.parcelleMerge
+        self.processLayer = self.parent.proccesLayer
+        self.canvas = self.parent.canvas
+        self.newGid = ''
+        #self.NumeroCF = self.parent.NumeroCF
+        self.raster_path, self.layer_raster, self.layer_shape, self.rect = None, None, None, None
+
+
+
+        os.chdir(self.resolve(".."))
+        dr = os.getcwd()
+        sys.path.append(os.path.dirname(dr))
+        from Configuration import DbConfig
+        self.db_config = DbConfig.DbConfig()
+#       print self.parent.txt
+
+        #self.id_projet = self.parent.id_projet
+        self.connection = self.parent.connection
+
+
+
+
+        #self.geomId = self.parent.geomid
+        #self.OtherGeomId = self.parent.OtherGeomId
+        #self.typeOp = self.parent.typeOp
+        #self.idActe = self.parent.idActe
+        #self.typeOp = 2
+        #self.newGeom = ""
+        self.previewLayer = ""
+        self.idActe = 0
+        self.ui.setupUi(self)
+        self.NouveauDemande = ""
+        self.ui.precedent_2.setVisible(False)
+        self.ui.suivant_2.setVisible(False)
+        self.ui.numRoCertificatLineEdit_3.setText(self.numCf[0])
+        self.ui.lineEdit.setText(self.numCf[1])
+
+        self.ui.numRoCertificatLineEdit_3.setReadOnly(True)
+        self.ui.lineEdit.setReadOnly(True)
+
+        self.ui.save.clicked.connect(self.saveAll)
+        #Eself.ui.tab_5.setVisible(False)
+        #self.ui.tabWidget.removeTab(3)
+        #self.ui.tabWidget.removeTab(3)
+        self.ui.tabWidget.removeTab(2)
+
+        self.ui.consistanceComboBox.setVisible(True)
+        self.ui.consistanceLabel.setVisible(True)
+        #self.ui.pushButtonAddition.clicked.connect(self.gestionProprio)
+        self.ui.Ajouter_2.clicked.connect(self.ChargerNouvelleLimites)
+        self.tbVoisin = self.ui.tableWidget_6
+
+        from Certificat.GestionProprietaireRun import GestionProprietaireRun
+        self.proprio = GestionProprietaireRun(self.connection)
+        self.nouveauProprio = ""
+
+
+
+        self.ui.details.setVisible(True)
+        self.ui.detail.setVisible(True)
+        self.ui.pushButtonAddition.clicked.connect(self.gestionProprio)
+        self.proprio.listePersonne.ui.btnSelectionner.clicked.connect(self.getIdPersonnePhysique)
+
+        try :
+            self.loadConsistance(self.connection)
+            self.writeNumCF()
+
+            #self.proprioT.listePersonne.ui.btnSelectionner.clicked.connect(self.getIdPersonnePhysiques)
+        except Exception as e:
+            print(e)
+
+    def ChargerNouvelleLimites(self):
+        from VoisinsRun import VoisinsRun
+        opp = VoisinsRun(self)
+        opp.show()
+        result = opp.exec_()
+
+    def gestionProprio(self):
+        print(' click add personne button ')
+        from Certificat.GestionProprietaireRun import GestionProprietaireRun
+        GP = GestionProprietaireRun(self.connection)
+        self.proprio.exec_()
+
+
+    def infosCF(self,numCf):
+        connection = self.connection
+        print('----numCf------')
+        print(numCf)
+        cursor = connection.cursor()
+        cursor.execute("SELECT * from certificat"
+                       " WHERE numerocertificat = %s ",
+                       [str(numCf).strip()])
+
+        rw = cursor.fetchone()
+        print " infosCF "
+        print rw
+        self.infosCert = rw
+        return  rw
+
+    def deleteOldGeometri(self):
+        processLayer = self.cLayer
+        #pkFld = processLayer.pendingPkAttributesList()[0]
+        cur = self.connection.cursor()
+        for aFeat in self.processLayer:
+            gid= aFeat.id()
+            print "aFeat.id() IN"
+            print gid
+            cur.execute("SELECT idcertificat from parcelle_d  WHERE  gid=%s", [int(gid)])
+            dm = cur.fetchone()
+            if dm[0] != None:
+                self.cLayer.startEditing()
+                cur.execute("delete from proprietaireparcelle WHERE idparcelle=%s", [int(gid)])
+                cur.execute("delete from  avoir_demande WHERE idparcelle=%s", [int(gid)])
+                cur.execute("delete from  oppositions WHERE gid=%s", [int(gid)])
+                cur.execute("delete from demande_crl WHERE iddemande = (SELECT iddemande FROM demande WHERE gid = %s)", [int(gid)])
+                cur.execute("delete from  demande WHERE gid=%s", [int(gid)])
+                cur.execute("delete from  limitesparcelle WHERE idparcelle=%s", [int(gid)])
+                cur.execute("delete from  parcelle_d WHERE gid=%s", [int(gid)])
+
+                cur.execute("delete from  certificat WHERE idcertificat=%s", [int(dm[0])])
+                self.connection.commit()
+                self.cLayer.commitChanges()
+
+                # if hasCF[0] != None :
+                #    print  "demande de confirmation par saisie code"
+                #    from BeforeDelRun import BeforeDelRun
+                #   z = BeforeDelRun(self)
+                #    result = z.exec_()
+                # else :
+                #self.cLayer.deleteFeature(int(gid))
+        for layer in self.canvas.layers():
+            if layer.type() == layer.VectorLayer:
+                layer.removeSelection()
+        self.canvas.refresh()
+        self.reloadCanvas()
+
+    def addNewGeometri(self,geometry):
+
+        x = None
+        strgeom = ""
+        self.ok = 0
+        if geometry.wkbType() == QGis.WKBPolygon:
+            x = geometry.asPolygon()
+        if geometry.wkbType() == QGis.WKBMultiPolygon:
+            x = geometry.asMultiPolygon()[0]
+        print " GEOMETRY "
+
+        x = x[0]
+        i = 0
+        print x
+        cur = self.connection.cursor()
+        try:
+            num = ""
+            exe = cur.execute(
+                "INSERT INTO parcelle_d (numero,geom,surface)VALUES (%s, ST_GeomFromText(%s, 29702),ST_Area(%s)) returning gid",
+                (num, str(geometry.exportToWkt()), str(geometry.exportToWkt())))
+            self.connection.commit()
+            dm = cur.fetchone()
+            if (len(dm) > 0 ) :
+                self.newGid = dm[0]
+                self.ok = 1
+        except Exception as e:
+            print(e)
+
+    def infosCF2(self):
+
+        connection = self.connection
+        cursor = connection.cursor()
+        cursor.execute("SELECT * from certificat"
+                       " WHERE numerocertificat = %s ",
+                       [str(self.numCf[0])])
+        rw = cursor.fetchone()
+        print " infosCF "
+        print rw
+        #self.infosCert = rw
+        return  rw
+
+    def saveAll(self):
+
+        print "save all"
+
+        if self.ui.numRoCertificatLineEdit.text() == "":
+            QMessageBox.critical(self.ui.numRoCertificatLineEdit, "Erreur", "Veuillez remplir le champ numero du nouveau CF")
+            # self.ui.coutLineEdit.setFocus(Qt.Qt.OtherFocusReason)
+            return
+
+        numCF = self.ui.numRoCertificatLineEdit.text()
+        CF1 = self.ui.numRoCertificatLineEdit_3.text()
+        # add into operationsub table
+        cursor = self.connection.cursor()
+        try :
+            infosCF = self.infosCF(CF1)
+        except Exception as e:
+            print(e)
+        numDemande = infosCF[1]
+        idfkt = infosCF[9]
+        idprojet = infosCF[10]
+        ancienCF = self.ui.numRoCertificatLineEdit_3.text()
+        nouveauCF = self.ui.numRoCertificatLineEdit.text()
+        AncienDemande = self.infosAncienDemande(numDemande)
+        NouveauDemande = self.ui.NumDemande.text()
+
+        #get hameau
+
+        try :
+            cursor.execute(" select pd.idhameau from parcelle_d as pd inner join "
+                           " certificat as c on pd.numdemande = c.numerodemande where c.numerocertificat  =%s", [str(ancienCF).strip()])
+            row = cursor.fetchone()
+            idhameau = row[0]
+        except Exception as e:
+            print(e)
+
+        geoms = QgsGeometry.fromWkt('GEOMETRYCOLLECTION EMPTY')
+        for aFeat in self.processLayer:
+            print "SELECTED FEATURE ID"
+            print aFeat.id()
+            #geomFeating = aFeat.geometry()
+            geoms = geoms.combine(aFeat.geometry())
+        try :
+
+            self.addNewGeometri(geoms)
+            idnew_demande = None
+            # creation demande
+            try:
+                year, month, day = AncienDemande[10].isoformat().split("-")
+                dateReconnaissance = date(int(year), int(month), int(day))
+                dtRec = dateReconnaissance
+                print("---date Reconnaissance")
+                print(dtRec)
+                # dtReconnaissance = dtRec.split('/')
+
+                year, month, day = AncienDemande[9].isoformat().split("-")
+                dateDemande = date(int(year), int(month), int(day))
+                dtDem = dateDemande
+                print("---date Demande")
+                print(dtDem)
+                # dtDemande = dtDem.split('/')
+
+                dateDecision = None
+                if AncienDemande[23] is not None:
+                    year, month, day = AncienDemande[23].isoformat().split("-")
+                    dateDecision = date(int(year), int(month), int(day))
+                dtDec = dateDecision
+                print("---date Decision")
+                dtDec = dateDecision
+                print("---date Decision")
+                print(dtDec)
+
+                cout = str(0.0)
+                if AncienDemande[19] is not None:
+                    cout = str(AncienDemande[19])
+                # dtDecision = dtDec.split('/')
+
+                exe = cursor.execute("INSERT INTO demande (numdemande,gid,datedemande,datereconnaissance,"
+                                     "region,district,idfokontany,idcommune,cout,consistance,idprojet,datedecision,categorie) "
+                                     "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING iddemande ",
+                                     (str(NouveauDemande).strip(), int(self.newGid),
+                                      dtDem,
+                                      dtRec,
+                                      str(AncienDemande[11]), str(AncienDemande[12]),
+                                      str(AncienDemande[16]), str(AncienDemande[17]),
+                                      cout, str(AncienDemande[20]), str(AncienDemande[21])
+                                      , dtDec,
+                                      str(AncienDemande[26])))
+                self.connection.commit()
+                idnew_demande = cursor.fetchone()
+
+            except Exception as e:
+                print(e)
+
+
+
+            # insertion certificat
+            try:
+                year, month, day = infosCF[2].isoformat().split("-")
+                DateReconnaissance = date(int(year), int(month), int(day))
+                # dtDem = dateDemande
+                print("---date Demande")
+                print(DateReconnaissance)
+                typecertificat = infosCF[3].strip()
+                exe = cursor.execute(
+                    "INSERT INTO certificat (numerocertificat,numerodemande,idfokontany,idprojet,idcommune,datereconnaissance,typecertificat) "
+                    "VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING idcertificat ",
+                    (str(nouveauCF), str(NouveauDemande), int(idfkt), int(idprojet), int(infosCF[12]),
+                     DateReconnaissance, typecertificat))
+                self.connection.commit()
+                id = cursor.fetchone()
+            except Exception as e:
+                print(e)
+
+            #update parcelle_d
+
+            try:
+                cursor.execute(
+                    "UPDATE parcelle_d SET idcertificat=(%s),idhameau=(%s),numdemande=(%s),id_commune=(%s) WHERE gid = (%s)",
+                    (int(id[0]), int(idhameau), str(NouveauDemande).strip(), int(infosCF[12]), int(self.newGid)))
+                self.connection.commit()
+            except Exception as e:
+                print(e)
+
+            print(" enter cptdemande")
+            print(" CurrentVal Demande ")
+            print(self.currentValDemande)
+
+            try:
+                self.currentValDemande = self.currentValDemande + 1
+                self.currentValCF = self.currentValCF + 1
+
+                cursor.execute("UPDATE commune SET cptdemande=(%s), cptcertificat=(%s)  WHERE idcommune = (%s)",
+                               (int(self.currentValDemande), int(self.currentValCF), globalvars.id_commune))
+                self.connection.commit()
+                # self.refreshCanvas()
+                # self.parent.canvas.refresh()
+                #
+                # self.parent.canvas.refresh()
+                # self.reloadCanvas()
+                self.close()
+            except Exception as e:
+                print(e)
+
+            representant = True
+            #update proprietaire parcelle
+            i = 0
+            for p in self.personne:
+                if i == 0:
+                    representant = True
+                else:
+                    representant = False
+                try:
+                    exe = cursor.execute("INSERT INTO proprietaireparcelle (idparcelle,idpersonne,representant)"
+                                         " VALUES (%s,%s,%s) RETURNING idparcelle ",
+                                         (int(self.newGid), int(p), representant))
+                    self.connection.commit()
+
+                except psycopg2.Error as e:
+                    print(e)
+                    self.connection.rollback()
+                    """
+                    if e.pgcode == '23505':
+                        try:
+                            exe = cursor.execute("UPDATE proprietaireparcelle SET idparcelle = %s WHERE idpersonne = %s",
+                                                 (self.newGid, self.proprio.listePersonne.idpersonne))
+                            self.connection.commit()
+                        except StandardError as e:
+                            print(e)
+                            self.connection.rollback()
+                    """
+                i = i + 1
+
+            # update avoir demande
+            i = 0
+            for p in self.personne:
+                if i == 0:
+                    representant = True
+                else:
+                    representant = False
+                try:
+                    exe = cursor.execute("INSERT INTO avoir_demande (idparcelle,idpersonne,representant, iddemande)"
+                                         " VALUES (%s,%s,%s, %s) RETURNING idparcelle ",
+                                         (int(self.newGid), int(p), representant, idnew_demande[0]))
+                    self.connection.commit()
+
+                except psycopg2.Error as e:
+                    print(e)
+                    self.connection.rollback()
+                    """
+                    if e.pgcode == '23505':
+                        try:
+                            exe = cursor.execute(
+                                "UPDATE proprietaireparcelle SET idparcelle = %s WHERE idpersonne = %s",
+                                (self.newGid, self.proprio.listePersonne.idpersonne))
+                            self.connection.commit()
+                        except StandardError as e:
+                            print(e)
+                            self.connection.rollback()
+                    """
+                i = i + 1
+            #update Limites Parcelle
+
+
+            # Mise à jour Voisins
+
+            self.voisins = []
+            rowCountVoisin = self.ui.tableWidget_6.rowCount()
+            # Traitement Voisins
+            try:
+                i = 0
+                OppositionTemp = []
+                if (rowCountVoisin) >= 1:
+                    while (i <= rowCountVoisin):
+                        j = 0
+                        while (j <= 2):
+                            item = self.ui.tableWidget_6.item(i, j)
+                            if item == None:
+                                print "None"
+                            else:
+                                print item.text()
+                                OppositionTemp.append(item.text())
+
+                            j = j + 1
+                        if len(OppositionTemp) >= 1:
+                            self.voisins.append(OppositionTemp)
+                        OppositionTemp = []
+                        i = i + 1
+            except Exception as e:
+                print(e)
+            print "self.voisins in INNNNNNNNNNN"
+            print self.voisins
+            print "self.voisins outTTTTTTTTTTTTT"
+            # return
+            try:
+                if len(self.voisins) >= 1:
+                    for o in self.voisins:
+                        Repere = o[0]
+                        nomRepere = o[1]
+                        idRepere = int(o[2])
+                        exe = cursor.execute(
+                            "INSERT INTO limitesparcelle (idpointscardinaux,idparcelle,description)"
+                            " VALUES (%s,%s,%s)",
+                            (idRepere, int(self.newGid), str(nomRepere)))
+                        self.connection.commit()
+                        # connection.commit()
+                i = j = 0
+            except psycopg2.Error as e:
+                print(e)
+                if e.pgcode == "23505":
+                    QMessageBox.critical(self, u"Erreur",
+                                         u"La combinaison position et parcelle existe déjà")
+                    self.connection.rollback()
+
+
+
+            self.connection.commit()
+            self.deleteOldGeometri()
+            QtGui.QMessageBox.information(self, u"Données ", u"Données sauvegardées")
+            #self.refreshCanvas()
+            self.cLayer.commitChanges()
+            self.cLayer.triggerRepaint()
+            # canvas.scene().removeItem(vertexMarker)
+            for layer in self.canvas.layers():
+                if layer.type() == layer.VectorLayer:
+                    layer.removeSelection()
+            self.cLayer.commitChanges()
+            self.canvas.refresh()
+            self.close()
+
+        #cursor = self.connection.cursor()
+        except Exception as e:
+            print(e)
+
+    def reloadCanvas(self):
+        print " reload canvas "
+        canvas = self.canvas
+        for layer in canvas.layers():
+            if layer.type() == layer.VectorLayer:
+                layer.removeSelection()
+                layer.triggerRepaint()
+
+        canvas.refresh()
+    def loadConsistance(self, connexion):
+        cursor = connexion.cursor()
+        cursor.execute("SELECT *   FROM consistance")
+        cs = cursor.fetchall()
+        size = len(cs)
+        if (size >= 1):
+            consistance = cs[0]
+            for row in cs:
+                ligneconsistance = row[2]
+                self.ui.consistanceComboBox.addItem(_fromUtf8(row[1]), row[0])
+                #self.ui.consistanceComboBox.addItem(_fromUtf8(row[1]), row[0])
+
+    def loadRegionDistrictCommune(self, connexion, idregion, iddistrict, idcommune):
+        cursor = connexion.cursor()
+        cursor.execute("SELECT nomregion  FROM region  WHERE idregion=%s", [int(idregion)])
+        dm = cursor.fetchone()
+        if (len(dm) >= 1):
+            region = dm[0]
+            self.ui.lineEditRegion.setText(_fromUtf8(region))
+            self.ui.lineEditRegion.setReadOnly(True)
+
+        cursor.execute("SELECT *  FROM district  WHERE iddistrict=%s", [int(iddistrict)])
+        dm = cursor.fetchone()
+        if (len(dm) >= 1):
+            coddistrict = dm[2]
+            district = dm[3]
+            self.coddistrict = coddistrict
+
+        self.ui.lineEditDistrict.setText(_fromUtf8(district))
+        cursor.execute("SELECT *  FROM commune  WHERE idcommune=%s", [int(idcommune)])
+        dm = cursor.fetchone()
+        if (len(dm) >= 1):
+            libelleCommune = dm[3]
+            codeCommune = dm[2]
+            self.codecommune = codeCommune
+            self.ui.lineEditCommune.setText(_fromUtf8(libelleCommune))
+            self.ui.lineEditCommune.setReadOnly(True)
+
+    def writeNumCF(self):
+        #cursor = connexion.cursor()
+        cursor = self.connection.cursor()
+        # numCF = self.ui.numRoCertificatLineEdit.text()
+        # cf = self.infosCF(numCF)
+        # idfkt = cf[9]
+        # cursor.execute("SELECT *  FROM fokontany  WHERE idfokontany=%s", [int(idfkt)])
+        # res = cursor.fetchone()
+        # # self.ui.comboFokontany.setReadOnly(True)
+
+        import globalvars
+
+        # Recuperer le district
+        try:
+            cursor.execute(
+                "SELECT d.nomdistrict, d.iddistrict, d.codedistrict FROM district d, commune c WHERE d.iddistrict = c.iddistrict AND c.idcommune = %s",
+                (globalvars.id_commune,))
+            dist = cursor.fetchone()
+        except StandardError as e:
+            print e
+            # Recuperer le nom de la commune
+        try:
+            cursor.execute("SELECT * FROM commune WHERE idcommune = %s",
+                             (globalvars.id_commune,))
+            com = cursor.fetchone()
+        except StandardError as e:
+            print e
+            currCert = None
+
+        #
+        try:
+            cursor.execute("SELECT MAX(idcertificat) FROM certificat")
+            crt = cursor.fetchone()
+            currCert = crt[0] + 1
+        except StandardError as e:
+            print e
+        if currCert is None:
+            currCert = 1
+
+        # Fokontany
+        # codefokontany = res[2]
+        numCert = str(dist[2]).strip() +"-"+ str(com[2]).strip()  + "-KT-" + str(com[6]).strip()
+        NewDemande = str(dist[2]).strip() +"-"+ str(com[2]).strip()  + "-F-" + str(com[8]).strip()
+        self.NouveauDemande = NewDemande
+        self.currentValDemande = int(com[8])
+        self.currentValCF = int(com[6])
+        self.ui.numRoCertificatLineEdit.setText(numCert)
+        self.ui.numRoCertificatLineEdit.setReadOnly(True)
+
+        self.ui.NumDemande.setText(NewDemande)
+        self.ui.NumDemande.setReadOnly(True)
+
+    def loadCommuneold(self, connexion, idcommune):
+        cursor = connexion.cursor()
+        cursor.execute("SELECT *  FROM fokontany  WHERE idcommune=%s", [int(idcommune)])
+        dm = cursor.fetchall()
+        size = len(dm)
+        if (size >= 1):
+            district = dm[0]
+            self.ui.comboFokontany.clear()
+            for row in dm:
+                lignefkt = row[3]
+                self.ui.comboFokontany.addItem(_fromUtf8(row[3]), row[0])
+                print lignefkt
+        else:
+            self.ui.comboFokontany.clear()
+
+    def ancienProprioCF(self):
+
+        from qgis.core import *
+        from qgis.gui import *
+        from PyQt4.QtGui import *
+        from PyQt4.QtCore import *
+        from qgis.gui import *
+        connection = self.connection
+        cursor = connection.cursor()
+        cursor.execute("SELECT * from personne ph"
+                       " INNER  JOIN proprietaireparcelle phd ON  phd.idpersonne = ph.idpersonne "
+                       " INNER  JOIN parcelle_d pc ON  phd.idparcelle = pc.gid "
+                       " WHERE pc.gid = %s ",
+                       [int(self.geomId)])
+        rw = cursor.fetchone()
+
+        rowPosition = self.ui.tableWidget.rowCount()
+        self.ui.tableWidget.insertRow(rowPosition)
+        j = 1
+        i = 1
+        while j < len(rw):
+            self.ui.tableWidget.setItem(rowPosition, j - 1, QTableWidgetItem(unicode(rw[j])))
+            j = j + 1
+        i = i + 1
+
+    def load_raster(self):
+        if self.raster_path is None:
+            return
+        fileInfo = QFileInfo(self.raster_path)
+        baseName = fileInfo.baseName()
+        layer = QgsRasterLayer(self.raster_path, baseName)
+        if not layer.isValid():
+            print("Layer " + self.raster_path + " is not valid raster")
+            return None
+        # QgsMapLayerRegistry.instance().addMapLayer(layer)
+        self.layer_raster = layer
+    def resolve(self, name, basepath=None):
+        if not basepath:
+            basepath = os.path.dirname(os.path.realpath(__file__))
+        return os.path.join(basepath, name)
+
+    def init_layers(self):
+        couches = ProjetCouche.find_by_projet_commune(self.connection, globalvars.id_projet_commune)
+        for couche in couches:
+            if couche.type_couche == 'R':
+                self.raster_path = couche.fichier
+                break
+
+    def ancienProprioCF(self):
+
+        from qgis.core import *
+        from qgis.gui import *
+        from PyQt4.QtGui import *
+        from PyQt4.QtCore import *
+        from qgis.gui import *
+        connection = self.connection
+        cursor = connection.cursor()
+        cursor.execute("SELECT * from personne ph"
+                       " INNER  JOIN proprietaireparcelle phd ON  phd.idpersonne = ph.idpersonne "
+                       " INNER  JOIN parcelle_d pc ON  phd.idparcelle = pc.gid "
+                       " WHERE pc.gid = %s ",
+                       [int(self.geomId)])
+        rw = cursor.fetchall()
+
+        rowPosition = self.ui.tableWidget.rowCount()
+        self.ui.tableWidget.insertRow(rowPosition)
+
+        i = 1
+        for r in rw:
+            j = 1
+            while j < len(r):
+                self.ui.tableWidget.setItem(rowPosition, j - 1, QTableWidgetItem(unicode(r[j])))
+                j = j + 1
+        i = i + 1
+
+    def init_canvas(self,geomId=None,OtherGeom = None):
+        style = {
+            u'outline_width': u'0.3',
+            u'outline_color': u'244,0,0,255',
+            u'offset_unit': u'MM',
+            u'color': u'227,26,28,255',
+            u'outline_style': u'solid',
+            u'style': u'b_diagonal',
+            u'joinstyle': u'bevel',
+            u'outline_width_unit': u'MM',
+            u'border_width_map_unit_scale': u'0,0',
+            u'offset': u'0,0',
+            u'offset_map_unit_scale': u'0,0'
+        }
+        self.cv = QgsMapCanvas()
+        #self.cv1 = QgsMapCanvas()
+
+        #self.idparcelle;
+        # add canvas  ad form
+        self.ui.horizontalLayout_2.addWidget(self.cv)
+        #self.ui.horizontalLayout_2.addWidget(self.cv1)
+        self.cv.show()
+        #self.cv1.show()
+
+        uri = QgsDataSourceURI()
+        #uri1 = QgsDataSourceURI()
+
+        uri.setConnection(
+            self.db_config.db_host,
+            self.db_config.db_port,
+            self.db_config.db_name,
+            self.db_config.db_user,
+            self.db_config.db_pass
+        )
+        where = "gid IN  (18600,18601)"
+        #uri.setDataSource("public", "parcelle_d", "geom", where)
+        print "self.OtherGeomId"
+        print self.OtherGeomId
+
+        print " self.geomId"
+        print self.geomId
+        uri.setDataSource("public", "parcelle_d", "geom", " gid  IN ("+str(self.geomId)+","+str(self.OtherGeomId)+")")
+        #uri1.setDataSource("public", "parcelle_d", "geom", "gid=%s " % [(18601,)])
+        #uri.setDataSource("public", "parcelle_d", "geom", "gid=%s" % (int(self.geomId),))
+        uri.setKeyColumn("gid")
+        layer = QgsVectorLayer(uri.uri(), "Demande", "postgres")
+        self.previewLayer = layer
+        layer.select(int(self.OtherGeomId))
+        # cLayer.setSelectedFeatures(int(ID))
+        self.cv.zoomToSelected(layer)
+        self.cv1.zoomToSelected(layer)
+
+        #layer1 = QgsVectorLayer(uri.uri(), "Demande", "postgres")
+
+        if not layer.isValid():
+            return
+        crs = QgsCoordinateReferenceSystem(100583, QgsCoordinateReferenceSystem.EpsgCrsId)
+        layer.setCrs(crs)
+        symbol_layer = QgsFillSymbolV2.createSimple(style)
+        layer.rendererV2().setSymbol(symbol_layer)
+        QgsMapLayerRegistry.instance().addMapLayer(layer)
+        QgsMapLayerRegistry.instance().addMapLayer(self.layer_raster)
+        #QgsMapLayerRegistry.instance().addMapLayer(layer1)
+
+        #QgsMapLayerRegistry.instance().addMapLayer(self.layer_raster)
+        self.cv.setLayerSet([QgsMapCanvasLayer(layer),QgsMapCanvasLayer(self.layer_raster)])
+        self.cv1.setLayerSet([QgsMapCanvasLayer(layer),QgsMapCanvasLayer(self.layer_raster)])
+        #self.cv.setLayerSet([QgsMapCanvasLayer(layer), QgsMapCanvasLayer(self.layer_raster)])
+
+
+        #self.cv.setLayerSet([QgsMapCanvasLayer(layer1)])
+
+        #self.cv.setLayerSet([QgsMapCanvasLayer(layer), QgsMapCanvasLayer(self.layer_raster)])
+        self.cv.setExtent(layer.extent())
+        self.cv1.setExtent(layer.extent())
+
+    def getIdPersonnePhysique(self):
+        print " ---getIdPersonnePhysiques ----XY in"
+        from qgis.core import *
+        from qgis.gui import *
+        from PyQt4.QtGui import *
+        from PyQt4.QtCore import *
+        from qgis.gui import *
+
+        self.proprio.listePersonne.idpersonne
+        self.nouveauProprio = self.proprio.listePersonne.idpersonne
+        self.personne.append(self.proprio.listePersonne.idpersonne)
+
+        i = 0
+        cursor = self.connection.cursor()
+        print("----id Personne physique----")
+        print(self.proprio.listePersonne.idpersonne)
+
+        cursor.execute("SELECT *  FROM personne  WHERE idpersonne=%s", [int(self.proprio.listePersonne.idpersonne)])
+        results = cursor.fetchone()
+        # cursor.execute("SELECT p.idpersonne, p.nompersonne, p.prenompersonne, p.numcipersonne "
+        #                "FROM personne p "
+        #                "WHERE p.idpersonne = (%s)", (int(self.proprio.listePersonne.idpersonne),))
+
+        print(" PERSONNE RESULTS")
+        print(results)
+        rowPosition = self.ui.tableWidget_2.rowCount()
+        self.ui.tableWidget_2.insertRow(rowPosition)
+        j = 1
+        while j < len(results):
+            self.ui.tableWidget_2.setItem(rowPosition, j - 1, QTableWidgetItem(unicode(results[j])))
+            j = j + 1
+        i = i + 1
+        self.proprio.listePersonne.close()
+        self.proprio.close()
+
+        print "XY out"
+
+    def infosAncienDemande(self,numdemande):
+        #self.NumeroCF
+        print("---NumDemande----")
+        print(numdemande)
+        try :
+            connection = self.connection
+            cursor = connection.cursor()
+            cursor.execute("SELECT * from demande"
+                           " WHERE numdemande = %s ",
+                           [str(numdemande).strip()])
+
+            rw = cursor.fetchone()
+            print " Ancien demande  "
+            print rw
+            self.infosCert = rw
+            return  rw
+        except Exception as e:
+            print(e)
+
+
+    def selGeometry(self):
+        canvas = self.cv1
+        for layer in canvas.layers():
+            print " in layer loop in "
+            if layer.type() == layer.VectorLayer:
+                layer.removeSelection()
+
+        canvas.refresh()
+        self.previewLayer.select(int(self.geomId))
+        self.newGeom = int(self.geomId)
+        self.cv1.zoomToSelected(self.previewLayer)
+        self.cv1.refresh()
+        #self.previewLayer.select(int(self.OtherGeomId))
+
+
+    def selGeometrySuivant(self):
+        canvas = self.cv1
+        for layer in canvas.layers():
+            print " in layer loop in "
+            if layer.type() == layer.VectorLayer:
+                layer.removeSelection()
+
+        canvas.refresh()
+        self.previewLayer.select(int(self.OtherGeomId))
+        self.newGeom = int(self.OtherGeomId)
+        self.cv1.zoomToSelected(self.previewLayer)
+        self.cv1.refresh()
+    def calculateArea(self,geom):
+        print "area calculate"
+        print geom
+        connection = self.connection
+        cursor = connection.cursor()
+        exe = cursor.execute(
+            "UPDATE parcelle_d set surface = ST_Area(%s) WHERE gid = %s returning gid",
+            (int(geom)))
+        connection.commit()
+
+        #exe = cursor.execute(
+        #    "UPDATE parcelle_d set geom = ST_GeomFromText(%s, 29702),surface = ST_Area(%s) WHERE gid = %s returning gid,surface, numdemande",
+        #    (wkt, wkt, self.idparcelle))
+
+
+        dm = cursor.fetchone()
+
+    def PersonneDetails(self):
+        from .PersonnePhysiqueRun import PersonnePhysique
+        GP = PersonnePhysique(self.parent)
+        GP.exec_()
+
+    def enregistrer(self):
+        print "enregistrer"
+        if not self.check():
+            return
+
+        self.save()
+        self.accept()
+
+
+    def check(self):
+        print "demande"
+
+
+    def save(self):
+
+        import time
+        import datetime
+        try:
+            print "try in"
+        except Exception as e:
+            print e
+
+
+
+
+

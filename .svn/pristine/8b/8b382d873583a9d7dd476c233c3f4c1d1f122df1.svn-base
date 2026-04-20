@@ -1,0 +1,271 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+	<meta http-equiv="Content-Type" content = "text/html;charset = utf-8"/>
+</head>
+<body style="font-size:9px">
+	<p style="margin-left:90%;margin-top:1%">Takelaka:<span style="text-decoration:underline;">$num_page</span></p>
+	<table class="fullwidth border-all border-collapse">
+		<tr style="font-size:9px">
+			<th colspan="3">TAKELAKA REGISTRY NY TANY </th>
+			<th colspan="5">KARATANY FAOBE</th>
+			<th colspan="5">MPIARA-MIOMBONANTOKA:............</th>
+		</tr>
+	</table>
+	<table style="font-size:9px" class="fullwidth border-all border-collapse">
+		<tr>
+			<th colspan="6">KARATANY Lah:<span style="text-decoration:underline;">$numCF</span> </th>
+			<th colspan="4" width="10%">Laharana taratasy</th>
+			<th colspan="4" width="10%"></th>
+		</tr>
+	</table>
+	<table style="font-size:9px" class="fullwidth border-all border-collapse">
+			<p style="margin-left:2%">FIANDOHAN'NY KARATANY</p>
+		<tr>
+			<th colspan="1"></th>
+			<th colspan="1" style="width:30%">DINGANANA </th>
+			<th colspan="2">LAHARANA </th>
+			<th colspan="2">DATY </th>
+			<th colspan="5" >FANAMARIHANA SAMIHAFA </th>
+		</tr>
+    	<tr style="text-align: left;font-size:8px">
+			<th colspan="1"></th>
+			<th colspan="1">FANGATAHANA KARATANY</th>
+			<th colspan="2">$numDmde</th>
+			<th colspan="2">$dateDmde</th>
+			<th colspan="5" rowspan="8"></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1"></th>
+			<th colspan="1">FANAPAHANA FITSIRIHANA IFOTONY</th>
+			<th colspan="2">numDecision</th>
+			<th colspan="5" >dateDecision</th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1"></th>
+			<th colspan="1">FAHAVITANA PETA-DRINDRINA</th>
+			<th colspan="2"></th>
+			<th colspan="5" ></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1"></th>
+			<th colspan="1">FITANANA AN-TSORATRA FITSIRIHANA IFOTONY</th>
+			<th colspan="2"></th>
+			<th colspan="5" ></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1"></th>
+			<th colspan="1">FANOTANA SONIA KARATANY</th>
+			<th colspan="2"></th>
+			<th colspan="5" ></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1"></th>
+			<th colspan="1">FANDEFASANA FAMPANAMARINANA AMIN'NY DISTRIKA</th>
+			<th colspan="2"></th>
+			<th colspan="5" ></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1"></th>
+			<th colspan="1">FANDEFASAN'NY DISTRIKA FANAMARINANA MAHAKASIKA NY KARATANY</th>
+			<th colspan="2"></th>
+			<th colspan="5" ></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1"></th>
+			<th colspan="1">FANOMEZANA NY KARATANY AMIN'NY TOMPONY</th>
+			<th colspan="2"></th>
+			<th colspan="5" ></th>
+		</tr>
+  	</table>
+	<br/>
+	<table style="font-size:9px" class="fullwidth border-all border-collapse">
+		<p style="margin-left:2%">I- MOMBAMOMBA NY TOMPON'NY TANY</p>
+		<thead>
+			<tr >
+				<th colspan="1">N&deg;</th>
+				<th colspan="2">Anarana sy fanampiny</th>
+				<th colspan="1">Laharana Kara-panondro na kopia nahaterahana sy toerana nakana azy </th>
+				<th colspan="1">Daty sy toerana nahaterahana </th>
+				<th colspan="3" >Anaran'ny RAY </th>
+				<th colspan="1" >Anaran'ny Reny </th>
+				<th colspan="2" >Anaran'ny Vady vita soratra(raha manambady) </th>
+				<th colspan="2" >Adiresy </th>
+			</tr>
+		</thead>
+		<tbody>
+		{REPEAT $proprios:$p}
+			<tr style ="height: 20px">
+				<td colspan="1">$p.numero</td>
+				<td colspan="2">$p.nomprenom</td>
+				<td colspan="1">$p.numpiece natao ny $p.datepiece tao $p.lieupiece</td>
+				<td colspan="1">$p.datenaiss tao $p.lieunaiss</td>
+				<td colspan="3" >$p.nompere</td>
+				<td colspan="1" >$p.nommere</td>
+				<td colspan="2" > </td>
+				<td colspan="2" >$p.adresse</td>
+			</tr>
+		</tbody>
+		{ENDREPEAT $proprios}
+		<!--<tr style ="height: 20px">
+			<th colspan="1"></th>
+			<th colspan="2"></th>
+			<th colspan="1"> </th>
+			<th colspan="1"></th>
+			<th colspan="3" ></th>
+			<th colspan="1" ></th>
+			<th colspan="2" > </th>
+			<th colspan="2" > </th>
+		</tr>
+		<tr style ="height: 20px">
+			<th colspan="1"></th>
+			<th colspan="2"></th>
+			<th colspan="1"> </th>
+			<th colspan="1"></th>
+			<th colspan="3" ></th>
+			<th colspan="1" ></th>
+			<th colspan="2" > </th>
+			<th colspan="2" > </th>
+		</tr>
+		<tr style ="height: 20px">
+			<th colspan="1"></th>
+			<th colspan="2"></th>
+			<th colspan="1"> </th>
+			<th colspan="1"></th>
+			<th colspan="3" ></th>
+			<th colspan="1" ></th>
+			<th colspan="2" > </th>
+			<th colspan="2" > </th>
+		</tr>
+		<tr style ="height: 20px">
+			<th colspan="1"></th>
+			<th colspan="2"></th>
+			<th colspan="1"> </th>
+			<th colspan="1"></th>
+			<th colspan="3" ></th>
+			<th colspan="1" ></th>
+			<th colspan="2" > </th>
+			<th colspan="2" > </th>
+		</tr>
+		<tr style ="height: 20px">
+			<th colspan="1"></th>
+			<th colspan="2"></th>
+			<th colspan="1"> </th>
+			<th colspan="1"></th>
+			<th colspan="3" ></th>
+			<th colspan="1" ></th>
+			<th colspan="2" > </th>
+			<th colspan="2" > </th>
+		</tr>-->
+	</table>
+
+	<table style="font-size:9px" class="fullwidth border-all border-collapse">
+
+			<p style="margin-left:2%">II- MOMBAMOMBA NY TANY</p>
+    	<tr>
+			<th colspan="2">Toerana misy ny tany</th>
+			<th colspan="2">Mamaritra ny tany</th>
+			<th colspan="3">Habeny </th>
+			<th colspan="5">VESATRA SY ZO VOALOHANY </th>
+		</tr>
+		<tr >
+			<th colspan="1" style="text-align: left;font-size:8px">FARITRA</th>
+			<th colspan="1"></th>
+			<th colspan="1" style="text-align: left;font-size:8px">ANTSINANA</th>
+			<th colspan="1"></th>
+			<th colspan="1">Ha </th>
+			<th colspan="1">a </th>
+			<th colspan="1">ca </th>
+			<th colspan="5" rowspan="5"></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1">DISTRIKA</th>
+			<th colspan="1"></th>
+			<th colspan="1">ANDREFANA</th>
+			<th colspan="1"></th>
+			<th colspan="1" rowspan="4"> </th>
+			<th colspan="1" rowspan="4"> </th>
+			<th colspan="1" rowspan="4"></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1">KAOMININA</th>
+			<th colspan="1"></th>
+			<th colspan="1">AVARATRA</th>
+			<th colspan="1"></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1">FOKONTANY</th>
+			<th colspan="1"></th>
+			<th colspan="1">ANTSIMO</th>
+			<th colspan="1"></th>
+		</tr>
+		<tr style="text-align: left;font-size:8px">
+			<th colspan="1">TANANA</th>
+			<th colspan="1"></th>
+			<th colspan="2"></th>
+		</tr>
+	</table>
+	<br/>
+	<table style="font-size:9px" class="fullwidth border-all border-collapse">
+		<tr>
+			<th colspan="1">Noraiketina tato anaty Regisitry ny Tany sy nankatoavina androany faha:_______________________________</th>
+
+			<th colspan="1">Karatany voaray androany fara:_______________________________________</th>
+		</tr>
+		<tr>
+			<th colspan="1" style="height:80px;vertical-align: text-bottom;">Ny Ben'ny tanàna (<I>ampiarahna ny anarana sy ny sonia ary fitomboka mena sy fitomboka maina an'i Birao Ifoton'ny Fananan-tany eo an-toerana</I>)</th>
+
+			<th colspan="1" style="height:80px;vertical-align: text-bottom">Ny nandray ny Karatany (<i>Ampiarahana sonia sy anaran'ny mpanao sonia</i>)</th>
+		</tr>
+	</table>
+	<br/>
+	<table>
+		<tr style="margin-buttom:1%">
+			<th colspan="2">Tsy maintsy hamarinin'ny solotenam-panjakana ny isan' ny pejy</th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+			<th colspan="2"></th>
+
+			<th colspan="2"> Pejy:__________/____________</th>
+		</tr>
+	</table>
+	<p></p>
+</body>
+</html>

@@ -1,0 +1,1 @@
+UPDATE pg_database SET datallowconn = 'false' WHERE datname = 'test_import_inventaire_4'; SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'test_import_inventaire_4';

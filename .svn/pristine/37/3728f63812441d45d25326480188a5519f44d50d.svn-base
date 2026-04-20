@@ -1,0 +1,6 @@
+UPDATE pg_database SET datallowconn = 'false' WHERE datname = 'all_ifigeo_data';
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE datname = 'all_ifigeo_data';
+UPDATE pg_database SET datallowconn = 'true' WHERE datname = 'all_ifigeo_data';
+\c all_ifigeo_data;

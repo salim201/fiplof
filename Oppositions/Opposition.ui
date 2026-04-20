@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>497</width>
+    <height>432</height>
+   </rect>
+  </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
+  </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QGroupBox" name="formGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>231</width>
+     <height>171</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Opposition</string>
+   </property>
+   <widget class="QLabel" name="dateOppositionLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>24</y>
+      <width>75</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date opposition</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dateOppositionLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>88</x>
+      <y>24</y>
+      <width>133</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dateDemandeLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>50</y>
+      <width>70</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date demande</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dateDemandeLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>88</x>
+      <y>50</y>
+      <width>133</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="typeOppositionLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>76</y>
+      <width>75</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Type opposition</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="typeOppositionComboBox">
+    <property name="geometry">
+     <rect>
+      <x>88</x>
+      <y>76</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="descriptionLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>102</y>
+      <width>53</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Description</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEditDescription">
+    <property name="geometry">
+     <rect>
+      <x>88</x>
+      <y>102</y>
+      <width>136</width>
+      <height>62</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonCalOpp">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>20</y>
+      <width>21</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonCalDemande">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>50</y>
+      <width>21</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</iconset>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="formGroupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>10</y>
+     <width>231</width>
+     <height>171</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Reglement</string>
+   </property>
+   <widget class="QLabel" name="dateReglementLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>24</y>
+      <width>74</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Date reglement</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="dateReglementLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>97</x>
+      <y>24</y>
+      <width>127</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="natureReglementLabel">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>50</y>
+      <width>84</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Nature reglement</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="natureReglementComboBox">
+    <property name="geometry">
+     <rect>
+      <x>97</x>
+      <y>50</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="descriptionLabel_2">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>76</y>
+      <width>53</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Description</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>97</x>
+      <y>76</y>
+      <width>127</width>
+      <height>88</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonCalReglement">
+    <property name="geometry">
+     <rect>
+      <x>204</x>
+      <y>20</y>
+      <width>21</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</normaloff>D:/EN COURS/PYTHON/DatePickerDialog.png</iconset>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>190</y>
+     <width>471</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButtonAjouterOpp">
+      <property name="text">
+       <string>Enregistrer Opposition</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButtonDeleteOpp">
+      <property name="text">
+       <string>Supprimer</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButtonDetail">
+      <property name="text">
+       <string>Details ...</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="gridLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>240</y>
+     <width>471</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QTableWidget" name="tableWidget">
+      <column>
+       <property name="text">
+        <string>N Demande</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Nouvelle colonne</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Type Opposition</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Description</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>370</y>
+     <width>471</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="pushButtonValider">
+      <property name="text">
+       <string>Valider</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButtonCancel">
+      <property name="text">
+       <string>Annuler</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,7 @@
+[database]
+host = 152.165.135.25
+port = 5432
+user = postgres
+pass = bd*F1pl0F2K24*
+name = mydb
+

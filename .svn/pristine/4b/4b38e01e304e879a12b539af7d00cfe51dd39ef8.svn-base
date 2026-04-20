@@ -1,0 +1,171 @@
+UPDATE pg_database SET datallowconn = 'false' WHERE datname = 'test';
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE datname = 'test';
+DROP DATABASE IF EXISTS test;
+--
+-- TOC entry 4775 (class 1262 OID 93991)
+-- Name: test; Type: DATABASE; Schema: -; Owner: postgres
+--
+ DROP USER IF EXISTS plof ;
+ CREATE ROLE plof LOGIN PASSWORD 'plof';
+CREATE DATABASE test WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'French_France.1252' LC_CTYPE = 'French_France.1252';
+UPDATE pg_database SET datallowconn = 'true' WHERE datname = 'test';
+\c test;
+SET postgis.gdal_enabled_drivers = 'ENABLE_ALL';--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.3.5
+-- Dumped by pg_dump version 9.3.5
+-- Started on 2023-04-19 23:55:45
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 7 (class 2615 OID 347391)
+-- Name: tiger; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA tiger;
+
+
+ALTER SCHEMA tiger OWNER TO postgres;
+
+--
+-- TOC entry 8 (class 2615 OID 347392)
+-- Name: tiger_data; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA tiger_data;
+
+
+ALTER SCHEMA tiger_data OWNER TO postgres;
+
+--
+-- TOC entry 6 (class 2615 OID 324181)
+-- Name: topology; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA topology;
+
+
+ALTER SCHEMA topology OWNER TO postgres;
+
+--
+-- TOC entry 377 (class 3079 OID 11750)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 4863 (class 0 OID 0)
+-- Dependencies: 377
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- TOC entry 379 (class 3079 OID 324486)
+-- Name: address_standardizer; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS address_standardizer WITH SCHEMA public;
+
+
+--
+-- TOC entry 4864 (class 0 OID 0)
+-- Dependencies: 379
+-- Name: EXTENSION address_standardizer; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION address_standardizer IS 'Used to parse an address into constituent elements. Generally used to support geocoding address normalization step.';
+
+
+--
+-- TOC entry 380 (class 3079 OID 324475)
+-- Name: fuzzystrmatch; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;
+
+
+--
+-- TOC entry 4865 (class 0 OID 0)
+-- Dependencies: 380
+-- Name: EXTENSION fuzzystrmatch; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION fuzzystrmatch IS 'determine similarities and distance between strings';
+
+
+--
+-- TOC entry 382 (class 3079 OID 322816)
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
+
+
+--
+-- TOC entry 4866 (class 0 OID 0)
+-- Dependencies: 382
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
+--
+-- TOC entry 381 (class 3079 OID 324321)
+-- Name: pgrouting; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS pgrouting WITH SCHEMA public;
+
+
+--
+-- TOC entry 4867 (class 0 OID 0)
+-- Dependencies: 381
+-- Name: EXTENSION pgrouting; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION pgrouting IS 'pgRouting Extension';
+
+
+--
+-- TOC entry 378 (class 3079 OID 324182)
+-- Name: postgis_topology; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis_topology WITH SCHEMA topology;
+
+
+--
+-- TOC entry 4868 (class 0 OID 0)
+-- Dependencies: 378
+-- Name: EXTENSION postgis_topology; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 199 (class 1259 OID 347393)
+-- Name: acces; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--

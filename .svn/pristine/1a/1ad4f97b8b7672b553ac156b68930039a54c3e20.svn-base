@@ -1,0 +1,671 @@
+import os
+import sys
+import os
+import os.path
+import psycopg2, datetime
+from PyQt4 import QtCore, QtGui
+import globalvars
+
+
+#from RechercheDemandeCertificat import Ui_Dialog
+from RechercheDemandeForm import Ui_Dialog
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+# create the dialog for qgsPlof
+class rechercheDemande(QtGui.QDialog):
+  def __init__(self,parent,stateEdition = 0):
+    QtGui.QDialog.__init__(self)
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+    #self.setModal(False)
+    self.parent = parent
+    #self.registry = self.parent.registry
+    self.geometryeEdit = None
+    self.MainWindow = self.parent.MainWindow
+    self.Flag =  self.parent.FlagOpposition
+    self.id_projet = self.parent.id_projet
+    self.ui = Ui_Dialog()
+    self.ui.setupUi(self)
+
+
+
+    appStyle = """  
+            QTableWidget 
+            {
+   
+    	        alternate-background-color: #00bfff;
+         	    background-color: white;
+            }
+            """
+    self.setStyleSheet(appStyle)
+    #self.actiondelVertex = self.parent.ui.actiondelVertex
+    #self.resize(493, 628)
+    self.NumDemande = None
+    #self.parent.ui.actiondelVertex.triggered.connect(self.removeVertex)
+    self.action_clearDate = QtGui.QAction(QtGui.QIcon("icone/marker--pencil.png"),u"Nouvelle opposition", self)
+    self.action_detail = QtGui.QAction(QtGui.QIcon("icone/if_pencil_14623.png"), _fromUtf8(u"Details demande"), self)
+    self.stateEdition = stateEdition
+    self.tool = self.parent.tool
+    self.iface = self.parent.iface
+    self.Mcs = self.parent.Mcs
+    self.current_layer = self.parent.current_layer
+    self.canvas = self.parent.MainWindow.canvas
+    self.activateChangeOngeom = self.parent.ui.actionEnregistrer
+    self.canvas = self.parent.canvas
+    self.showSel = self.parent.showSel
+    self.connection = self.parent.connection
+    self.cur = self.parent.connection.cursor()
+    self.idparcelle = 1
+    self.idDemande = 0
+    self.geomid = 0
+    self.dlg = ""
+    #self.id_projet = self.parent.id_projet
+    self.id_projet = globalvars.id_projet
+    self.gids = []
+    self.hasGeom = []
+    self.nbrPageElt = 20
+    #self.setModal(True)
+    self.ui.checkBoxNumeroDemande.stateChanged.connect(self.setupFieldsStatus)
+    self.ui.checkBoxNomDemandeur.stateChanged.connect(self.setupFieldsStatus)
+    self.ui.checkBoxDateDemande.stateChanged.connect(self.setupFieldsStatus)
+    self.ui.checkBox.stateChanged.connect(self.setupFieldsStatus)
+    self.ui.tableWidget.setSelectionBehavior(1)
+    print "self.Flag"
+    print self.Flag
+
+    if self.Flag == 1:
+        self.ui.tableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.tableWidget.customContextMenuRequested.connect(self.viewContextMenu)
+        self.ui.pushButtonDetails.setVisible(False)
+
+    self.parent.FlagOpposition = 0
+    self.action_clearDate.triggered.connect(self.oppositions)
+    self.action_detail.triggered.connect(self.detailsDemande)
+    self.ui.tableWidget.setAlternatingRowColors(True)
+    self.ui.pushButtonAfficherTous.clicked.connect(self.showAll)
+    self.ui.pushButtonDetails.clicked.connect(self.detailsDemande)
+    self.ui.tableWidget.cellClicked.connect(self.cellSelected)
+    self.ui.tableWidget.cellDoubleClicked.connect(self.detailsDemande)
+    self.ui.pushButtonRechercher.clicked.connect(self.readInput)
+    self.ui.pushButtonRechercher.clicked.connect(self.readInput)
+    #self.ui.lineEditNumeroDemande.textEdited.connect(self.readInput)
+    #self.ui.lineEditNomDemandeur.textEdited.connect(self.readInput)
+    #self.ui.dateEditDateDemande.dateChanged.connect(self.readInput)
+    #self.ui.auDateEdit.dateChanged.connect(self.readInput)
+    self.ui.pushButtonQuitter.clicked.connect(self.closeApp)
+
+    self.isShowAll = False
+    self.nombreDePage = None
+    self.ui.lineEditNumPage.setText("1")
+    self.ui.btnDebut.clicked.connect(self.debut)
+    self.ui.btnPrecedent.clicked.connect(self.precedent)
+    self.ui.btnSuivant.clicked.connect(self.suivant)
+    self.ui.btnFin.clicked.connect(self.fin)
+    self.ui.comboBoxNumPage.activated.connect(self.updatePage)
+    self.ui.comboBoxNumPage.currentIndexChanged.connect(self.preUpdatePage)
+    if self.showSel == 0 :
+        self.ui.pushButtonSelection.setVisible(False)
+
+    #self.ui.lineEditNumeroDemande.textEdited.connect(self.readInput)
+
+  def oppositions(self):
+      print "fdsgs"
+
+      from OppositionFormRun import OppositionFormRun
+      #numDmd = str(self.ui.numeroDemandeLineEdit.text())
+      self.numDemande = self.NumDemande
+      opp = OppositionFormRun(self)
+      opp.show()
+      result = opp.exec_()
+  def viewContextMenu(self, p):
+      menu = QtGui.QMenu(self.ui.tableWidget)
+      menu.addAction(self.action_clearDate)
+      menu.addAction(self.action_detail)
+      menu.exec_(self.ui.tableWidget.mapToGlobal(p))
+
+  def showOpposition(self):
+      print "showOpposition"
+  def setupFieldsStatus(self):
+
+      self.ui.lineEditNumeroDemande.setEnabled(self.ui.checkBoxNumeroDemande.isChecked())
+      self.ui.lineEditNomDemandeur.setEnabled(self.ui.checkBoxNomDemandeur.isChecked())
+      self.ui.dateEditDateDemande.setEnabled(self.ui.checkBoxDateDemande.isChecked())
+      self.ui.auDateEdit.setEnabled(self.ui.checkBox.isChecked())
+
+      if self.ui.checkBoxNumeroDemande.isChecked() != True:
+          self.ui.lineEditNumeroDemande.clear()
+
+      if self.ui.checkBoxNomDemandeur.isChecked() != True:
+          self.ui.lineEditNomDemandeur.clear()
+
+      if self.ui.checkBoxDateDemande.isChecked() != True:
+          self.ui.dateEditDateDemande.clear()
+
+      if self.ui.checkBox.isChecked() != True:
+          self.ui.auDateEdit.clear()
+
+  def closeApp(self):
+      self.parent.FlagOpposition = 0
+      self.close()
+
+  def detailsDemande(self):
+      # from DetailsDemandeRunn import DetailsDemandeRunn
+
+      from PyQt4.QtCore import *
+      from PyQt4.QtGui import *
+      #self.currentIndex = int(self.ui.tableWidget.currentIndex())
+      currentRW = self.ui.tableWidget.currentRow()
+      if currentRW == -1:
+          print "dqsd"
+          QtGui.QMessageBox.critical(self.ui.tableWidget, "Erreur", "Veuillez au moins selectionner une ligne")
+          return
+      else:
+          #self.ui.tableDemande.removeRow(self.selectedRow)
+          from DemandeDetailsRun import DemandeDetailsRun
+          # detail = DetailsDemandeRunn(self)
+          if self.hasGeom[currentRW] == 1:
+              detail = DemandeDetailsRun(self)
+          else:
+              detail = DemandeDetailsRun(self, True)
+
+          detail.show()
+          result = detail.exec_()
+
+  def showAll(self):
+
+      self.ui.comboBoxNumPage.clear()
+      self.isShowAll = True
+      count = []
+      listeParams = []
+      numeropage = int(self.ui.lineEditNumPage.text())
+      print
+      "numero page in"
+      print
+      numeropage
+      limite = self.nbrPageElt
+      # print numeropage
+      offset = limite * (numeropage - 1)
+      import globalvars
+
+
+
+      # self.cur.execute("SELECT idcertificat, numerodemande, datereconnaissance FROM certificat")
+      print self.id_projet
+      demandeurs = []
+      try :
+          print "ffsdffsd"
+          '''
+          self.cur.execute("SELECT DISTINCT pd.numdemande,d.datedemande,pd.surface,pd.gid, pd.geom FROM "
+                           " parcelle_d pd, demande d "
+                           " LEFT JOIN avoir_demande avd ON d.iddemande = avd.iddemande "
+                           " LEFT JOIN personne dmd   ON avd.idpersonne = dmd.idpersonne "
+                           " WHERE pd.gid = d.gid  AND d.idrejet IS NULL AND d.idprojet = %s AND d.idcommune = %s",
+                           [int(self.id_projet),int(globalvars.id_commune)])
+                           '''
+          self.cur.execute("SELECT DISTINCT pd.numdemande FROM "
+                            " parcelle_d pd, demande d "
+                           " LEFT JOIN avoir_demande avd ON d.iddemande = avd.iddemande "
+                           " LEFT JOIN personne dmd   ON avd.idpersonne = dmd.idpersonne "
+                           " WHERE pd.gid = d.gid  AND d.idrejet IS NULL AND d.idprojet = %s AND d.idcommune = %s",
+                           [int(self.id_projet), int(globalvars.id_commune)])
+          data = self.cur.fetchall()
+          # Concat Demandeurs
+          i = 0
+
+          #for res in data:
+              #print res[3]
+              #dataToConcat = []
+              #dataToConcat = self.getNomDemandeurs(res[3])
+              #print dataToConcat
+              #nomDemandeurs = ''
+              #for dToCon in dataToConcat:
+                  #nomDemandeurs += "".join(dToCon) + ","
+              # demandeurs.append(nomDemandeurs)
+              #resutat = list(res)
+              #resutat.insert(1, nomDemandeurs)
+              #resy = tuple(resutat)
+              #demandeurs.append(resy)
+              #i = i + 1
+          # Fin concat Demandeurs
+      except Exception as e:
+          print(e)
+
+
+      count = len(data)
+      if (count >= 1) :
+          print " count "
+          if count <= self.nbrPageElt:
+              self.nombreDePage = 1
+          else:
+              nbrDePage = count / self.nbrPageElt
+              reste = count % self.nbrPageElt
+              if reste > 0:
+                  self.nombreDePage = nbrDePage + 1
+              else:
+                  self.nombreDePage = nbrDePage
+
+      i = 1
+      while i <= self.nombreDePage:
+          item = str(i) + "/" + str(self.nombreDePage)
+          if self.ui.comboBoxNumPage.findText(item) == -1:
+              self.ui.comboBoxNumPage.addItem(item)
+          i = i + 1
+
+      self.ui.comboBoxNumPage.setCurrentIndex(numeropage - 1)
+
+      listeParams.append(int(self.id_projet))
+      listeParams.append(int(globalvars.id_commune))
+      listeParams.append(limite)
+      listeParams.append(offset)
+      params = tuple(listeParams)
+
+      SQL = " SELECT DISTINCT pd.numdemande,d.datedemande,pd.surface,pd.gid, pd.geom FROM  parcelle_d pd, demande d " \
+            " LEFT  JOIN avoir_demande avd ON d.iddemande = avd.iddemande  " \
+            " LEFT  JOIN personne dmd   ON avd.idpersonne = dmd.idpersonne  " \
+            " WHERE pd.gid = d.gid AND d.idrejet IS NULL AND d.idprojet = %s AND d.idcommune = %s"
+      #SQL = SQL + "  AND d.idprojet = %s"
+      #data['idprojet'] = int(self.id_projet)
+
+      #self.cur.execute(SQL,[int(self.id_projet),limite,offset])
+      #data = self.cur.fetchall()
+      print params
+      data = self.pagination(SQL, params)
+      #print data
+      try :
+          self.add_valuest(data)
+      except Exception as e:
+          print(e)
+
+  def add_values(self, data):
+      columns = len(data)
+      rowPosition = self.ui.tableWidget.rowCount()
+      self.ui.tableWidget.setColumnCount(columns)
+      self.ui.tableWidget.insertRow(rowPosition)
+      for i in range(len(data) - 1):
+          item = QtGui.QTableWidgetItem()
+          item.setText(_translate("", str(data[i]), None))
+          self.ui.tableWidget.setItem(rowPosition, i, item)
+
+  def add_valuest(self, data):
+      i = 0
+      j = 0
+      nb_row = len(data)
+      lignes = len(data)
+      columns = 5
+      self.gids[:] = []
+      self.hasGeom[:] = []
+      self.ui.tableWidget.setRowCount(nb_row)
+      self.ui.tableWidget.setColumnCount(columns)
+      self.ui.tableWidget.setRowCount(0)
+
+      while i < len(data) :
+
+          rowPosition = self.ui.tableWidget.rowCount()
+          self.ui.tableWidget.insertRow(rowPosition)
+          self.gids.append(data[i][0])
+          if data[i][5] is not None:
+              self.hasGeom.append(1)
+          else:
+              self.hasGeom.append(0)
+
+          for j in range(columns):
+
+              if (str(data[i][j]) != "" or str(data[i][j]) != None):
+                  if (j == 2):
+                      if data[i][j] is not None:
+                        item = QtGui.QTableWidgetItem(data[i][j].strftime('%d/%m/%Y'))
+                      else:
+                        item = QtGui.QTableWidgetItem("")
+                      item.setText(_translate("", str(data[i][j]), None))
+                      self.ui.tableWidget.setItem(rowPosition, j, item)
+                      # self.ui.tableWidget.setItem(rowPosition, j - 1,QtGui.QTableWidgetItem(data[i][j].strftime('%d/%m/%Y')))
+                  else:
+                      item = QtGui.QTableWidgetItem(str(data[i][j]))
+                      item.setText(_translate("", str(data[i][j]), None))
+                      self.ui.tableWidget.setItem(i, j, item)
+              else:
+                  print str(data[i][j])
+          i = i + 1
+
+  def readInput(self):
+      data = {}
+      data['idprojet'] = int(self.id_projet)
+
+      if self.ui.checkBoxNumeroDemande.isChecked():
+          data['numdemande'] = unicode(self.ui.lineEditNumeroDemande.text()).encode('utf-8').upper()
+      else:
+          data['numdemande'] = ''
+
+      if self.ui.checkBoxNomDemandeur.isChecked():
+          data['nomdemandeur'] = unicode(self.ui.lineEditNomDemandeur.text()).encode('utf-8').upper()
+      else:
+          data['nomdemandeur'] = ''
+
+      if self.ui.checkBoxDateDemande.isChecked():
+          data['datedebut'] = datetime.date(self.ui.dateEditDateDemande.date().year(),
+                                            self.ui.dateEditDateDemande.date().month(),
+                                            self.ui.dateEditDateDemande.date().day())
+          print
+          data['datedebut']
+      else:
+          data['datedebut'] = ''
+      if self.ui.checkBox.isChecked():
+          # data['datefin'] = time.strptime(self.ui.dateEditDateDemandeFin.text(), '%d/%m/%Y')
+          data['datefin'] = datetime.date(self.ui.auDateEdit.date().year(), self.ui.auDateEdit.date().month(),
+                                          self.ui.auDateEdit.date().day())
+      else:
+          data['datefin'] = ''
+
+      # data['fokontany'] = unicode(self.ui.comboBoxFokotany.currentText()).encode('utf-8')
+      print " data in"
+      #print data
+      print " dat out"
+      self.rechercher(data)
+
+  def rechercher(self, data):
+      flag = 0
+      listeParams = []
+      #print data
+      import globalvars
+      self.ui.comboBoxNumPage.clear()
+      self.isShowAll = False
+      count = []
+      numeropage = int(self.ui.lineEditNumPage.text())
+      limite = self.nbrPageElt
+      listeParamsPagination = []
+      # print numeropage
+      offset = limite * (numeropage - 1)
+      listeParamsPagination.append(limite)
+      listeParamsPagination.append(offset)
+      # ***fin prepa pagination****#
+      flag = 0
+      listeParams = []
+
+      # SQL = "SELECT pd.gid, pd.numdemande, d.datedemande, d.datereconnaissance,   pd.cout, d.nomdemandeur, d.gid FROM parcelle_d pd, demande d WHERE pd.gid = d.gid "
+      SQL = "SELECT DISTINCT d.numdemande,d.datedemande,pd.surface,pd.gid, pd.geom FROM " \
+            " parcelle_d pd, demande d " \
+            " LEFT  JOIN avoir_demande avd ON d.iddemande = avd.iddemande " \
+            " LEFT  JOIN personne dmd   ON avd.idpersonne = dmd.idpersonne " \
+            " WHERE pd.gid = d.gid  AND d.idrejet IS NULL AND avd.idparcelle = pd.gid"
+
+      SQL_count = "SELECT DISTINCT COUNT(d.numdemande) FROM " \
+            " parcelle_d pd, demande d " \
+            " LEFT  JOIN avoir_demande avd ON d.iddemande = avd.iddemande " \
+            " LEFT  JOIN personne dmd   ON avd.idpersonne = dmd.idpersonne " \
+            " WHERE pd.gid = d.gid  AND d.idrejet IS NULL AND avd.idparcelle = pd.gid"
+
+      SQL = SQL + "  AND d.idprojet = %s"
+      data['idprojet'] = int(self.id_projet)
+      listeParams.append(data['idprojet'])
+
+      SQL = SQL + "  AND d.idcommune = %s"
+      data['idcommune'] = int(globalvars.id_commune)
+      listeParams.append(data['idcommune'])
+
+      if self.ui.checkBoxNumeroDemande.isChecked():
+          data['numdemande'] = "%" + data['numdemande'] + "%"
+          SQL = SQL + " AND UPPER(pd.numdemande) LIKE %s "
+          print("SQL print")
+          print(SQL)
+
+          listeParams.append(data['numdemande'])
+          flag = 1
+      if self.ui.checkBoxNomDemandeur.isChecked():
+          if flag == 1:
+              data['nomdemandeur'] = "%" + data['nomdemandeur'] + "%"
+              SQL = SQL + " AND UPPER(dmd.nompersonne) LIKE %s"
+              listeParams.append(data['nomdemandeur'])
+          else:
+              data['nomdemandeur'] = "%" + data['nomdemandeur'] + "%"
+              SQL = SQL + " AND UPPER(dmd.nompersonne) LIKE %s"
+              listeParams.append(data['nomdemandeur'])
+              flag = 1
+      if self.ui.checkBoxDateDemande.isChecked() and self.checkBox.isChecked():
+          if flag == 1:
+              SQL = SQL + " and d.datedemande >= %s and d.datedemande <= %s "
+              listeParams.append(data['datedebut'])
+              listeParams.append(data['datefin'])
+          else:
+              SQL = SQL + " AND d.datedemande >= %s and d.datedemande <= %s "
+              listeParams.append(data['datedebut'])
+              listeParams.append(data['datefin'])
+              flag = 1
+      elif self.ui.checkBoxDateDemande.isChecked():
+          if flag == 1:
+              SQL = SQL + " and d.datedemande  >= %s "
+              listeParams.append(data['datedebut'])
+          else:
+              SQL = SQL + " AND d.datedemande >= %s "
+              listeParams.append(data['datedebut'])
+              flag = 1
+      elif self.ui.checkBox.isChecked():
+          if flag == 1:
+              SQL = SQL + " and d.datedemande <= %s "
+              listeParams.append(data['datefin'])
+          else:
+              SQL = SQL + " AND d.datedemande <= %s "
+              listeParams.append(data['datefin'])
+              flag = 1
+
+      if flag == 1:
+          # SQL = SQL + "and pd.idcertificat IS NULL"
+          params = tuple(listeParams)
+          try:
+              print SQL
+              self.cur.execute(SQL, params)
+              results = self.cur.fetchall()
+
+              count = len(results)
+              print "Nombre lignes = " + str(count)
+
+          except StandardError as e:
+              print e
+
+          # *****CALCUL DU NOMBRE TOTAL DE PAGES****************#
+
+          if (count >= 1) :
+
+              if count <= self.nbrPageElt:
+                  self.nombreDePage = 1
+              else:
+                  nbrDePage = count / self.nbrPageElt
+                  reste = count % self.nbrPageElt
+                  if reste > 0:
+                      self.nombreDePge = nbrDePage + 1
+                  else:
+                      self.nombreDePage = nbrDePage
+
+              i = 1
+              while i <= self.nombreDePage:
+                  item = str(i) + "/" + str(self.nombreDePage)
+                  if self.ui.comboBoxNumPage.findText(item) == -1:
+                      self.ui.comboBoxNumPage.addItem(item)
+                  i = i + 1
+
+              self.ui.comboBoxNumPage.setCurrentIndex(numeropage - 1)
+              listeParams = listeParams + listeParamsPagination
+              params = tuple(listeParams)
+              results = self.pagination(SQL, params)
+              self.add_valuest(results)
+
+      else:
+          print
+          "Aucun critere de recherche selectionne"
+
+          QtGui.QMessageBox.information(self.canvas, "Erreur", "Aucun critere de recherche selectionne ")
+          self.ui.tableWidget.setRowCount(0)
+
+  def getNomDemandeurs(self, param):
+      #params = tuple(param)
+      print "getNomDemandeurs"
+      try:
+        self.cur.execute("SELECT DISTINCT CONCAT(dmd.nompersonne,' ',dmd.prenompersonne) FROM "
+                "parcelle_d pd, demande d "
+                "LEFT  JOIN avoir_demande avd ON d.iddemande = avd.iddemande "
+                "LEFT  JOIN personne dmd   ON avd.idpersonne = dmd.idpersonne "
+                "WHERE pd.gid = d.gid  AND d.idrejet IS NULL AND avd.idparcelle = %s", (param,))
+        return self.cur.fetchall()
+      except StandardError as e:
+        print e
+
+
+  def pagination(self, SQL, params):
+      print
+      "Appel pagination"
+      SQL = SQL + " LIMIT %s OFFSET %s"
+
+      print SQL
+      print SQL
+      try:
+          self.cur.execute(SQL, params)
+          data = self.cur.fetchall()
+
+          #Concat Demandeurs
+          i = 0
+          demandeurs = []
+          for res in data:
+              print res[3]
+              dataToConcat = []
+              dataToConcat = self.getNomDemandeurs(res[3])
+              print dataToConcat
+              nomDemandeurs = ''
+              for dToCon in dataToConcat:
+                  nomDemandeurs += "".join(dToCon) + ","
+              # demandeurs.append(nomDemandeurs)
+              resutat = list(res)
+              resutat.insert(1, nomDemandeurs)
+              resutat.insert(5, res[4])
+              resy = tuple(resutat)
+              demandeurs.append(resy)
+              i = i + 1
+          #Fin concat Demandeurs
+          # print data
+          return demandeurs
+      except StandardError as e:
+          print(e)
+
+  def debut(self):
+
+      self.ui.lineEditNumPage.setText("1")
+      if self.isShowAll:
+          self.showAll()
+      else:
+          self.readInput()
+
+  def precedent(self):
+      NumPageActuel = int(self.ui.lineEditNumPage.text())
+      Numpage = 1
+      if NumPageActuel > 1:
+          NumPage = NumPageActuel - 1
+      else:
+          NumPage = 1
+      self.ui.lineEditNumPage.setText(str(NumPage))
+      if self.isShowAll:
+          self.showAll()
+      else:
+          self.readInput()
+
+  def suivant(self):
+      print
+      "suivant"
+      NumPageActuel = int(self.ui.lineEditNumPage.text())
+      if NumPageActuel < self.nombreDePage:
+          NumPage = NumPageActuel + 1
+      else:
+          NumPage = self.nombreDePage
+
+      self.ui.lineEditNumPage.setText(str(NumPage))
+      if self.isShowAll:
+          self.showAll()
+      else:
+          self.readInput()
+
+  def fin(self):
+      self.ui.lineEditNumPage.setText(str(self.nombreDePage))
+      if self.isShowAll:
+          self.showAll()
+      else:
+          self.readInput()
+
+  def updatePage(self):
+      if self.ui.comboBoxNumPage.currentIndex() != -1:
+          text = str(self.ui.comboBoxNumPage.currentText()).split("/")
+          NumPage = int(text[0])
+          self.ui.lineEditNumPage.setText(str(NumPage))
+          if self.isShowAll:
+              self.showAll()
+          else:
+              self.readInput()
+
+  def preUpdatePage(self):
+      if self.ui.comboBoxNumPage.currentIndex() != -1:
+          text = str(self.ui.comboBoxNumPage.currentText()).split("/")
+          NumPage = int(text[0])
+          self.ui.lineEditNumPage.setText(str(NumPage))
+
+
+  def cellSelected(self, row):
+      print "cellSelected"
+      try :
+          self.NumDemande = self.ui.tableWidget.item(row, 0).text()
+      except Exception as e:
+          print(e)
+      print self.NumDemande
+      ID = self.gids[row]
+      ID = self.ui.tableWidget.item(row, 4).text()
+      canvas = self.parent.canvas
+      cLayer = self.parent.cLayer
+      print "has geom"
+      print self.hasGeom[row]
+      self.geomid = ID
+      print('self.geomid Selected')
+      print(self.geomid)
+      for layer in canvas.layers():
+          if layer.type() == layer.VectorLayer:
+              layer.removeSelection()
+      canvas.refresh()
+      self.idparcelle = int(ID)
+      canvas.setSelectionColor(QtGui.QColor(str(globalvars.SelectionColor)))
+
+      self.idDemande = int(ID)
+      # cLayer.setSelectedFeatures(int(ID))
+      if self.hasGeom[row] == 1:
+          cLayer.select(int(ID))
+          canvas.zoomToSelected(cLayer)
+
+
+
+      # box = cLayer.boundingBoxOfSelected()
+      # canvas.setExtent(box);
+      # canvas.refresh();
+
+  def showInTable(self, data):
+      self.gids[:] = []
+      self.ui.tableWidget.setRowCount(0)
+      i = 0
+      while i < len(data) - 1:
+          rowPosition = self.ui.tableWidget.rowCount()
+          self.ui.tableWidget.insertRow(rowPosition)
+          self.gids.append(data[i][0])
+          j = 1
+          while j < len(data[i]) - 1:
+              if (j == 2) and data[i][j]:
+                  self.ui.tableWidget.setItem(rowPosition, j - 1,
+                                           QtGui.QTableWidgetItem(data[i][j].strftime('%d/%m/%Y')))
+              else:
+                  self.ui.tableWidget.setItem(rowPosition, j - 1, QtGui.QTableWidgetItem(str(data[i][j])))
+              j = j + 1
+
+          i = i + 1

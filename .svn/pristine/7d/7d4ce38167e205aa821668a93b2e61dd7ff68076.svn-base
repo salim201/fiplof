@@ -1,0 +1,152 @@
+# coding: utf8
+from PyQt4.QtCore import QThread, SIGNAL
+from osgeo import gdal, ogr
+#import ogrinfo
+import sys
+import os
+import os.path
+import globalvars
+from datetime import datetime
+import psycopg2
+import time
+from xlrd import open_workbook
+import xlrd
+import io
+import qgis
+from qgis.core import *
+from PyQt4 import QtCore, QtGui
+from logs import xlsLogger
+
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+
+class ImportDxfThread(QThread):
+    def __init__(self, filename, connection, table = None):
+        QThread.__init__(self)
+        self.filename, self.connection = filename, connection
+        self.table = table
+        self.current_step =-1
+        self.logger = xlsLogger.xlsLogger("Import_DXF")
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        #print (self.filename)
+        if self.filename == "":
+            self.emit(SIGNAL("alert(QString)"), "Veuillez choisir un fichier")
+            return
+
+        print("thread runing")
+        self.idCommune = int(globalvars.id_commune)
+        # poDS = ogr.Open(str(self.filename), False)
+        # if poDS is None:
+        # self.emit(SIGNAL("alert(QString)"), "Fichier ogr non valide")
+        # return
+        self.current_step = -1
+
+        #IMPORT PARCELLE
+        self.emit(SIGNAL("stepInit(int)"), self.current_step + 1)
+        print("Debut import Parcelle")
+        self.importParcelle()
+        print("Fin import Parcelle")
+        #self.logger.write()
+        self.emit(SIGNAL("stepDone(int)"), self.current_step)
+
+    def importParcelle(self):
+        #Preparation log
+        title = ["code_parcelle", "numero_demande", "etat_insertion", "erreur"]
+        dataToLog = []
+        #fin prep    log
+        self.current_step = self.current_step + 1
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+        cursor = self.connection.cursor()
+        print ("IMPORT DEMANDE")
+        #self.emit(SIGNAL("clearSubstep(int)"), self.current_step)s
+
+        #filename = _fromUtf8(self.filename)
+
+        filename = str(self.filename).encode('utf-8')
+        try:
+            fichier = open(filename,'r')
+            print(filename)
+            data_fic = str(fichier.read())
+            idx_of_polyline = data_fic.index('AcDbPolyline')
+            idx_of_end_sec = data_fic.index('ENDSEC', idx_of_polyline)
+            print (str(idx_of_polyline) + " et " + str(idx_of_end_sec))
+            data_of_interest = data_fic[idx_of_polyline:idx_of_end_sec]
+            print (data_of_interest)
+            str_geom = self.prepare_coord(data_of_interest)
+            self.insertInDataBase(str_geom)
+            #print(data_fic)
+            #traitement du fichier dxf
+        except Exception as err:
+            print(err)
+
+    def prepare_coord(self, data_of_interest):
+        x = []
+        y = []
+        str_geom = "POLYGON(("
+        tab_str = data_of_interest.split('\n')
+        i = 0
+        for val in tab_str:
+            if val.strip() == '10':
+                x.append(tab_str[i+1])
+            if val.strip() == '20':
+                y.append(tab_str[i+1])
+            i = i + 1
+            if val.strip() == 'ENDBLK':
+                break;
+
+        for k in range(len(x)):
+            if k == len(x) - 1:
+                str_geom = str_geom + x[k] + " " + y[k] + "))"
+            else:
+                str_geom = str_geom + x[k] + " " + y[k] + ","
+
+        self.emit(SIGNAL("progress(int)"), 25)
+        return str_geom
+
+    def insertInDataBase(self, str_geom):
+        if len(self.checkGeomEquality(str_geom)) == 0:
+            try:
+                cur = self.connection.cursor()
+                sql = "INSERT INTO " + self.table + " (geom) VALUES(ST_GeomFromText(%s,"+str(globalvars.EPSG_SCR)+"))"
+                cur.execute(sql, (str_geom,))
+                self.connection.commit()
+                cur.close()
+            except Exception as err:
+                print(err)
+                self.connection.rollback()
+        else:
+            self.emit(SIGNAL("alert(QString)"), u"Une géométrie identique existe déjà dans la base de données")
+
+        self.emit(SIGNAL("progress(int)"), 100)
+    def checkGeomEquality(self, str_geom):
+        try:
+            cur = self.connection.cursor()
+            sql = "SELECT geom FROM " + self.table + " WHERE ST_OrderingEquals(ST_GeomFromText(%s,"+str(globalvars.EPSG_SCR)+"), geom)"
+            cur.execute(sql, (str_geom,))
+            res = cur.fetchall()
+            print ("***********RES*******************")
+            print (res)
+            print ("**********FIN RES***************")
+            cur.close()
+            self.emit(SIGNAL("progress(int)"), 50)
+            return res
+        except Exception as err:
+            print(err)
+            self.connection.rollback()
+            return None
+
+
+
+
+

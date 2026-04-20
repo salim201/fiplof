@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/zoom.png</file>
+        <file>icons/flash.png</file>
+        <file>icons/pan.png</file>
+    </qresource>
+    <qresource prefix="/plugins/zoomtocoordinates">
+        <file>icon.png</file>
+    </qresource>
+</RCC>

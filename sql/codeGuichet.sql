@@ -1,0 +1,1 @@
+﻿ALTER TABLE public.commune ADD COLUMN codeg integer;

@@ -1,0 +1,2409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1071</width>
+    <height>836</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PLOF-Plan Local d'Occupation Foncière</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/sig/icone/map.png</normaloff>:/sig/icone/map.png</iconset>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1071</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_Fichier">
+    <property name="title">
+     <string>&amp;Fichier</string>
+    </property>
+    <addaction name="actionGeoreferencement"/>
+    <addaction name="actionCharger_points_depuis_xls"/>
+    <addaction name="actionLevee_Parcellaire"/>
+    <addaction name="separator"/>
+    <addaction name="actionReconnexion"/>
+    <addaction name="action_Quitter"/>
+   </widget>
+   <widget class="QMenu" name="menuCertificat_Foncier">
+    <property name="title">
+     <string>Certificat Foncier</string>
+    </property>
+    <widget class="QMenu" name="menu_Demande_De_Certificat">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Demande De Certificat</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/plof/icone/certificate_01.png</normaloff>:/plof/icone/certificate_01.png</iconset>
+     </property>
+     <widget class="QMenu" name="menu_Edition">
+      <property name="title">
+       <string>&amp;Edition</string>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/std/icone/edit_02.png</normaloff>:/std/icone/edit_02.png</iconset>
+      </property>
+      <addaction name="actionEdition_des_Informations"/>
+      <addaction name="actionEditions_de_la_Geometrie"/>
+     </widget>
+     <addaction name="action_Creation"/>
+     <addaction name="actionDemande_sans_geometrie"/>
+     <addaction name="action_Consultation"/>
+     <addaction name="menu_Edition"/>
+     <addaction name="separator"/>
+     <addaction name="actionImport_listing"/>
+     <addaction name="separator"/>
+     <addaction name="actionAttribution_des_dates"/>
+     <addaction name="separator"/>
+     <addaction name="actionOppositions"/>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menu_Certificat">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Certificat</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/plof/icone/certificate_02.png</normaloff>:/plof/icone/certificate_02.png</iconset>
+     </property>
+     <widget class="QMenu" name="menuEdition">
+      <property name="title">
+       <string>Edition</string>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/std/icone/edit_02.png</normaloff>:/std/icone/edit_02.png</iconset>
+      </property>
+      <addaction name="actionEdition_des_informations"/>
+      <addaction name="actionEdition_de_la_geometrie"/>
+     </widget>
+     <addaction name="action_Creation_Certificat_Recherche"/>
+     <addaction name="action_Creation_Certificat_Consultation"/>
+     <addaction name="menuEdition"/>
+     <addaction name="actionTransformation_group_e"/>
+    </widget>
+    <widget class="QMenu" name="menu_Personne">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Personnes</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/users/icone/group.png</normaloff>:/users/icone/group.png</iconset>
+     </property>
+     <addaction name="action_Physique"/>
+     <addaction name="action_Morale"/>
+     <addaction name="separator"/>
+     <addaction name="actionM_nage"/>
+    </widget>
+    <widget class="QMenu" name="menuImpression">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Impression</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+     </property>
+     <addaction name="action_Certificat_Original"/>
+     <addaction name="actionRe_Impression"/>
+    </widget>
+    <widget class="QMenu" name="menuOp_rations_subs_quentes">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Opérations subséquentes</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>icone/subsequentes.png</normaloff>icone/subsequentes.png</iconset>
+     </property>
+     <widget class="QMenu" name="menuActes">
+      <property name="title">
+       <string>Actes</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>icone/icc_certified-icon.png</normaloff>icone/icc_certified-icon.png</iconset>
+      </property>
+      <addaction name="actionActe_public"/>
+      <addaction name="actionActe_prive"/>
+      <addaction name="actionActe_de_deces"/>
+      <addaction name="actionDecision"/>
+     </widget>
+     <addaction name="actionLancer_une_operation"/>
+     <addaction name="menuActes"/>
+     <addaction name="actionD_coupages"/>
+    </widget>
+    <widget class="QMenu" name="menuReconnaissance_Locale">
+     <property name="title">
+      <string>Reconnaissance Locale</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/sig/icone/reco_locale.png</normaloff>:/sig/icone/reco_locale.png</iconset>
+     </property>
+     <addaction name="actionExport_Donn_es_pour_RL"/>
+     <addaction name="actionImport_Donn_es_Apr_s_RL"/>
+    </widget>
+    <addaction name="menu_Demande_De_Certificat"/>
+    <addaction name="menuReconnaissance_Locale"/>
+    <addaction name="menu_Certificat"/>
+    <addaction name="menu_Personne"/>
+    <addaction name="separator"/>
+    <addaction name="menuImpression"/>
+    <addaction name="separator"/>
+    <addaction name="action_ConsultationCertificat"/>
+    <addaction name="separator"/>
+    <addaction name="actionAttestation_2"/>
+    <addaction name="menuOp_rations_subs_quentes"/>
+    <addaction name="actionAnnulation_Certificat"/>
+   </widget>
+   <widget class="QMenu" name="menu_Impot_Foncier">
+    <property name="title">
+     <string>&amp;Impot Foncier</string>
+    </property>
+    <widget class="QMenu" name="menu_Saisie_Des_Donn_es">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>&amp;Saisie Des Données</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/std/icone/edit_02.png</normaloff>:/std/icone/edit_02.png</iconset>
+     </property>
+     <addaction name="actionNouvelle_Parcelle"/>
+     <addaction name="actionNouvelle_Parcelle_Avec_Donn_es"/>
+     <addaction name="actionFiscaliser_un_certificat_foncier"/>
+     <addaction name="actionModification_Parcelle"/>
+     <addaction name="actionSuivi"/>
+    </widget>
+    <widget class="QMenu" name="menuCalcul_Impots">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Calcul Impots</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/std/icone/coins-icon.png</normaloff>:/std/icone/coins-icon.png</iconset>
+     </property>
+     <addaction name="actionStatistiquesFiplof"/>
+     <addaction name="actionRecalcul_Des_Impots"/>
+     <addaction name="actionAvis_d_Imposition"/>
+     <addaction name="actionListe_Contribuables"/>
+     <addaction name="actionPaiement"/>
+    </widget>
+    <widget class="QMenu" name="menuParam_tres">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Paramètres</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/std/icone/wrench-screwdriver-icon.png</normaloff>:/std/icone/wrench-screwdriver-icon.png</iconset>
+     </property>
+     <addaction name="actionCat_gories"/>
+     <addaction name="actionListe_des_contribuables"/>
+    </widget>
+    <widget class="QMenu" name="menuAutres">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Autres</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>icone/autres.png</normaloff>icone/autres.png</iconset>
+     </property>
+     <addaction name="actionRegistre_Demande"/>
+     <addaction name="actionListes_des_b_n_ficiaires"/>
+     <addaction name="actionAffichage"/>
+    </widget>
+    <addaction name="action_Connexion"/>
+    <addaction name="menu_Saisie_Des_Donn_es"/>
+    <addaction name="menuCalcul_Impots"/>
+    <addaction name="separator"/>
+    <addaction name="menuParam_tres"/>
+    <addaction name="menuAutres"/>
+    <addaction name="separator"/>
+    <addaction name="actionD_connexion"/>
+   </widget>
+   <widget class="QMenu" name="menu_Gerer_Projet">
+    <property name="title">
+     <string>&amp;Gerer Projet</string>
+    </property>
+    <widget class="QMenu" name="menuG_rer_Utilisateurs">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Gérer Utilisateurs</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/users/icone/group.png</normaloff>:/users/icone/group.png</iconset>
+     </property>
+     <addaction name="actionEdition_Profil"/>
+     <addaction name="actionEdition_Utilisateur"/>
+     <addaction name="actionGestion_des_Groupes"/>
+    </widget>
+    <widget class="QMenu" name="menuProjet">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Gérer Projets</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/std/icone/briefcase.png</normaloff>:/std/icone/briefcase.png</iconset>
+     </property>
+     <addaction name="actionNouveau"/>
+     <addaction name="actionListe_Des_Projets"/>
+     <addaction name="separator"/>
+     <addaction name="actionParam_tre_Des_Projets"/>
+    </widget>
+    <widget class="QMenu" name="menuAnciennes_Donn_es">
+     <property name="title">
+      <string>Anciennes Données</string>
+     </property>
+     <addaction name="actionImport_Hameau_Fokontany"/>
+     <addaction name="separator"/>
+     <addaction name="actionImport"/>
+     <addaction name="actionImport_FIPLOF"/>
+    </widget>
+    <widget class="QMenu" name="menuCRISP">
+     <property name="title">
+      <string>Import - Demande groupée</string>
+     </property>
+     <addaction name="actionImport_Personne_physique"/>
+     <addaction name="actionImport_Personne_Morale"/>
+     <addaction name="actionImport_parcelle_Creation_demande"/>
+    </widget>
+    <widget class="QMenu" name="menuDonn_es_Terrain">
+     <property name="title">
+      <string>Données Terrain</string>
+     </property>
+     <addaction name="actionImport_geometries"/>
+     <addaction name="actionLecture_Excel"/>
+    </widget>
+    <addaction name="menuG_rer_Utilisateurs"/>
+    <addaction name="menuProjet"/>
+    <addaction name="separator"/>
+    <addaction name="actionJournal"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport"/>
+    <addaction name="actionImportDb"/>
+    <addaction name="actionExporter_shapefile"/>
+    <addaction name="separator"/>
+    <addaction name="menuAnciennes_Donn_es"/>
+    <addaction name="menuCRISP"/>
+    <addaction name="menuDonn_es_Terrain"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_photos"/>
+   </widget>
+   <widget class="QMenu" name="menu_Parametre">
+    <property name="title">
+     <string>&amp;Parametre</string>
+    </property>
+    <widget class="QMenu" name="menuTerritoires">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Territoires</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/sig/icone/marker--pencil.png</normaloff>:/sig/icone/marker--pencil.png</iconset>
+     </property>
+     <addaction name="actionRegions"/>
+     <addaction name="actionDistricts"/>
+     <addaction name="actionCommunes"/>
+     <addaction name="actionFokontany"/>
+    </widget>
+    <widget class="QMenu" name="menuDonn_es_fonciers">
+     <property name="title">
+      <string>Données Foncières</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="menuAdministration_avancee">
+     <property name="title">
+      <string>Administration avancee</string>
+     </property>
+     <addaction name="actionSuppression_demande"/>
+     <addaction name="separator"/>
+     <addaction name="actionMise_jour_Manuelle_Table"/>
+     <addaction name="separator"/>
+     <addaction name="actionCr_er_une_base_de_donn_es_vide"/>
+     <addaction name="separator"/>
+     <addaction name="actionS_parer_la_base_en_base_de_donn_es_par_commune"/>
+     <addaction name="separator"/>
+     <addaction name="actionnettoyage_vecteurs_demandes_sans_donn_es"/>
+    </widget>
+    <addaction name="actionHameau"/>
+    <addaction name="actionConsistance"/>
+    <addaction name="actionConsistance_Batiment"/>
+    <addaction name="separator"/>
+    <addaction name="menuTerritoires"/>
+    <addaction name="separator"/>
+    <addaction name="menuDonn_es_fonciers"/>
+    <addaction name="actionCode_Guichet"/>
+    <addaction name="actionContenance_octroyable"/>
+    <addaction name="separator"/>
+    <addaction name="actionBase_de_donn_es"/>
+    <addaction name="separator"/>
+    <addaction name="actionCompteur"/>
+    <addaction name="separator"/>
+    <addaction name="menuAdministration_avancee"/>
+   </widget>
+   <widget class="QMenu" name="menu_Etats">
+    <property name="title">
+     <string>&amp;Etats</string>
+    </property>
+    <widget class="QMenu" name="menuStatistiques">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Statistiques</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/std/icone/chart_bar.png</normaloff>:/std/icone/chart_bar.png</iconset>
+     </property>
+     <addaction name="actionStatistiquesCertificats"/>
+    </widget>
+    <addaction name="actionFilazana_Peta_Drindrina"/>
+    <addaction name="actionFanapahana"/>
+    <addaction name="actionAttestation"/>
+    <addaction name="actionRegistre_parcellaire"/>
+    <addaction name="actionPage_Operations_Subs_quentes"/>
+    <addaction name="actionRegistre_de_demandes"/>
+    <addaction name="actionAvis_d_Imposition"/>
+    <addaction name="actionCertificat_d_Affichage"/>
+    <addaction name="actionListing_Demande"/>
+    <addaction name="actionPVRL"/>
+    <addaction name="separator"/>
+    <addaction name="actionNombre_Demandes_et_CF"/>
+    <addaction name="menuStatistiques"/>
+   </widget>
+   <widget class="QMenu" name="menuPropositions">
+    <property name="title">
+     <string>Propositions</string>
+    </property>
+    <widget class="QMenu" name="menuTitre_foncier">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Titre foncier</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/plof/icone/certificate_02.png</normaloff>:/plof/icone/certificate_02.png</iconset>
+     </property>
+     <addaction name="actionCreation"/>
+     <addaction name="actionConsultation"/>
+     <addaction name="actionEdition"/>
+    </widget>
+    <widget class="QMenu" name="menuDomaine_public">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Domaine public</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/plof/icone/certificate_02.png</normaloff>:/plof/icone/certificate_02.png</iconset>
+     </property>
+     <addaction name="actionCreation_2"/>
+     <addaction name="actionConsultation_2"/>
+     <addaction name="actionEdition_2"/>
+    </widget>
+    <widget class="QMenu" name="menuAire_statut_specifique">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Aire à statut specifique</string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/plof/icone/certificate_01.png</normaloff>:/plof/icone/certificate_01.png</iconset>
+     </property>
+     <addaction name="actionCr_ation"/>
+     <addaction name="actionConsultation_3"/>
+     <addaction name="actionEdition_3"/>
+    </widget>
+    <addaction name="menuTitre_foncier"/>
+    <addaction name="menuDomaine_public"/>
+    <addaction name="menuAire_statut_specifique"/>
+   </widget>
+   <widget class="QMenu" name="menuInventaire_Parcellaire">
+    <property name="title">
+     <string>Inventaire Parcellaire</string>
+    </property>
+    <widget class="QMenu" name="menuImport_de_donn_es">
+     <property name="title">
+      <string>Import de données</string>
+     </property>
+     <widget class="QMenu" name="menuCorrections_automatiques">
+      <property name="title">
+       <string>Corrections automatiques</string>
+      </property>
+      <addaction name="actionAuto_Correction_Demandeurs"/>
+      <addaction name="separator"/>
+      <addaction name="actionAuto_Correction_incoherence_informations"/>
+     </widget>
+     <addaction name="actionImport_Vecteurs"/>
+     <addaction name="actionImport_donn_es_CSV"/>
+     <addaction name="separator"/>
+     <addaction name="actionAnnuler_import"/>
+     <addaction name="separator"/>
+     <addaction name="menuCorrections_automatiques"/>
+    </widget>
+    <addaction name="menuImport_de_donn_es"/>
+    <addaction name="actionFiltre_inventaire"/>
+   </widget>
+   <widget class="QMenu" name="menuPLOF">
+    <property name="title">
+     <string>PLOF et Interconnexion</string>
+    </property>
+    <widget class="QMenu" name="menuZone_Certifiable">
+     <property name="title">
+      <string>Echange hors ligne</string>
+     </property>
+     <addaction name="actionExport_donn_es_GU"/>
+     <addaction name="actionExport_donn_es_BIF"/>
+     <addaction name="separator"/>
+     <addaction name="actionImport_donn_es_GU"/>
+     <addaction name="actionImport_donn_es_BIF"/>
+    </widget>
+    <addaction name="actionImport_Shape_PLOF"/>
+    <addaction name="actionImport_Fichier_DXF"/>
+    <addaction name="separator"/>
+    <addaction name="menuZone_Certifiable"/>
+    <addaction name="separator"/>
+    <addaction name="actionOptions_d_interconnexion"/>
+    <addaction name="separator"/>
+    <addaction name="actionSauvergarde_en_ligne"/>
+   </widget>
+   <widget class="QMenu" name="menuA_Propos">
+    <property name="title">
+     <string>A-propos</string>
+    </property>
+   </widget>
+   <addaction name="menu_Fichier"/>
+   <addaction name="menuCertificat_Foncier"/>
+   <addaction name="menu_Impot_Foncier"/>
+   <addaction name="menuPropositions"/>
+   <addaction name="menu_Gerer_Projet"/>
+   <addaction name="menu_Parametre"/>
+   <addaction name="menu_Etats"/>
+   <addaction name="menuInventaire_Parcellaire"/>
+   <addaction name="menuPLOF"/>
+   <addaction name="menuA_Propos"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="sizeGripEnabled">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>Boite a outil SIG</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
+   <addaction name="actionZoomFull"/>
+   <addaction name="actionPan"/>
+   <addaction name="actionRefresh"/>
+   <addaction name="actionInformation"/>
+   <addaction name="separator"/>
+   <addaction name="actionDelete"/>
+   <addaction name="actionEditing_Node_Layers"/>
+   <addaction name="actionAnneau"/>
+   <addaction name="actionActionPolygoneAuto"/>
+   <addaction name="actionRechercheObjet"/>
+   <addaction name="actionArea"/>
+   <addaction name="separator"/>
+   <addaction name="actionSelect"/>
+   <addaction name="actionNouveauDmd"/>
+   <addaction name="separator"/>
+   <addaction name="actionEnregistrer"/>
+   <addaction name="actionXY"/>
+   <addaction name="separator"/>
+   <addaction name="actionMerge"/>
+   <addaction name="actionSplit"/>
+   <addaction name="actionCutter"/>
+   <addaction name="actionMultiSelect"/>
+   <addaction name="actionDeselection"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Couches</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="pushButtonAddRaster">
+         <property name="toolTip">
+          <string>Ajouter Couche Raster</string>
+         </property>
+         <property name="text">
+          <string>Raster ...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/sig/icone/layer_add.png</normaloff>:/sig/icone/layer_add.png</iconset>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonAddShape">
+         <property name="text">
+          <string>Vecteurs</string>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/sig/icone/layer-select.png</normaloff>:/sig/icone/layer-select.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonDelRaster">
+         <property name="text">
+          <string>Suppr ...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/sig/icone/layer_del.png</normaloff>:/sig/icone/layer_del.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="DraggableListView" name="listWidget">
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetGeoreferencer">
+   <property name="windowTitle">
+    <string>Georéférencement</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayoutGeoreferencer">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBarGeoref">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionAddRaster"/>
+   <addaction name="action_georeferencer_Add_Point"/>
+   <addaction name="separator"/>
+   <addaction name="actionMoveRaster"/>
+   <addaction name="actionRotateRaster"/>
+   <addaction name="actionScaleRaster"/>
+   <addaction name="actionAjousterRaster"/>
+   <addaction name="actionAugmenterTransparence"/>
+   <addaction name="actionDiminuerTransparence"/>
+   <addaction name="actionMap_swipe_tool"/>
+   <addaction name="separator"/>
+   <addaction name="actionShowTableTransformation"/>
+  </widget>
+  <action name="action_Quitter">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/cross-script.png</normaloff>:/std/icone/cross-script.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quitter</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="action_Creation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Creation</string>
+   </property>
+  </action>
+  <action name="action_Consultation">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/listing.png</normaloff>icone/listing.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Consultation</string>
+   </property>
+  </action>
+  <action name="action_Charger_Couches">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/layer_add.png</normaloff>:/sig/icone/layer_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Charger Couches</string>
+   </property>
+  </action>
+  <action name="action_Creation_Certificat_Recherche">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Création</string>
+   </property>
+   <property name="iconText">
+    <string>Création</string>
+   </property>
+  </action>
+  <action name="action_Creation_Certificat_Consultation">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/listing.png</normaloff>icone/listing.png</iconset>
+   </property>
+   <property name="text">
+    <string>C&amp;onsultation</string>
+   </property>
+  </action>
+  <action name="action_Physique">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/users/icone/user.png</normaloff>:/users/icone/user.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Physique</string>
+   </property>
+  </action>
+  <action name="action_Morale">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/users/icone/user_02.png</normaloff>:/users/icone/user_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Morale</string>
+   </property>
+  </action>
+  <action name="action_Affichage_Collectif">
+   <property name="text">
+    <string>&amp;Affichage Collectif</string>
+   </property>
+  </action>
+  <action name="action_Registre">
+   <property name="text">
+    <string>&amp;Registre</string>
+   </property>
+  </action>
+  <action name="action_Decision">
+   <property name="text">
+    <string>&amp;Decision</string>
+   </property>
+  </action>
+  <action name="action_Certificat_Original">
+   <property name="text">
+    <string>&amp;Certificat Original</string>
+   </property>
+  </action>
+  <action name="action_Connexion">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/unlock.png</normaloff>:/std/icone/unlock.png</iconset>
+   </property>
+   <property name="text">
+    <string>Connexion</string>
+   </property>
+   <property name="iconText">
+    <string>&amp;Connexion</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionNouvelle_Parcelle">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Nouvelle Parcelle</string>
+   </property>
+  </action>
+  <action name="actionNouvelle_Parcelle_Avec_Donn_es">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Nouvelle Parcelle Avec Données</string>
+   </property>
+  </action>
+  <action name="actionModification_Parcelle">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/if_pencil_14623.png</normaloff>:/std/icone/if_pencil_14623.png</iconset>
+   </property>
+   <property name="text">
+    <string>Modification Parcelle</string>
+   </property>
+  </action>
+  <action name="actionRecalcul_Des_Impots">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/calculator-icon.png</normaloff>:/std/icone/calculator-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Recalcul Des Impots</string>
+   </property>
+  </action>
+  <action name="actionAvis_d_Imposition">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Avis d'Imposition</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionListe_Contribuables">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/users/icone/group.png</normaloff>:/users/icone/group.png</iconset>
+   </property>
+   <property name="text">
+    <string>Liste Contribuables</string>
+   </property>
+  </action>
+  <action name="actionPaiement">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/coins-icon.png</normaloff>:/std/icone/coins-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paiement</string>
+   </property>
+  </action>
+  <action name="action_ConsultationCertificat">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/listing.png</normaloff>icone/listing.png</iconset>
+   </property>
+   <property name="text">
+    <string>Consultation</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/magnifier-zoom-in.png</normaloff>:/std/icone/magnifier-zoom-in.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/magnifier-zoom-out.png</normaloff>:/std/icone/magnifier-zoom-out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="actionValidate">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/database--plus.png</normaloff>:/sig/icone/database--plus.png</iconset>
+   </property>
+   <property name="text">
+    <string>Validate</string>
+   </property>
+   <property name="toolTip">
+    <string>Valider changement</string>
+   </property>
+  </action>
+  <action name="actionEditing_Node_Layers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/if_pencil_14623.png</normaloff>:/std/icone/if_pencil_14623.png</iconset>
+   </property>
+   <property name="text">
+    <string>Editing Node Layers</string>
+   </property>
+   <property name="toolTip">
+    <string>Edition geometrie</string>
+   </property>
+  </action>
+  <action name="actionPan">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/arrow-move.png</normaloff>:/sig/icone/arrow-move.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pan</string>
+   </property>
+  </action>
+  <action name="actionCat_gories">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/category-group-icon.png</normaloff>:/std/icone/category-group-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Catégories</string>
+   </property>
+  </action>
+  <action name="actionEdition_Profil">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/users/icone/user.png</normaloff>:/users/icone/user.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edition Profil</string>
+   </property>
+  </action>
+  <action name="actionEdition_Utilisateur">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/users/icone/user_02.png</normaloff>:/users/icone/user_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edition Utilisateur</string>
+   </property>
+  </action>
+  <action name="actionNouveau">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/briefcase--plus.png</normaloff>:/std/icone/briefcase--plus.png</iconset>
+   </property>
+   <property name="text">
+    <string>Nouveau Projet</string>
+   </property>
+  </action>
+  <action name="actionJournal">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/document.png</normaloff>:/std/icone/document.png</iconset>
+   </property>
+   <property name="text">
+    <string>Journal</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/database-export-icon.png</normaloff>:/std/icone/database-export-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sauvegarder DataBase</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/database-import-icon.png</normaloff>:/std/icone/database-import-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import PLOF</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionHameau">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/home-icon.png</normaloff>:/std/icone/home-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Hameau</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionFokontany">
+   <property name="text">
+    <string>Fokontany</string>
+   </property>
+  </action>
+  <action name="actionConsistance">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/category-group-icon.png</normaloff>:/std/icone/category-group-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Categorie</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionPoints_Cardinaux">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/compass.png</normaloff>:/sig/icone/compass.png</iconset>
+   </property>
+   <property name="text">
+    <string>Points Cardinaux</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/remove.png</normaloff>icone/remove.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="toolTip">
+    <string>Suppresion geometrie</string>
+   </property>
+  </action>
+  <action name="actionSelect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/cursor.png</normaloff>:/std/icone/cursor.png</iconset>
+   </property>
+   <property name="text">
+    <string>select</string>
+   </property>
+  </action>
+  <action name="actionNouveauDmd">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/plof/icone/icon-0.png</normaloff>:/plof/icone/icon-0.png</iconset>
+   </property>
+   <property name="text">
+    <string>Nouvelle Demande</string>
+   </property>
+   <property name="toolTip">
+    <string>Nouvelle Demande</string>
+   </property>
+  </action>
+  <action name="actionRefresh">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/arrow-circle-double.png</normaloff>:/std/icone/arrow-circle-double.png</iconset>
+   </property>
+   <property name="text">
+    <string>refresh</string>
+   </property>
+  </action>
+  <action name="actionZoomFull">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/magnifier-zoom-fit.png</normaloff>:/std/icone/magnifier-zoom-fit.png</iconset>
+   </property>
+   <property name="text">
+    <string>zoomFull</string>
+   </property>
+  </action>
+  <action name="actionFond_Image">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/map.png</normaloff>:/sig/icone/map.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fond Image</string>
+   </property>
+  </action>
+  <action name="actionEnregistrer">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/disk.png</normaloff>:/std/icone/disk.png</iconset>
+   </property>
+   <property name="text">
+    <string>Enregistrer</string>
+   </property>
+  </action>
+  <action name="actionListe_Des_Projets">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/briefcase.png</normaloff>:/std/icone/briefcase.png</iconset>
+   </property>
+   <property name="text">
+    <string>Liste Des Projets</string>
+   </property>
+  </action>
+  <action name="actionParam_tre_Des_Projets">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/wrench-screwdriver-icon.png</normaloff>:/std/icone/wrench-screwdriver-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paramètre Des Projets</string>
+   </property>
+  </action>
+  <action name="actionListe_des_contribuables">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/users/icone/group.png</normaloff>:/users/icone/group.png</iconset>
+   </property>
+   <property name="text">
+    <string>Liste des contribuables</string>
+   </property>
+  </action>
+  <action name="actionEdition_des_Informations">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/edit_02.png</normaloff>:/std/icone/edit_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edition des Informations</string>
+   </property>
+  </action>
+  <action name="actionEditions_de_la_Geometrie">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/layer-shape-polygon.png</normaloff>:/sig/icone/layer-shape-polygon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Editions de la Geometrie</string>
+   </property>
+  </action>
+  <action name="actionInformation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/information.png</normaloff>:/sig/icone/information.png</iconset>
+   </property>
+   <property name="text">
+    <string>Information</string>
+   </property>
+   <property name="toolTip">
+    <string>Information</string>
+   </property>
+  </action>
+  <action name="actionArea">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/Project-icon.png</normaloff>icone/Project-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>area</string>
+   </property>
+   <property name="toolTip">
+    <string>Mesurer surface</string>
+   </property>
+  </action>
+  <action name="actionAnneau">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/layer-mask.png</normaloff>:/sig/icone/layer-mask.png</iconset>
+   </property>
+   <property name="text">
+    <string>Anneau</string>
+   </property>
+   <property name="toolTip">
+    <string>Anneau</string>
+   </property>
+  </action>
+  <action name="actionRegions">
+   <property name="text">
+    <string>Régions</string>
+   </property>
+  </action>
+  <action name="actionDistricts">
+   <property name="text">
+    <string>Districts</string>
+   </property>
+  </action>
+  <action name="actionCommunes">
+   <property name="text">
+    <string>Communes</string>
+   </property>
+  </action>
+  <action name="actionDemande_de_terrain_sans_parcell">
+   <property name="text">
+    <string>Demande de terrain sans parcelle</string>
+   </property>
+  </action>
+  <action name="actionDemande_terrain_avec_parcelle">
+   <property name="text">
+    <string>Demande terrain avec parcelle</string>
+   </property>
+  </action>
+  <action name="actionTitre_foncier">
+   <property name="text">
+    <string>Titre foncier</string>
+   </property>
+  </action>
+  <action name="actionCadastre_en_cours">
+   <property name="text">
+    <string>Cadastre en cours</string>
+   </property>
+  </action>
+  <action name="actionP_rim_tre_cadastre">
+   <property name="text">
+    <string>Périmètre cadastre</string>
+   </property>
+  </action>
+  <action name="actionDomaine_public">
+   <property name="text">
+    <string>Domaine public</string>
+   </property>
+  </action>
+  <action name="actionAire_statut_sp_cifique">
+   <property name="text">
+    <string>Aire à statut spécifique</string>
+   </property>
+  </action>
+  <action name="actionFilazana_Peta_Drindrina">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Affichage Collectif</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionLancer_une_operation">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/lanceroperation.png</normaloff>icone/lanceroperation.png</iconset>
+   </property>
+   <property name="text">
+    <string>Lancer une opération</string>
+   </property>
+  </action>
+  <action name="actionD_coupages">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/decoupage.png</normaloff>icone/decoupage.png</iconset>
+   </property>
+   <property name="text">
+    <string>Découpage</string>
+   </property>
+  </action>
+  <action name="actionActe_public">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/document.png</normaloff>icone/document.png</iconset>
+   </property>
+   <property name="text">
+    <string>Acte public</string>
+   </property>
+  </action>
+  <action name="actionActe_prive">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/document.png</normaloff>icone/document.png</iconset>
+   </property>
+   <property name="text">
+    <string>Acte privé</string>
+   </property>
+  </action>
+  <action name="actionActe_de_deces">
+   <property name="text">
+    <string>Acte de décès</string>
+   </property>
+  </action>
+  <action name="actionDecision">
+   <property name="text">
+    <string>Décision</string>
+   </property>
+  </action>
+  <action name="actionAnnulation_Certificat">
+   <property name="text">
+    <string>Annulation Certificat</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionCreation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Création</string>
+   </property>
+  </action>
+  <action name="actionEdition">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/if_pencil_14623.png</normaloff>:/std/icone/if_pencil_14623.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edition</string>
+   </property>
+  </action>
+  <action name="actionConsultation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/find.png</normaloff>:/std/icone/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>Consultation</string>
+   </property>
+  </action>
+  <action name="actionCreation_2">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Création</string>
+   </property>
+  </action>
+  <action name="actionEdition_2">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/if_pencil_14623.png</normaloff>:/std/icone/if_pencil_14623.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edition</string>
+   </property>
+  </action>
+  <action name="actionConsultation_2">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/find.png</normaloff>:/std/icone/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>Consultation</string>
+   </property>
+  </action>
+  <action name="actionCr_ation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Création</string>
+   </property>
+  </action>
+  <action name="actionEdition_3">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/if_pencil_14623.png</normaloff>:/std/icone/if_pencil_14623.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edition </string>
+   </property>
+  </action>
+  <action name="actionConsultation_3">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/find.png</normaloff>:/std/icone/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>Consultation</string>
+   </property>
+  </action>
+  <action name="actionFiscaliser_un_certificat_foncier">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/coins-icon.png</normaloff>:/std/icone/coins-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fiscaliser un certificat foncier</string>
+   </property>
+  </action>
+  <action name="actionFanapahana">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fanapahana</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionAttestation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Attestation</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionD_connexion">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/cross-script.png</normaloff>:/std/icone/cross-script.png</iconset>
+   </property>
+   <property name="text">
+    <string>Déconnexion</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionReconnexion">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/unlock.png</normaloff>:/std/icone/unlock.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reconnexion</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionStatistiquesCertificats">
+   <property name="text">
+    <string>Certificats</string>
+   </property>
+  </action>
+  <action name="actionEdition_des_informations">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/edit_02.png</normaloff>:/std/icone/edit_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edition des informations</string>
+   </property>
+  </action>
+  <action name="actionEdition_de_la_geometrie">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/layer-shape-polygon.png</normaloff>:/sig/icone/layer-shape-polygon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edition de la géometrie</string>
+   </property>
+  </action>
+  <action name="action_georeferencer_Load_Layer">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/layer--plus.png</normaloff>:/sig/icone/layer--plus.png</iconset>
+   </property>
+   <property name="text">
+    <string>Charger Couche</string>
+   </property>
+  </action>
+  <action name="action_georeferencer_Add_Point">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/marker--plus.png</normaloff>:/sig/icone/marker--plus.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ajouter Point</string>
+   </property>
+  </action>
+  <action name="action_georeferencer_Remove_Point">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/marker--minus.png</normaloff>:/sig/icone/marker--minus.png</iconset>
+   </property>
+   <property name="text">
+    <string>Supprimer Point</string>
+   </property>
+  </action>
+  <action name="action_georeferencer_Run">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/control_play.png</normaloff>:/std/icone/control_play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Géoréférencer</string>
+   </property>
+  </action>
+  <action name="actionGeoreferencement">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/marker--pencil.png</normaloff>:/sig/icone/marker--pencil.png</iconset>
+   </property>
+   <property name="text">
+    <string>Georeferencement</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionXY">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/sig/icone/xy.png</normaloff>:/sig/icone/xy.png</iconset>
+   </property>
+   <property name="text">
+    <string>XY</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom sur</string>
+   </property>
+  </action>
+  <action name="actionCharger_points_depuis_xls">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/document-excel-table.png</normaloff>:/std/icone/document-excel-table.png</iconset>
+   </property>
+   <property name="text">
+    <string>Charger points depuis xls...</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionMerge">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/digitizing/icone/digitizing/Merge.png</normaloff>:/digitizing/icone/digitizing/Merge.png</iconset>
+   </property>
+   <property name="text">
+    <string>Merge</string>
+   </property>
+   <property name="toolTip">
+    <string>Fusion</string>
+   </property>
+  </action>
+  <action name="actionSplit">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/digitizing/icone/digitizing/ExtractPart.png</normaloff>:/digitizing/icone/digitizing/ExtractPart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Split</string>
+   </property>
+   <property name="toolTip">
+    <string>Decoupage</string>
+   </property>
+  </action>
+  <action name="actionCutter">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/digitizing/icone/digitizing/cutter.png</normaloff>:/digitizing/icone/digitizing/cutter.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cutter</string>
+   </property>
+   <property name="toolTip">
+    <string>Partie d'une geometrie</string>
+   </property>
+  </action>
+  <action name="actionSuivi">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/suivi_icon.png</normaloff>icone/suivi_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Suivi</string>
+   </property>
+  </action>
+  <action name="actionStatistiquesFiplof">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/chart_bar.png</normaloff>:/std/icone/chart_bar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Statistiques</string>
+   </property>
+  </action>
+  <action name="actionMultiSelect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>MultipleLayerSelection/icon.png</normaloff>MultipleLayerSelection/icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>selection multiple</string>
+   </property>
+   <property name="toolTip">
+    <string>Selection multiple</string>
+   </property>
+  </action>
+  <action name="actionDeselection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>MultipleLayerSelection/icon_clear.png</normaloff>MultipleLayerSelection/icon_clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>deselection</string>
+   </property>
+   <property name="toolTip">
+    <string>desélectionner </string>
+   </property>
+  </action>
+  <action name="actionAddRaster">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/layer--plus.png</normaloff>icone/georef/layer--plus.png</iconset>
+   </property>
+   <property name="text">
+    <string>addRaster</string>
+   </property>
+   <property name="toolTip">
+    <string>ajouter un raster</string>
+   </property>
+  </action>
+  <action name="actionMoveRaster">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/arrow-move.png</normaloff>icone/georef/arrow-move.png</iconset>
+   </property>
+   <property name="text">
+    <string>moveRaster</string>
+   </property>
+   <property name="toolTip">
+    <string>deplacer le raster</string>
+   </property>
+  </action>
+  <action name="actionRotateRaster">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/layer-rotate.png</normaloff>icone/georef/layer-rotate.png</iconset>
+   </property>
+   <property name="text">
+    <string>rotateRaster</string>
+   </property>
+   <property name="toolTip">
+    <string>rotation du Raster</string>
+   </property>
+  </action>
+  <action name="actionScaleRaster">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/layer-resize.png</normaloff>icone/georef/layer-resize.png</iconset>
+   </property>
+   <property name="text">
+    <string>scaleRaster</string>
+   </property>
+   <property name="toolTip">
+    <string>redimensionner le raster</string>
+   </property>
+  </action>
+  <action name="actionAugmenterTransparence">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/light-bulb--plus.png</normaloff>icone/georef/light-bulb--plus.png</iconset>
+   </property>
+   <property name="text">
+    <string>augmenterTransparence</string>
+   </property>
+   <property name="toolTip">
+    <string>augmenter la transparence</string>
+   </property>
+  </action>
+  <action name="actionDiminuerTransparence">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/light-bulb--minus.png</normaloff>icone/georef/light-bulb--minus.png</iconset>
+   </property>
+   <property name="text">
+    <string>diminuerTransparence</string>
+   </property>
+   <property name="toolTip">
+    <string>diminuer la transparence</string>
+   </property>
+  </action>
+  <action name="actionExporterRaster">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/exporter.png</normaloff>icone/georef/exporter.png</iconset>
+   </property>
+   <property name="text">
+    <string>exporterRaster</string>
+   </property>
+   <property name="toolTip">
+    <string>exporter le raster géoreférencé</string>
+   </property>
+  </action>
+  <action name="actionAjousterRaster">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/layer-resize-actual.png</normaloff>icone/georef/layer-resize-actual.png</iconset>
+   </property>
+   <property name="text">
+    <string>ajousterRaster</string>
+   </property>
+   <property name="toolTip">
+    <string>ajuster le raster</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/time_go.png</normaloff>:/std/icone/time_go.png</iconset>
+   </property>
+   <property name="text">
+    <string>Lancer</string>
+   </property>
+   <property name="toolTip">
+    <string>Lancer</string>
+   </property>
+  </action>
+  <action name="actionRegistre_Demande">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/registredmd.png</normaloff>icone/registredmd.png</iconset>
+   </property>
+   <property name="text">
+    <string>Registre Demande</string>
+   </property>
+  </action>
+  <action name="actionListes_des_b_n_ficiaires">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/listbenef.png</normaloff>icone/listbenef.png</iconset>
+   </property>
+   <property name="text">
+    <string>Listes des beneficiaires</string>
+   </property>
+  </action>
+  <action name="actionAffichage">
+   <property name="text">
+    <string>Affichage</string>
+   </property>
+  </action>
+  <action name="actionRegistre_parcellaire">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Registre parcellaire</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionShowTableTransformation">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/georef/application-table.png</normaloff>icone/georef/application-table.png</iconset>
+   </property>
+   <property name="text">
+    <string>Afficher la table de transformation</string>
+   </property>
+  </action>
+  <action name="actionAjout_couche_administration_Fonci_re">
+   <property name="text">
+    <string>Ajout couche administration Foncière</string>
+   </property>
+  </action>
+  <action name="actionAttestation_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/if_certificate_80761.png</normaloff>icone/if_certificate_80761.png</iconset>
+   </property>
+   <property name="text">
+    <string>Attestation</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionRe_Impression">
+   <property name="text">
+    <string>Re-Impression</string>
+   </property>
+  </action>
+  <action name="actionMap_swipe_tool">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/mapswipetool.png</normaloff>icone/mapswipetool.png</iconset>
+   </property>
+   <property name="text">
+    <string>map swipe tool</string>
+   </property>
+   <property name="toolTip">
+    <string>balayer couche</string>
+   </property>
+  </action>
+  <action name="actionGestion_des_Groupes">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/users/icone/group.png</normaloff>:/users/icone/group.png</iconset>
+   </property>
+   <property name="text">
+    <string>Gestion des Groupes</string>
+   </property>
+  </action>
+  <action name="actionActionPolygoneAuto">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/icons8-polygone-48.png</normaloff>icone/icons8-polygone-48.png</iconset>
+   </property>
+   <property name="text">
+    <string>actionPolygoneAuto</string>
+   </property>
+   <property name="toolTip">
+    <string>Accrochage-Polygone Automatique</string>
+   </property>
+  </action>
+  <action name="actionImportDb">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/database-import-icon.png</normaloff>:/std/icone/database-import-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Restaurer DataBase</string>
+   </property>
+   <property name="iconText">
+    <string>Import DB</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionImport_FIPLOF">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/database-import-icon.png</normaloff>:/std/icone/database-import-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import FIPLOF</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionCode_Guichet">
+   <property name="text">
+    <string>Code Guichet</string>
+   </property>
+  </action>
+  <action name="actionRechercheObjet">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/rechercheObjet.PNG</normaloff>icone/rechercheObjet.PNG</iconset>
+   </property>
+   <property name="text">
+    <string>delVertex</string>
+   </property>
+   <property name="toolTip">
+    <string>Suppression sommet</string>
+   </property>
+  </action>
+  <action name="actionOppositions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/oc.png</normaloff>icone/oc.png</iconset>
+   </property>
+   <property name="text">
+    <string>Signaler oppositions</string>
+   </property>
+  </action>
+  <action name="actionContenance_octroyable">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/cog_go.png</normaloff>icone/cog_go.png</iconset>
+   </property>
+   <property name="text">
+    <string>Contenance maximale</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionCertificat_d_Affichage">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Certificat d'Affichage</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionConsistance_Batiment">
+   <property name="text">
+    <string>Consistance Batiment</string>
+   </property>
+  </action>
+  <action name="actionImport_Personne_physique">
+   <property name="text">
+    <string>Import Personne physique</string>
+   </property>
+  </action>
+  <action name="actionImport_Personne_Morale">
+   <property name="text">
+    <string>Import Personne Morale</string>
+   </property>
+  </action>
+  <action name="actionImport_parcelle_Creation_demande">
+   <property name="text">
+    <string>Import parcelle /Creation demande</string>
+   </property>
+  </action>
+  <action name="actionRegistre_de_demandes">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Registre de demandes</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionLevee_Parcellaire">
+   <property name="icon">
+    <iconset>
+     <normaloff>icone/GPS2.jpg</normaloff>icone/GPS2.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>Levee Parcelle - GPS</string>
+   </property>
+  </action>
+  <action name="actionLecture_Excel">
+   <property name="text">
+    <string>Lecture Excel</string>
+   </property>
+  </action>
+  <action name="actionImport_geometries">
+   <property name="text">
+    <string>Import geometries</string>
+   </property>
+  </action>
+  <action name="actionDates">
+   <property name="text">
+    <string>Dates</string>
+   </property>
+  </action>
+  <action name="actionBase_de_donn_es">
+   <property name="text">
+    <string>Base de données</string>
+   </property>
+  </action>
+  <action name="actionImport_Hameau_Fokontany">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/database-import-icon.png</normaloff>:/std/icone/database-import-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import Hameau, Fokontany et Consistance</string>
+   </property>
+  </action>
+  <action name="actionExport_Shapefile_Demandes">
+   <property name="text">
+    <string>Exporter Shapefile Demandes</string>
+   </property>
+  </action>
+  <action name="actionExport_Shapefile_Certificats">
+   <property name="text">
+    <string>Exporter Shapefile Certificats</string>
+   </property>
+  </action>
+  <action name="actionExport_Base_de_donn_es_SQL">
+   <property name="text">
+    <string>Exporter Base de données SQL</string>
+   </property>
+  </action>
+  <action name="actionRestaurer_base_de_donn_es_sql">
+   <property name="text">
+    <string>Restaurer base de données sql</string>
+   </property>
+  </action>
+  <action name="actionExporter_shapefile">
+   <property name="text">
+    <string>Exporter shapefile</string>
+   </property>
+  </action>
+  <action name="actionM_nage">
+   <property name="text">
+    <string>Ménage</string>
+   </property>
+  </action>
+  <action name="actionCompteur">
+   <property name="text">
+    <string>Compteur</string>
+   </property>
+  </action>
+  <action name="actionImport_Vecteurs">
+   <property name="text">
+    <string>Import Vecteurs</string>
+   </property>
+  </action>
+  <action name="actionImport_donn_es_CSV">
+   <property name="text">
+    <string>Import données CSV</string>
+   </property>
+  </action>
+  <action name="actionAnnuler_import">
+   <property name="text">
+    <string>Annuler import</string>
+   </property>
+  </action>
+  <action name="actionFiltre_inventaire">
+   <property name="text">
+    <string>Filtre inventaire</string>
+   </property>
+  </action>
+  <action name="actionAttribution_des_dates">
+   <property name="text">
+    <string>Attribution des dates</string>
+   </property>
+  </action>
+  <action name="actionImport_listing">
+   <property name="text">
+    <string>Import listing</string>
+   </property>
+  </action>
+  <action name="actionDemande_sans_geometrie">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+   </property>
+   <property name="text">
+    <string>Creation Demande sans géométrie</string>
+   </property>
+  </action>
+  <action name="actionExport_Donn_es_pour_RL">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/database-export-icon.png</normaloff>:/std/icone/database-export-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Données pour RL</string>
+   </property>
+  </action>
+  <action name="actionImport_Donn_es_Apr_s_RL">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/database-import-icon.png</normaloff>:/std/icone/database-import-icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import Données Après RL</string>
+   </property>
+  </action>
+  <action name="actionListing_Demande">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Listing Demande</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionPVRL">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>PVRL</string>
+   </property>
+  </action>
+  <action name="actionSuppression_demande">
+   <property name="text">
+    <string>Suppression demande</string>
+   </property>
+  </action>
+  <action name="actionSuppression_CF">
+   <property name="text">
+    <string>Suppression CF</string>
+   </property>
+  </action>
+  <action name="actionMise_jour_Manuelle_Table">
+   <property name="text">
+    <string>Mise à jour Manuelle Table</string>
+   </property>
+  </action>
+  <action name="actionTransformation_group_e">
+   <property name="text">
+    <string>Transformation groupée</string>
+   </property>
+  </action>
+  <action name="actionCorrection_donn_es_import_inventaire">
+   <property name="text">
+    <string>Correction demandeurs import inventaire</string>
+   </property>
+  </action>
+  <action name="actionCorrection_Commune_Import_Inventaire">
+   <property name="text">
+    <string>Correction Commune Import Inventaire</string>
+   </property>
+  </action>
+  <action name="actionAuto_Correction_Demandeurs">
+   <property name="text">
+    <string>Auto Correction demandeurs</string>
+   </property>
+  </action>
+  <action name="actionAuto_Correction_incoherence_informations">
+   <property name="text">
+    <string>Auto Correction incoherence informations</string>
+   </property>
+  </action>
+  <action name="actionCr_er_une_base_de_donn_es_vide">
+   <property name="text">
+    <string>Créer une base de données vide</string>
+   </property>
+  </action>
+  <action name="actionS_parer_la_base_en_base_de_donn_es_par_commune">
+   <property name="text">
+    <string>Séparer la base en base de données par commune</string>
+   </property>
+  </action>
+  <action name="actionPage_Operations_Subs_quentes">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/std/icone/printer.png</normaloff>:/std/icone/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Page Operations Subséquentes</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionNombre_Demandes_et_CF">
+   <property name="text">
+    <string>Nombre Demandes et CF</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionImport_Shape_PLOF">
+   <property name="text">
+    <string>Import Shape PLOF</string>
+   </property>
+  </action>
+  <action name="actionImport_Fichier_DXF">
+   <property name="text">
+    <string>Import Fichier DXF</string>
+   </property>
+  </action>
+  <action name="actionBase_de_donn_es_Syncro">
+   <property name="text">
+    <string>Base de données Synchro</string>
+   </property>
+  </action>
+  <action name="actionImport_photos">
+   <property name="text">
+    <string>Import photos</string>
+   </property>
+  </action>
+  <action name="actionnettoyage_vecteurs_demandes_sans_donn_es">
+   <property name="text">
+    <string>Nettoyage vecteurs demandes sans données</string>
+   </property>
+  </action>
+  <action name="actionTra_age">
+   <property name="text">
+    <string>Traçage</string>
+   </property>
+  </action>
+  <action name="actionajout_suivant_coordonn_es_gps">
+   <property name="text">
+    <string>Ajout suivant coordonnées gps</string>
+   </property>
+  </action>
+  <action name="actionExport_donn_es_GU">
+   <property name="text">
+    <string>Export données GU</string>
+   </property>
+  </action>
+  <action name="actionExport_donn_es_BIF">
+   <property name="text">
+    <string>Export données BIF</string>
+   </property>
+  </action>
+  <action name="actionImport_donn_es_GU">
+   <property name="text">
+    <string>Import données GU</string>
+   </property>
+  </action>
+  <action name="actionImport_donn_es_BIF">
+   <property name="text">
+    <string>Import données BIF</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
+  <action name="actionOptions_d_interconnexion">
+   <property name="text">
+    <string>Options d'interconnexion</string>
+   </property>
+  </action>
+  <action name="actionSauvergarde_en_ligne">
+   <property name="text">
+    <string>Sauvergarde en ligne</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DraggableListView</class>
+   <extends>QListWidget</extends>
+   <header location="global">Widgets/DraggableListView</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

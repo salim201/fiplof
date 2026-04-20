@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>INFORMATIONS</class>
+ <widget class="QDialog" name="INFORMATIONS">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>343</width>
+    <height>237</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Infos</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/sig/icone/information.png</normaloff>:/sig/icone/information.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLineEdit" name="codeParcelle"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="numDemandeCF"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="infos1"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="infos2"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="infos3"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="infos5"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="infos6"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttonsLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonEditFisc">
+       <property name="text">
+        <string>Editer (Fisc)</string>
+       </property>
+       <property name="icon">
+        <iconset resource="icons.qrc">
+         <normaloff>:/std/icone/if_pencil_14623.png</normaloff>:/std/icone/if_pencil_14623.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCreateDemande">
+       <property name="text">
+        <string>Créer Demande</string>
+       </property>
+       <property name="icon">
+        <iconset resource="icons.qrc">
+         <normaloff>:/sig/icone/layer--plus.png</normaloff>:/sig/icone/layer--plus.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCreateCert">
+       <property name="text">
+        <string>Créer un Certificat</string>
+       </property>
+       <property name="icon">
+        <iconset resource="icons.qrc">
+         <normaloff>:/std/icone/add_02.png</normaloff>:/std/icone/add_02.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

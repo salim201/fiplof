@@ -1,0 +1,1 @@
+﻿ALTER TABLE public.demandeur_d ADD COLUMN matrimoniale character varying(250);

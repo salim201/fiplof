@@ -1,0 +1,190 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'gestionPLOF.ui'
+#
+# Created by: PyQt4 UI code generator 4.11.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.resize(709, 499)
+        self.groupBox = QtGui.QGroupBox(Dialog)
+        self.groupBox.setGeometry(QtCore.QRect(20, 20, 691, 141))
+        self.groupBox.setObjectName(_fromUtf8("groupBox"))
+        self.lineEdit = QtGui.QLineEdit(self.groupBox)
+        self.lineEdit.setGeometry(QtCore.QRect(150, 20, 171, 21))
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.comboLangue = QtGui.QComboBox(self.groupBox)
+        self.comboLangue.setGeometry(QtCore.QRect(150, 80, 171, 21))
+        self.comboLangue.setEditable(True)
+        self.comboLangue.setObjectName(_fromUtf8("comboLangue"))
+        self.label = QtGui.QLabel(self.groupBox)
+        self.label.setGeometry(QtCore.QRect(20, 20, 101, 16))
+        self.label.setObjectName(_fromUtf8("label"))
+        self.label_2 = QtGui.QLabel(self.groupBox)
+        self.label_2.setGeometry(QtCore.QRect(20, 50, 101, 16))
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.label_3 = QtGui.QLabel(self.groupBox)
+        self.label_3.setGeometry(QtCore.QRect(20, 80, 46, 13))
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.label_4 = QtGui.QLabel(self.groupBox)
+        self.label_4.setGeometry(QtCore.QRect(360, 20, 131, 20))
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.lineEdit_2 = QtGui.QLineEdit(self.groupBox)
+        self.lineEdit_2.setGeometry(QtCore.QRect(500, 20, 171, 21))
+        self.lineEdit_2.setObjectName(_fromUtf8("lineEdit_2"))
+        self.lineEdit_3 = QtGui.QLineEdit(self.groupBox)
+        self.lineEdit_3.setGeometry(QtCore.QRect(500, 50, 171, 21))
+        self.lineEdit_3.setObjectName(_fromUtf8("lineEdit_3"))
+        self.label_5 = QtGui.QLabel(self.groupBox)
+        self.label_5.setGeometry(QtCore.QRect(360, 50, 131, 20))
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.lineDateLancement = QtGui.QLineEdit(self.groupBox)
+        self.lineDateLancement.setGeometry(QtCore.QRect(150, 50, 171, 20))
+        self.lineDateLancement.setObjectName(_fromUtf8("lineDateLancement"))
+        self.pushButton = QtGui.QPushButton(self.groupBox)
+        self.pushButton.setGeometry(QtCore.QRect(300, 50, 21, 21))
+        self.pushButton.setText(_fromUtf8(""))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("D:/EN COURS/PYTHON/DatePickerDialog.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton.setIcon(icon)
+        self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.groupBox_2 = QtGui.QGroupBox(Dialog)
+        self.groupBox_2.setGeometry(QtCore.QRect(10, 150, 691, 171))
+        self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
+        self.cbRegion = QtGui.QComboBox(self.groupBox_2)
+        self.cbRegion.setGeometry(QtCore.QRect(150, 40, 171, 21))
+        self.cbRegion.setEditable(True)
+        self.cbRegion.setObjectName(_fromUtf8("cbRegion"))
+        self.cbDistrict = QtGui.QComboBox(self.groupBox_2)
+        self.cbDistrict.setGeometry(QtCore.QRect(150, 70, 171, 21))
+        self.cbDistrict.setEditable(True)
+        self.cbDistrict.setObjectName(_fromUtf8("cbDistrict"))
+        self.cbCommune = QtGui.QComboBox(self.groupBox_2)
+        self.cbCommune.setGeometry(QtCore.QRect(150, 100, 171, 21))
+        self.cbCommune.setEditable(True)
+        self.cbCommune.setObjectName(_fromUtf8("cbCommune"))
+        self.label_6 = QtGui.QLabel(self.groupBox_2)
+        self.label_6.setGeometry(QtCore.QRect(20, 40, 46, 13))
+        self.label_6.setObjectName(_fromUtf8("label_6"))
+        self.label_7 = QtGui.QLabel(self.groupBox_2)
+        self.label_7.setGeometry(QtCore.QRect(20, 70, 46, 13))
+        self.label_7.setObjectName(_fromUtf8("label_7"))
+        self.label_8 = QtGui.QLabel(self.groupBox_2)
+        self.label_8.setGeometry(QtCore.QRect(20, 100, 91, 16))
+        self.label_8.setObjectName(_fromUtf8("label_8"))
+        self.btListe1 = QtGui.QPushButton(self.groupBox_2)
+        self.btListe1.setGeometry(QtCore.QRect(330, 40, 75, 23))
+        self.btListe1.setObjectName(_fromUtf8("btListe1"))
+        self.btListe1.clicked.connect(self.listeRegion)
+#        self.pushButton_3.clicked.connect(self.callDemandeur)
+#        self.action.triggered.connect(self.onRun)
+        self.btListe2 = QtGui.QPushButton(self.groupBox_2)
+        self.btListe2.setGeometry(QtCore.QRect(330, 70, 75, 23))
+        self.btListe2.setObjectName(_fromUtf8("btListe2"))
+        self.btListe2.clicked.connect(self.listeDistrict)
+        
+        self.btListe3 = QtGui.QPushButton(self.groupBox_2)
+        self.btListe3.setGeometry(QtCore.QRect(330, 100, 75, 23))
+        self.btListe3.setObjectName(_fromUtf8("btListe3"))
+        self.btListe3.clicked.connect(self.listeCommune)
+        
+        self.listView = QtGui.QListView(self.groupBox_2)
+        self.listView.setGeometry(QtCore.QRect(420, 40, 171, 91))
+        self.listView.setObjectName(_fromUtf8("listView"))
+        self.label_9 = QtGui.QLabel(self.groupBox_2)
+        self.label_9.setGeometry(QtCore.QRect(430, 20, 46, 13))
+        self.label_9.setObjectName(_fromUtf8("label_9"))
+        self.btAddCommune = QtGui.QPushButton(self.groupBox_2)
+        self.btAddCommune.setGeometry(QtCore.QRect(600, 60, 81, 23))
+        self.btAddCommune.setObjectName(_fromUtf8("btAddCommune"))
+        self.btSupprCommune = QtGui.QPushButton(self.groupBox_2)
+        self.btSupprCommune.setGeometry(QtCore.QRect(600, 90, 81, 23))
+        self.btSupprCommune.setObjectName(_fromUtf8("btSupprCommune"))
+        self.groupBox_3 = QtGui.QGroupBox(Dialog)
+        self.groupBox_3.setGeometry(QtCore.QRect(10, 330, 691, 121))
+        self.groupBox_3.setTitle(_fromUtf8(""))
+        self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
+        self.tableWidget = QtGui.QTableWidget(self.groupBox_3)
+        self.tableWidget.setGeometry(QtCore.QRect(10, 10, 671, 101))
+        self.tableWidget.setObjectName(_fromUtf8("tableWidget"))
+        self.tableWidget.setColumnCount(0)
+        self.tableWidget.setRowCount(0)
+        self.groupBox_4 = QtGui.QGroupBox(Dialog)
+        self.groupBox_4.setGeometry(QtCore.QRect(10, 450, 691, 40))
+        self.groupBox_4.setTitle(_fromUtf8(""))
+        self.groupBox_4.setObjectName(_fromUtf8("groupBox_4"))
+        self.btSuppr = QtGui.QPushButton(self.groupBox_4)
+        self.btSuppr.setGeometry(QtCore.QRect(20, 10, 110, 20))
+        self.btSuppr.setObjectName(_fromUtf8("btSuppr"))
+        self.btAjout = QtGui.QPushButton(self.groupBox_4)
+        self.btAjout.setGeometry(QtCore.QRect(160, 10, 100, 20))
+        self.btAjout.setObjectName(_fromUtf8("btAjout"))
+        self.btModif = QtGui.QPushButton(self.groupBox_4)
+        self.btModif.setGeometry(QtCore.QRect(310, 10, 100, 20))
+        self.btModif.setObjectName(_fromUtf8("btModif"))
+        self.btNouveau = QtGui.QPushButton(self.groupBox_4)
+        self.btNouveau.setGeometry(QtCore.QRect(460, 10, 100, 20))
+        self.btNouveau.setObjectName(_fromUtf8("btNouveau"))
+        self.btFermer = QtGui.QPushButton(self.groupBox_4)
+        self.btFermer.setGeometry(QtCore.QRect(590, 10, 80, 20))
+        self.btFermer.setObjectName(_fromUtf8("btFermer"))
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+    def  listeRegion(self):
+        from regionRunn import region
+        ListeRegion= region()
+        result = ListeRegion.exec_()
+        
+    def listeDistrict(self):
+        from districtRunn import district
+        ListeDistrict= district()
+        result = ListeDistrict.exec_()
+    def listeCommune(self):
+        from communeRunn import commune
+        ListeCommune= commune()
+        result = ListeCommune.exec_()
+        
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(_translate("Dialog", "Gestion de projet P.L.O.F", None))
+        self.groupBox.setTitle(_translate("Dialog", "Caractéristique du projet", None))
+        self.label.setText(_translate("Dialog", "Nom du projet", None))
+        self.label_2.setText(_translate("Dialog", "Date de lancement", None))
+        self.label_3.setText(_translate("Dialog", "Langue", None))
+        self.label_4.setText(_translate("Dialog", "Date du dernier import", None))
+        self.label_5.setText(_translate("Dialog", "Date du dernier import", None))
+        self.groupBox_2.setTitle(_translate("Dialog", "Communes", None))
+        self.label_6.setText(_translate("Dialog", "Region", None))
+        self.label_7.setText(_translate("Dialog", "District", None))
+        self.label_8.setText(_translate("Dialog", "Commune", None))
+        self.btListe1.setText(_translate("Dialog", "Liste", None))
+        self.btListe2.setText(_translate("Dialog", "Liste", None))
+        self.btListe3.setText(_translate("Dialog", "Liste", None))
+        self.label_9.setText(_translate("Dialog", "TextLabel", None))
+        self.btAddCommune.setText(_translate("Dialog", "+  Commune", None))
+        self.btSupprCommune.setText(_translate("Dialog", "-   Commune", None))
+        self.btSuppr.setText(_translate("Dialog", "Supprimer projet", None))
+        self.btAjout.setText(_translate("Dialog", "Ajout projet", None))
+        self.btModif.setText(_translate("Dialog", "Modifier projet", None))
+        self.btNouveau.setText(_translate("Dialog", "Nouveau projet", None))
+        self.btFermer.setText(_translate("Dialog", "Fermer", None))
+

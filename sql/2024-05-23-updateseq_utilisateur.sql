@@ -1,0 +1,1 @@
+SELECT pg_catalog.setval('utilisateur_id_seq', (select MAX(idutilisateur) + 1 FROM utilisateur), true);

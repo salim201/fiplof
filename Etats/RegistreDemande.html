@@ -1,0 +1,105 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+	<meta http-equiv="Content-Type" content = "text/html;charset = utf-8"/>
+</head>
+<body>
+  <p>Arrêté le jour par les agents du GF</p>
+
+    <table class="fullwidth border-all border-collapse">
+		<tr>
+			<th colspan="11">Phase de procedure / dingana fangatahana</th>
+			<th colspan="2">Paiement</th>
+			<th colspan="2">Signature</th>
+		</tr>
+    <tr>
+		<th rowspan="2">Lah Fangatahana <br>N° Demande</th>
+		<th rowspan="2">Daty Fangatahana <br>Depôt demande</th>
+		<th rowspan="2">Daty fanapahana sy laharany <br>Date et n° de decision du maire</th>
+		<th colspan="2">Fampahalalana <br>publicité</th>
+		<th rowspan="2">Datin'ny fitsirihana ifotony <br>RL</th>
+		<th rowspan="2">Daty fanapahana fanemorana fitsirihana sy laharany <br>date du report de CRL</th>
+		<th rowspan="2">daty fanohanana1 na Fanoratan-jo2 <br>opposition ou demande d'inscription</th>
+		<th rowspan="2">Fiafaran'ny fangatahana<br>Sort de la demande</th>
+		<th colspan="2">Kara-Tany<br>Certificat</th>
+		<th colspan="2">Vola naloha<br>Quittance</th>
+		<th rowspan="2" width="4%">Mpangataka<br>Usager</th>
+		<th rowspan="2" width="4%">Bif<br>Agent</th>
+    </tr>
+		<tr>
+			<td>Daty Fanombohana <br>Début</td>
+			<td>Daty Fiafarana <br>Fin</td>
+			<td>Fanoratana rejistra sy fankatoavana <br>Inscription dans le régistre parcellaire et validation</td>
+			<td>daty nanomezana<br>Délivrance</td>
+			<td width="5%">Montant</td>
+			<td width="5%">N° Quit</td>
+		</tr>
+		<tr>
+			<td>$numDmde1</td>
+			<td>$dateDmde1</td>
+			<td>$dateDecision1 <br> $numDecision1</td>
+			<td>$dateDecision1</td>
+			<td>$dateReconnaissance1</td>
+			<td>$dateReconnaissance1</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td rowspan="7"></td>
+			<td rowspan="7"></td>
+		</tr>
+
+		<tr>
+			<td rowspan="6">Mombamomba ny mpangataka<br>Identité du demandeur</td>
+		</tr>
+			{REPEAT $proprios1:$p}
+		<tr>
+			<td colspan="5" >
+				$p.nom $p.prenom $p.consorts
+			</td>
+			<td rowspan="6">Mombamomba ny tany<br>Identité Parcelle</td>
+			<td colspan="3">Mpifanila</td>
+
+
+			<td colspan="3">Karazan-tany</td>
+			</tr>
+
+
+		<tr>
+			<td colspan="5">
+				Teraka ny $p.datenaiss tao $p.lieunaiss
+			</td>
+			<td colspan="3">N : $nord1</td>
+			<td colspan="3">$categorie1</td>
+			</tr>
+		<tr>
+			<td colspan="5">
+				CIN $p.numpiece natao tao $p.lieupiece
+			</td>
+			<td colspan="3">S : $sud1</td>
+			<td colspan="3">Zava-misy eo</td>
+			</tr>
+		<tr>
+			<td colspan="5">
+			Zanak'i $p.nopere
+			</td>
+			<td colspan="3">E : $est1</td>
+			<td colspan="3" rowspan="2">$consistance1</td>
+		</tr>
+		<tr>
+			<td colspan="5" >
+			sy $p.no_mere
+			</td>
+			<td colspan="3">O : $ouest1</td>
+		</tr>
+
+			{ENDREPEAT $proprios1}
+
+  </table>
+  <br>
+
+</body>
+</html>

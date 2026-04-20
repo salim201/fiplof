@@ -1,0 +1,1 @@
+id_parcelle_cf,c_district,c_commune,c_fokontany,c_hameau,num_parcelle,c_parcelle,anomalie,limitrophe,observation,id_lot,date_num,utilisateur,superficie,coord_x,coord_y,geom,cq0,cq1,cq2,cqe,type_op,ocfm,cod_parc_en_doublon,editer_en_cf,matching_saisie,est_soumis_cqe,soumis_cqe,ftm_2009,ftm_2021,ctrl_com,pass_cq2,date_cq2,pers_cq2,analyse_com,reponse_cqe

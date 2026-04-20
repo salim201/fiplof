@@ -1,0 +1,33 @@
+﻿ALTER TABLE public.categorie RENAME valeur_ha  TO v_surface;
+COMMENT ON COLUMN public.categorie.v_surface
+  IS 'valeur par surface';
+
+  ALTER TABLE public.categorie
+   ADD COLUMN u_surface character varying(5);
+COMMENT ON COLUMN public.categorie.u_surface
+  IS 'unité surface';
+
+  ALTER TABLE public.categorie
+   ADD COLUMN v_venale integer;
+COMMENT ON COLUMN public.categorie.v_venale
+  IS 'valeur venale';
+
+  ALTER TABLE public.categorie
+   ADD COLUMN u_venale character varying(5);
+
+   ALTER TABLE public.classecategorieforfaitaire DROP COLUMN deb_ifpb;
+
+   ALTER TABLE public.classecategorieforfaitaire DROP COLUMN fin_ifpb;
+
+   ALTER TABLE public.classecategorieforfaitaire DROP COLUMN valeurariary_ifpb;
+
+   ALTER TABLE public.classecategorieforfaitaire
+   ADD COLUMN unite character varying(5);
+COMMENT ON COLUMN public.classecategorieforfaitaire.unite
+  IS 'unité classe forfaitaire';
+  ALTER TABLE public.classecategorieforfaitaire DROP COLUMN idforfaitaire;
+
+  ALTER TABLE public.classecategorieforfaitaire
+  ADD CONSTRAINT pk_classecategorieforfaitaire PRIMARY KEY (idcategorie, idclasse);
+
+  

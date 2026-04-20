@@ -1,0 +1,23 @@
+rehefa vita ilay traçagen'ilay parcelle de commitena de mvoka le fenetre info fiscale
+de eo amn contribuable clikena le bouton recherche de mivôka ny liste des contribuables
+De misy bouton rechercher eo de manao recherche ra ohatra ka efa misy contribuable ao
+Sinon dia ilay bouton ajouter no ahafahana mamorona contribuable
+De eo am ilay fenetre contribuable misy bouton hoe "personne physique" manokatra ny liste des personnes physiques
+De afaka selectionena ao izay personne physique tiana ho atao  contribuable
+
+Ny ambiny fenona araka izay itiavana azy ra ao anatin'ilay onglet "contribuable parcelle"
+Ao anty onglet parcelle batiment kosa code no mameno ilay surface fa mbola tsy vita ny implementation, dia avy eo misafidy categorie 
+sy consistance
+Dia ao am'le hoe batiment mampiditra code sy surfacen'ilay batiment sy ny nombre de pièces ary ny categorie n'le
+batiment dia miclique ajouter de afaka manampy trano arak'zay tina
+NB ny bouton supprimer mbola tsis implementation
+Ao amin onglet certificat tokony fenona par code io numero demande sy numero certificat fa mbol
+mitady fika ampifandraisana le certificat sy ilay infofiscale amzao (am le taloha mantsy champ readonly ireo)
+fa le limite et repères io no afaka ampina ra tina ho ampina.
+
+Ireto avy ny table miasa
+parcelle_d : enregitrena ilay parcelle, misy champ idcontribuable misy ny identifiant du contribuable selectionné
+batiment: enregitrena ireo information momban' zay batiment io ambonin'le parcelle
+categorie: hisontomany ireo categorie de misafidy iray dia iny no miditra any amn idcategorie an am parcelle_d
+consistance: hisontomana ireo consistance dia misafidy iray dia iny miditra an amn idconsistance an am parcalle_d
+

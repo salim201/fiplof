@@ -1,0 +1,120 @@
+# coding: utf-8
+from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui, Qt
+import datetime
+from PopupInfosDemandeFn import Ui_INFORMATIONS
+from Utilisateur import AccesManager
+
+# create the dialog for qgsPlof  Qt.QDialog
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+
+
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+
+class PopupInfosDemandeFnRun(Qt.QDialog):
+    def __init__(self, parent):
+        Qt.QDialog.__init__(self)
+        self.parent = parent
+        self.connection, self.canvas = self.parent.connection, self.parent.MainWindow.canvas
+        self.newParcelleCF = True
+        self.gid = self.parent.currentSelect
+        self.ui = Ui_INFORMATIONS()
+        self.ui.setupUi(self)
+        self.registry = None
+        self.iddemande = self.numDemande = self.dateDemande = self.idparcelle = None
+        self.MainWindow = self.parent.MainWindow
+        self.currentGeomIdParcelle = self.gid
+        self.idparcelle = self.gid
+        self.currvalDemande = self.gid
+        self.id_projet = parent.id_projet
+        self.geometryeEdit = 0
+        self.stateEdition = 1
+        self.geomid = self.gid
+        self.tool = parent.tool
+        self.iface = parent.iface
+        self.Mcs = self.MainWindow
+        self.idDemande = self.gid
+        self.getFeatureInfos()
+        self.init_actions()
+
+    def init_actions(self):
+        manager = AccesManager.AccessManager(self, self.connection)
+        manager.activate_widget("IMPOT_FONCIER/CREATE", self.ui.pushButtonEditFisc)
+        self.ui.pushButtonEditFisc.clicked.connect(self.fisc_edit)
+
+    def getFeatureInfos(self):
+        connection = self.connection
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT df.fn_fg,df.demandeur,df.sur_plan"
+            " FROM demandefn df  WHERE df.gid=%s ", [int(self.gid)])
+        dm = cursor.fetchone()
+        self.ui.fn_fg.setReadOnly(True)
+        self.ui.demandeur.setReadOnly(True)
+        self.ui.sur_plan.setReadOnly(True)
+        
+        if len(dm) >= 1:
+            if dm[0] is None: 
+                self.ui.fn_fg.setText(_fromUtf8("FN_FG : " ))
+            else:
+                self.ui.fn_fg.setText(_fromUtf8("FN_FG : " + str(dm[0])))
+
+            if dm[1] is None:
+                self.ui.demandeur.setText(_fromUtf8("DEMANDEUR : "))
+            else:
+                self.ui.demandeur.setText(_fromUtf8("DEMANDEUR : "+ str(dm[1])))
+
+            if dm[2] is None:    
+                self.ui.sur_plan.setText(_fromUtf8("SUR_PLAN : " ))
+            else:
+                self.ui.sur_plan.setText(_fromUtf8("SUR_PLAN : " + str(dm[2])))
+        else:
+            print("Erreur")
+       
+    def create_certificat(self):
+        from MultipleLayersEditNodesButton import MultipleLayersEditNodesButton
+        self.parent.tool = MultipleLayersEditNodesButton(self.parent.iface, self.parent.MainWindow.canvas, self.parent)
+        from Certificat.ChoixSurParcelleDmdRun import ChoixSurParcelleDmdRun
+        choix = ChoixSurParcelleDmdRun(self.connection, self.canvas, self)
+        if choix.creation.getEtatOpposition():
+            reply = QtGui.QMessageBox.critical(self, "Erreur Opposition",
+                                        u"Il existe encore des oppositions non résolues liées à cette demande")
+            if reply == QtGui.QMessageBox.Ok:
+                choix.close()
+        else:
+            n_jours = datetime.date.today() - self.dateDemande
+            if n_jours.days > 15:
+                choix.exec_()
+            else:
+                print "erreur"
+                reply = QtGui.QMessageBox.critical(self, "Erreur",
+                                            u"La date du jour doit être superieure à la  date de la demande d'au moins 15 jours !")
+                if reply == QtGui.QMessageBox.Ok:
+                    choix.close()
+
+    def fisc_edit(self):
+        self.registry = self.parent.registry
+        from Fiplof.Saisie.InformationFiscaleRun import InformationFiscaleRun
+        info_fisc = InformationFiscaleRun(self.connection, self, 1)
+        if info_fisc.ui.comboCategorieParcelle.count() == 0 or info_fisc.ui.comboCategorieBatiment.count() == 0:
+            QtGui.QMessageBox.critical(self, "Erreur",
+                                 u"Veuillez d'abord configiurer les categories au niveau du menu Impot foncier > Paramètres > Catégories")
+            return
+        else:
+            info_fisc.exec_()
+
+    def create_demande(self):
+        from Demande.DemandeFormRun import DemandeFormRun
+        demande = DemandeFormRun(self, True, self.codeParcelle)
+        demande.exec_()

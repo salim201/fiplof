@@ -1,0 +1,70 @@
+# coding: utf8
+from PyQt4 import Qt, QtGui
+from .DbSyncroChange import Ui_Dialog
+from ConfigParser import SafeConfigParser
+import os, sys
+import psycopg2
+import psycopg2.extras
+
+
+class DbSyncroChangeRun(Qt.QDialog):
+    def __init__(self):
+        Qt.QDialog.__init__(self)
+
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.setWindowTitle(u"Configuration de la base de données de Synchronisation")
+        self.parser = SafeConfigParser()
+        self.parser.read(self.resolve("remote.ini"))
+        self.db_host = self.parser.get('database', 'host')
+        self.db_port = self.parser.get('database', 'port')
+        self.db_user = self.parser.get('database', 'user')
+        self.db_pass = self.parser.get('database', 'pass')
+        self.db_name = self.parser.get('database', 'name')
+        self.initActions()
+        self.fillFields()
+
+
+    def resolve(self, name, basepath=None):
+        if not basepath:
+            basepath = os.path.dirname(os.path.realpath(__file__))
+        return os.path.join(basepath, name)
+
+    def fillFields(self):
+        self.ui.lineEditHost.setText(str(self.db_host))
+        self.ui.lineEditPass.setText(str(self.db_pass))
+        self.ui.lineEditPort.setText(str(self.db_port))
+        self.ui.lineEditUser.setText(str(self.db_user))
+        self.ui.lineEditBdName.setText(str(self.db_name))
+
+    def initActions(self):
+        self.ui.pushButtonSave.clicked.connect(self.editIniFile)
+        self.ui.pushButtonClose.clicked.connect(self.close)
+        self.ui.pushButtonTester.clicked.connect(self.testerConnex)
+
+    def testerConnex(self):
+        #tester la connection
+        try:
+            test_connection = psycopg2.connect(database=str(self.ui.lineEditBdName.text()).strip(), user=str(self.ui.lineEditUser.text()).strip(),
+                                           password=str(self.ui.lineEditPass.text()).strip(), host=str(self.ui.lineEditHost.text()).strip())
+            QtGui.QMessageBox.information(self,'Test de connexion', u"Connexion réussi à la base")
+        except Exception as err:
+            QtGui.QMessageBox.critical(self,'Erreur de connexion', str(err))
+
+    def editIniFile(self):
+        self.db_host = str(self.ui.lineEditHost.text()).strip()
+        self.db_port = str(self.ui.lineEditPort.text()).strip()
+        self.db_user = str(self.ui.lineEditUser.text()).strip()
+        self.db_pass = str(self.ui.lineEditPass.text()).strip()
+        self.db_name = str(self.ui.lineEditBdName.text()).strip()
+        self.editFile()
+
+    def editFile(self):
+        self.parser.set('database', 'host',self.db_host)
+        self.parser.set('database', 'port', self.db_port)
+        self.parser.set('database', 'user', self.db_user)
+        self.parser.set('database', 'pass', self.db_pass)
+        self.parser.set('database', 'name', self.db_name)
+        with open(self.resolve('remote.ini'), 'wb') as configFile:
+            self.parser.write(configFile)
+        QtGui.QMessageBox.information(self, 'informartion', u"Modification réussi!")

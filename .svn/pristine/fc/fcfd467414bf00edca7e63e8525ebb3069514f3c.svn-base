@@ -1,0 +1,94 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'ActePublic.ui'
+#
+# Created: Sat Apr 07 17:56:18 2018
+#      by: PyQt4 UI code generator 4.9.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.resize(400, 195)
+        self.verticalLayout = QtGui.QVBoxLayout(Dialog)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.frame = QtGui.QFrame(Dialog)
+        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame.setObjectName(_fromUtf8("frame"))
+        self.gridLayout_2 = QtGui.QGridLayout(self.frame)
+        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.numRoDeLActeLabel = QtGui.QLabel(self.frame)
+        self.numRoDeLActeLabel.setObjectName(_fromUtf8("numRoDeLActeLabel"))
+        self.gridLayout.addWidget(self.numRoDeLActeLabel, 0, 0, 1, 1)
+        self.dateEditEnregistrement = QtGui.QDateEdit(self.frame)
+        self.dateEditEnregistrement.setCalendarPopup(True)
+        self.dateEditEnregistrement.setObjectName(_fromUtf8("dateEditEnregistrement"))
+        self.gridLayout.addWidget(self.dateEditEnregistrement, 1, 1, 1, 1)
+        self.lineEditNomOfficierPublic = QtGui.QLineEdit(self.frame)
+        self.lineEditNomOfficierPublic.setObjectName(_fromUtf8("lineEditNomOfficierPublic"))
+        self.gridLayout.addWidget(self.lineEditNomOfficierPublic, 2, 1, 1, 1)
+        self.lineEditNumActe = QtGui.QLineEdit(self.frame)
+        self.lineEditNumActe.setObjectName(_fromUtf8("lineEditNumActe"))
+        self.gridLayout.addWidget(self.lineEditNumActe, 0, 1, 1, 1)
+        self.dateDeLEnregistrementLabel = QtGui.QLabel(self.frame)
+        self.dateDeLEnregistrementLabel.setObjectName(_fromUtf8("dateDeLEnregistrementLabel"))
+        self.gridLayout.addWidget(self.dateDeLEnregistrementLabel, 1, 0, 1, 1)
+        self.lineEditValeurTransanction = QtGui.QLineEdit(self.frame)
+        self.lineEditValeurTransanction.setObjectName(_fromUtf8("lineEditValeurTransanction"))
+        self.gridLayout.addWidget(self.lineEditValeurTransanction, 3, 1, 1, 1)
+        self.nomDeLOfficierPublicLabel = QtGui.QLabel(self.frame)
+        self.nomDeLOfficierPublicLabel.setObjectName(_fromUtf8("nomDeLOfficierPublicLabel"))
+        self.gridLayout.addWidget(self.nomDeLOfficierPublicLabel, 2, 0, 1, 1)
+        self.spinBoxNombreOperations = QtGui.QSpinBox(self.frame)
+        self.spinBoxNombreOperations.setObjectName(_fromUtf8("spinBoxNombreOperations"))
+        self.gridLayout.addWidget(self.spinBoxNombreOperations, 4, 1, 1, 1)
+        self.nombreOpRationsLabel = QtGui.QLabel(self.frame)
+        self.nombreOpRationsLabel.setObjectName(_fromUtf8("nombreOpRationsLabel"))
+        self.gridLayout.addWidget(self.nombreOpRationsLabel, 4, 0, 1, 1)
+        self.valeurDeLaTransactionLabel = QtGui.QLabel(self.frame)
+        self.valeurDeLaTransactionLabel.setObjectName(_fromUtf8("valeurDeLaTransactionLabel"))
+        self.gridLayout.addWidget(self.valeurDeLaTransactionLabel, 3, 0, 1, 1)
+        self.label = QtGui.QLabel(self.frame)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.gridLayout.addWidget(self.label, 3, 2, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.verticalLayout.addWidget(self.frame)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.btnAide = QtGui.QPushButton(Dialog)
+        self.btnAide.setObjectName(_fromUtf8("btnAide"))
+        self.horizontalLayout.addWidget(self.btnAide)
+        self.btnOk = QtGui.QPushButton(Dialog)
+        self.btnOk.setObjectName(_fromUtf8("btnOk"))
+        self.horizontalLayout.addWidget(self.btnOk)
+        self.btnAnnuler = QtGui.QPushButton(Dialog)
+        self.btnAnnuler.setObjectName(_fromUtf8("btnAnnuler"))
+        self.horizontalLayout.addWidget(self.btnAnnuler)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Acte Public", None, QtGui.QApplication.UnicodeUTF8))
+        self.numRoDeLActeLabel.setText(QtGui.QApplication.translate("Dialog", "Numéro de l\'acte*", None, QtGui.QApplication.UnicodeUTF8))
+        self.dateDeLEnregistrementLabel.setText(QtGui.QApplication.translate("Dialog", "Date de l\'enregistrement*", None, QtGui.QApplication.UnicodeUTF8))
+        self.nomDeLOfficierPublicLabel.setText(QtGui.QApplication.translate("Dialog", "Nom de l\'officier public*", None, QtGui.QApplication.UnicodeUTF8))
+        self.nombreOpRationsLabel.setText(QtGui.QApplication.translate("Dialog", "Nombre opérations", None, QtGui.QApplication.UnicodeUTF8))
+        self.valeurDeLaTransactionLabel.setText(QtGui.QApplication.translate("Dialog", "Valeur de la transaction", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Dialog", "Ar", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnAide.setText(QtGui.QApplication.translate("Dialog", "Aide", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnOk.setText(QtGui.QApplication.translate("Dialog", "Ok", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnAnnuler.setText(QtGui.QApplication.translate("Dialog", "Annuler", None, QtGui.QApplication.UnicodeUTF8))
+

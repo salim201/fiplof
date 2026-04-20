@@ -1,0 +1,253 @@
+# coding: utf-8
+import os
+import subprocess
+
+from datetime import datetime
+import psycopg2
+import psycopg2.extras
+from PyQt4.QtGui import QApplication
+from PyQt4.QtCore import QTimer
+
+import globalvars
+from Parametres.DbExportThread import DbExportThread
+from models.ConnectRemoteModel import ConnectRemoteModel
+from models.CompareDbModel import CompareDbModel
+from logs import xlsLogger
+class ConnectRemote:
+    def __init__(self):
+        self.file = None
+        self.lines=None
+        self.logger = xlsLogger.xlsLogger("Synchronisation ")
+        self.dataToLog = []
+        self.title = ["Connexion", "Table", "Activite", "Situation","Erreur"]
+        from Configuration import DbConfig
+        self.db_config = DbConfig.DbConfig()
+        self.thread = None
+
+    def append_dataTolog(self,conn,table,act,sit,erreur):
+        self.dataToLog.append(
+            {"Connexion": conn, "Table": table, "Activite": act, "Situation": sit,
+             "Erreur": erreur})
+
+    def connectToRemote(self):
+        try:
+            param = []
+            path = "Configuration/remote.ini"
+            from Helpers.FiPlofFile import FiPlofFile
+            #content = FiPlofFile.readFile(self, path)
+            param =FiPlofFile.list_in_file(self, path,6,2)
+            connRemote = ConnectRemoteModel.connectToRemote(self, param)
+            if (connRemote) :
+                self.append_dataTolog('Remote','',u'Vérification connexion à distace','OK','')
+            else:
+                self.append_dataTolog('Remote', '', u'Vérification connexion à distace', 'KO', u'problème de connexion à distance')
+            return connRemote
+        except Exception as e:
+            print 'Erreur dans connectToRemote'
+            print(e.message)
+            self.append_dataTolog('Remote', '', u'Vérification connexion à distace', 'KO', e.message)
+            try:
+                connRemote.rollback()
+            except Exception as e:
+                print(e)
+                print 'ce n est pas grave'
+            return False
+
+    def connectToLocal(self):
+        try:
+            connLocal=psycopg2.connect(database=self.db_config.db_name, user=self.db_config.db_user,
+                                           password=self.db_config.db_pass, host=self.db_config.db_host)
+            self.append_dataTolog('local', '', u'Vérification connexion local', 'OK', '')
+            # print self.dataToLog
+            return connLocal
+
+        except Exception as e:
+            print 'Erreur dans connectToLocal'
+            print(e.message)
+            self.append_dataTolog('local', '', u'Vérification connexion local', 'KO', e.message)
+            try:
+                connLocal.rollback()
+            except Exception as e:
+                print(e)
+            return False
+
+
+
+    def connectDBs(self):
+
+        try:
+
+            localConn=None
+            remoteConn=None
+
+            from Synchronisation.synchro_Dialog_run import synchro_Dialog_run
+            bar_syncho=synchro_Dialog_run()
+            bar_syncho.ui.progressBar.setValue(1)
+            bar_syncho.show()
+            QTimer.singleShot(300000, lambda: bar_syncho.ui.progressBar.setValue(2))
+
+            bar_syncho.ui.label.setText("Verification de la connexion à la base de données local ")
+            bar_syncho.ui.progressBar.setValue(4)
+            localConn =self.connectToLocal()
+
+
+            bar_syncho.ui.label.setText("Verification de la connexion à la base de données à distance ")
+            bar_syncho.ui.progressBar.setValue(6)
+            remoteConn = self.connectToRemote()
+            missing_columns_list=CompareDbModel.compare_Tables_columns_remote_local(self,localConn,remoteConn,bar_syncho)
+
+            objet_compare = CompareDbModel(localConn, remoteConn,bar_syncho)
+            if (missing_columns_list):
+                self.append_dataTolog('local and remote',missing_columns_list,u'Liste des tables et colonnes manquantes entre deux BD',
+                                      'OK', '')
+                objet_compare.sync_Tables_remote_local(localConn, remoteConn,missing_columns_list)
+            else:
+                self.append_dataTolog('local and remote', '', u'Tentative de comparaison des tables et colonnes entre deux BD: Aucune différence', 'OK','' )
+
+            print '*************** ento no manao sauvegarde bd********'
+
+            pgdump=self.get_pgdump_path(localConn)
+            print pgdump
+            dirname =  "C:/sauvegarde"
+            filename = dirname + "/db_fiplof.sql"
+            print "*******************filename******************"
+            print filename
+            self.FILESAVE = str(filename)
+
+            self.thread = DbExportThread(pgdump=pgdump, filename=self.FILESAVE, nomBase=self.db_config.db_name)
+            self.thread.start()
+           
+            #self.create_database_dump(self.db_config.db_name, self.db_config.db_user, self.db_config.db_pass, self.db_config.db_host, self.db_config.db_port, output_file)
+            print '*************** tapitra eto ento no manao sauvegarde bd********'
+            if (bar_syncho.ui.progressBar.value()<60):
+                bar_syncho.ui.progressBar.setValue(60)
+
+            res_datatoLog=objet_compare.recup_table_data(localConn,remoteConn)
+
+            self.dataToLog.extend(res_datatoLog)
+
+
+            bar_syncho.close()
+
+            try:
+                self.logger.addSheet(title=self.title, data=self.dataToLog, sheet_name="LogSynchronisation")
+                self.logger.write()
+            except Exception as e:
+                print "erreur  e ato aminny self.logger.addSheet connectDBs sychro achevé"
+                print e
+
+        except Exception as e:
+            bar_syncho.close()
+            print "erreur ato amin'i connectDBS"
+            print(e)
+            try:
+                print 'tsy tafiditra ato kosa ve '
+                self.dataToLog.append(
+                    {"Connexion": '', "Table": '', "Activite": 'Erreur dans connectDBS', "Situation": 'KO',
+                     "Erreur": e.message})
+                self.logger.addSheet(title=self.title, data=self.dataToLog, sheet_name="Log Synchronisation")
+                self.logger.write()
+            except Exception as e:
+                print "erreur  ato amin'ny "
+                print e
+            try:
+                remoteConn.rollback()
+                localConn.rollback()
+            except Exception as e:
+                print(e)
+
+            return False
+
+    def progresswithp(self, p):
+        self.ui.progressBarlisting.setValue(p)
+
+    def reset(self):
+        self.current_value = 0
+        self.ui.progressBarlisting.reset()
+
+    def progress(self):
+        print '-----progress---'
+        print self.current_value
+        if self.current_value <= self.ui.progressBarlisting.maximum():
+            self.current_value += self.pas
+            self.ui.progressBarlisting.setValue(self.current_value)
+        print '-----progress suivant---'
+        print self.current_value
+
+    def get_pgdump_path(self,conn):
+        setting = None
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT setting FROM pg_settings where name like 'data_directory'")
+            setting = cursor.fetchone()
+
+
+            if setting is None:
+                return None
+            b = os.path.dirname(setting[0])
+            type='pg_dump'
+            test=str(os.path.join(b, "bin\\%s.exe" % type))
+            print test
+            return test
+
+        except Exception as e:
+            print(e)
+
+
+    def create_database_dump(self,database_name, user, password, host, port, commune):
+        try:
+            print '----------------------------------------tsy tafiditra eto akory---------------------------------------------'
+            date_now=datetime.now()
+            current_date = date_now.strftime('%d%m%Y')
+            hour_format = date_now.strftime('%H')
+            minute_format = date_now.strftime('%M')
+
+            # Concaténer les valeurs pour obtenir le format "hh-mm-ss"
+            heure_minute = '{}{}'.format(hour_format, minute_format)
+
+            # Construction du nom de fichier avec la date
+            output_file = 'dump_{}_{}.dump'.format(current_date,heure_minute)
+            print output_file
+
+            # # Chemin complet du répertoire de sauvegarde
+            output_directory = r"C:\sauvegarde"
+
+            # Vérifier si le répertoire de sauvegarde existe, sinon le créer
+            if not os.path.exists(output_directory):
+                os.makedirs(output_directory)
+
+            # Construction du chemin complet du fichier de sauvegarde
+            output_file_path = os.path.join(output_directory, output_file)
+            print 'output_file_path++++++++++++++++++++++++++++++++++++++++++++++++++++'
+            print output_file_path
+
+            # Création du fichier vide
+            with open(output_file_path, 'w') as f:
+                pass  # Le fichier est créé vide
+
+            # Construction de la commande pg_dump
+            pg_dump_command = ['pg_dump', '-d', database_name, '-U', user, '-h', host, '-p', port, '-F', 'c',
+                # Format personnalisé
+                '-f', output_file_path]
+
+            # Vérification du mot de passe
+            if password:
+                pg_dump_command.extend(['-W', password])
+            print pg_dump_command
+
+            if os.path.exists(output_file_path):
+                print("Le fichier existe.")
+            else:
+                print("Le fichier n'existe pas.")
+            # Exécution de la commande pg_dump
+
+            subprocess.check_output(pg_dump_command, stderr=subprocess.STDOUT)
+            print("Exportation de la base de données terminée avec succès.")
+
+            self.dataToLog.append(
+                {"Connexion": '', "Local": '', "Activite": 'sauvegarde BD', "Situation": 'OK',
+                 "Erreur": ''})
+        except Exception as e:
+            self.dataToLog.append(
+                {"Connexion": '', "Local": '', "Activite": 'tentative de sauvegarde BD', "Situation": 'KO', "Erreur": e.message})
+            print("Erreur lors de la création :", e)

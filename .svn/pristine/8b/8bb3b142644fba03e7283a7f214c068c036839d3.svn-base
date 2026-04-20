@@ -1,0 +1,352 @@
+# coding: utf8
+from PyQt4.QtGui import QMessageBox
+from PyQt4.QtCore import QThread, SIGNAL
+from osgeo import gdal, ogr
+import sys
+import os
+import os.path
+from PyQt4 import QtCore, QtGui
+import globalvars
+import qgis
+from qgis.core import *
+from PyQt4.QtCore import SIGNAL
+from Utils import Utils
+from FormImportShapePLOF import Ui_Dialog
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+
+class ImportShapePLOF(QtGui.QDialog):
+	def __init__(self, connection):
+		QtGui.QDialog.__init__(self)
+		sys.setdefaultencoding('utf8')
+		self.connection = connection
+		self.ui = Ui_Dialog()
+		self.ui.setupUi(self)
+		self.initAction()
+		self.ui.pushButtonLancer.setEnabled(True)
+		self.ui.pushButtonAnnuler.setEnabled(True)
+		self.ui.pushButtonParcourir.setEnabled(True)
+	
+	def initAction(self):
+		self.ui.pushButtonAnnuler.clicked.connect(self.accept)
+		self.ui.pushButtonParcourir.clicked.connect(self.browseFile)
+		self.ui.pushButtonLancer.clicked.connect(self.launch)
+
+	def browseFile(self):
+		self.filename = QtGui.QFileDialog.getOpenFileName(self, "Choisissez un fichier","","Fichier de forme files(*.shp)")
+		self.ui.filename.setText(self.filename)
+		self.ui.pushButtonLancer.setEnabled(True)
+
+	def launch(self):
+		couche = self.ui.comboListecouche.currentText()
+		if couche == "Titre":
+			self.importTitre()
+
+		if couche == "Cadastre":
+			self.importCadastre()
+
+		if couche == "Demande FN":
+			self.importDemandeFn()
+
+		if couche == "Terrain Statut Spécifique":
+			self.importCadastre()
+
+	def importDemandeFn(self):
+		layer = QgsVectorLayer(_fromUtf8(str(self.filename)), "dataFromPLOFPapers", "ogr")
+		features = layer.getFeatures()
+		
+		try:
+			provider = layer.dataProvider()
+			fields = provider.fields()
+			fn_fg = 0
+			demandeur = 0
+			sur_plan = 0
+			counter = 0
+			verifcolonne = 0
+
+			for field in fields:
+				header = str(field.name()).lower()
+			
+				if header == "fn_fg":
+					fn_fg = counter
+					counter = counter + 1 
+					verifcolonne = verifcolonne + 1 
+				
+				elif header == "demandeur":
+					demandeur = counter
+					counter = counter + 1
+					verifcolonne = verifcolonne + 1 
+				
+				elif header == "sur_plan":
+					sur_plan = counter
+					counter = counter + 1
+					verifcolonne = verifcolonne + 1 
+				
+				else:
+					counter = counter + 1
+				
+			if verifcolonne >= 3:
+				for f in features:
+					try:
+						geometry = f.geometry()
+						if geometry.wkbType() == QGis.WKBPolygon:
+							x = geometry.asPolygon()
+						if geometry.wkbType() == QGis.WKBMultiPolygon:
+							x = geometry.asMultiPolygon()[0]
+						attrs = f.attributes()
+
+						name_fn_fg = str(attrs[fn_fg].toPyObject())
+						name_demandeur = str(attrs[demandeur].toPyObject())
+						name_sur_plan = str(attrs[sur_plan].toPyObject())
+
+						if name_fn_fg == "":
+							name_fn_fg = None
+						
+						if name_demandeur == "":
+							name_demandeur = None
+
+						if name_sur_plan == "":
+							name_sur_plan = None
+
+						cursor = self.connection.cursor()
+						exe = cursor.execute(
+								"INSERT INTO demandefn (fn_fg,demandeur,sur_plan,geom) VALUES ("
+									"%s,%s,%s,ST_GeomFromText(%s, "+str(globalvars.EPSG_SCR) + "))",
+								(name_fn_fg,name_demandeur,name_sur_plan,str(geometry.exportToWkt()),))
+							
+						self.connection.commit()
+						cursor.close()
+
+					except Exception as e:
+						self.connection.rollback()
+						print("-----------------Erreur-------------")
+						print(e)
+			else:
+				QMessageBox.critical(self,"Erreur","Veuillez bien respecter la nomenclature des tables attributaires Demande FN")
+				# print("Colonne does not matched")
+			
+		except Exception as e:
+			print("-----------------Erreur-------------")
+			print(e)    
+
+	def importCadastre(self):
+		layer = QgsVectorLayer(_fromUtf8(str(self.filename)), "dataFromPLOFPapers", "ogr")
+		features = layer.getFeatures()
+		
+		try:
+			provider = layer.dataProvider()
+			fields = provider.fields()
+			nom_section = 0
+			section = 0
+			parcelle = 0
+			nom_plan = 0
+			counter = 0
+			verifcolonne = 0
+
+			for field in fields:
+				header = str(field.name()).lower()
+			
+				if header == "nom_sectio":
+					nom_section = counter
+					counter = counter + 1 
+					verifcolonne = verifcolonne + 1 
+				
+				elif header == "section":
+					section = counter
+					counter = counter + 1
+					verifcolonne = verifcolonne + 1 
+				
+				elif header == "parcelle":
+					parcelle = counter
+					counter = counter + 1
+					verifcolonne = verifcolonne + 1 
+				
+				elif header == "nom_plan":
+					nom_plan = counter
+					counter = counter + 1
+					verifcolonne = verifcolonne + 1 
+				else:
+					counter = counter + 1
+				
+			if verifcolonne >= 4:
+				for f in features:
+					try:
+						geometry = f.geometry()
+						if geometry.wkbType() == QGis.WKBPolygon:
+							x = geometry.asPolygon()
+						if geometry.wkbType() == QGis.WKBMultiPolygon:
+							x = geometry.asMultiPolygon()[0]
+						attrs = f.attributes()
+
+						name_nom_section = str(attrs[nom_section].toPyObject())
+						name_section = str(attrs[section].toPyObject())
+						name_parcelle = str(attrs[parcelle].toPyObject())
+						name_nom_plan = str(attrs[nom_plan].toPyObject())
+
+						if name_nom_section == "":
+							name_nom_section = None
+						
+						if name_section == "":
+							name_section = None
+
+						if name_parcelle == "":
+							name_parcelle = None
+						
+						if name_nom_plan == "":
+							name_nom_plan = None
+
+						cursor = self.connection.cursor()
+						exe = cursor.execute(
+								"INSERT INTO cadastre (nom_section,section,parcelle,nom_plan,geom) VALUES ("
+									"%s,%s,%s,%s,ST_GeomFromText(%s, "+str(globalvars.EPSG_SCR) + "))",
+								(name_nom_section,name_section,name_parcelle,name_nom_plan,str(geometry.exportToWkt()),))
+							
+						self.connection.commit()
+						cursor.close()
+
+					except Exception as e:
+						self.connection.rollback()
+						print("-----------------Erreur-------------")
+						print(e)
+			else:
+				QMessageBox.critical(self,"Erreur","Veuillez bien respecter la nomenclature des tables attributaires Cadastre")
+			
+		except Exception as e:
+			print("-----------------Erreur-------------")
+			print(e)    
+
+	def importTitre(self):
+		layer = QgsVectorLayer(_fromUtf8(str(self.filename)), "dataFromPLOFPapers", "ogr")
+		features = layer.getFeatures()
+		
+		try:
+			provider = layer.dataProvider()
+			fields = provider.fields()
+			titres_req = 0
+			propriete = 0
+			sur_plan = 0
+			titre_r = 0
+			partie = 0
+			feuille = 0
+			parcelle = 0
+			counter = 0
+			verifColonne = 0
+
+			for field in fields:
+				header = str(field.name()).lower()
+
+				if header == "titres":
+					titres_req = counter
+					counter = counter + 1 
+					verifColonne = verifColonne + 1 
+				
+				elif header == "propriete":
+					propriete = counter
+					counter = counter + 1 
+					verifColonne = verifColonne + 1
+				
+				elif header == "sur_plan":
+					sur_plan = counter
+					counter = counter + 1 
+					verifColonne = verifColonne + 1
+				
+				elif header == "titre_r":
+					titre_r = counter
+					counter = counter + 1 
+					verifColonne = verifColonne + 1
+				
+				elif header == "partie":
+					partie = counter
+					counter = counter + 1 
+					verifColonne = verifColonne + 1
+				
+				elif header == "feuille":
+					feuille = counter
+					counter = counter + 1 
+					verifColonne = verifColonne + 1
+				
+				elif header == "parcelle":
+					parcelle = counter
+					counter = counter + 1 
+					verifColonne = verifColonne + 1
+				else:
+					counter = counter + 1
+			
+			if verifColonne >= 7:
+				for f in features:
+					try:
+						geometry = f.geometry()
+						if geometry.wkbType() == QGis.WKBPolygon:
+							x = geometry.asPolygon()
+						if geometry.wkbType() == QGis.WKBMultiPolygon:
+							x = geometry.asMultiPolygon()[0]
+						attrs = f.attributes()
+
+						name_titre = str(attrs[titres_req].toPyObject())
+						name_Propriete = str(attrs[propriete].toPyObject())
+						name_sur_plan = str(attrs[sur_plan].toPyObject())
+						name_titre_R = str(attrs[titre_r].toPyObject())
+						name_parcelle = str(attrs[parcelle].toPyObject())
+						name_partie = str(attrs[partie].toPyObject())
+						name_feuille = str(attrs[feuille].toPyObject())
+
+
+						if name_sur_plan == "":
+							name_sur_plan = None
+						else:
+							name_sur_plan = float(name_sur_plan)
+						
+						if name_titre == "":
+							name_titre = None
+
+						if name_titre_R == "":
+							name_titre_R = None
+
+						if name_Propriete == "":
+							name_Propriete = None
+
+						if name_parcelle == "":
+							name_parcelle = None
+
+						if name_partie == "":
+							name_partie = None
+
+						if name_feuille == "":
+							name_feuille = None
+
+						cursor = self.connection.cursor()
+						exe = cursor.execute(
+								"INSERT INTO titre (titres,propriete,sur_plan,titre_r,parcelle,partie,feuille,geom) VALUES ("
+									"%s,%s,%s,%s,%s,%s,%s,ST_GeomFromText(%s, "+str(globalvars.EPSG_SCR) + "))",
+								(name_titre,name_Propriete,name_sur_plan, name_titre_R,name_parcelle,name_partie,name_feuille,str(geometry.exportToWkt()),))
+							
+						self.connection.commit()
+						cursor.close()
+
+					except Exception as e:
+						self.connection.rollback()
+						print("-----------------Erreur-------------")
+						print(e)
+			else:
+				QMessageBox.critical(self,"Erreur","Veuillez bien respecter la nomenclature des tables attributaires Titre")
+
+		except Exception as e:
+			print("-----------------Erreur-------------")
+			print(e)    
+	
+        
+
+
+

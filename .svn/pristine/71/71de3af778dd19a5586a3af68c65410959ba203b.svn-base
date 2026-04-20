@@ -1,0 +1,123 @@
+# -*- coding: utf-8 -*-
+import os
+import sys
+import os
+import os.path
+from os.path import expanduser
+from qgis.core import *
+from qgis.gui import *
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import *
+from .ExportData import Ui_ExportData
+from PyQt4.QtGui import *
+import psycopg2
+from PyQt4.QtCore import *
+from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui, Qt
+from PyQt4 import Qt, QtGui
+import globalvars
+import psycopg2
+import time
+import datetime, globalvars
+from datetime import date
+from AutoBackupThread import AutoBackupThread
+from AutoSaveBdForm import Ui_AutoSaveUI
+from Utils import Utils
+from Configuration import DbConfig
+from plof import Plof
+from ConfigParser import SafeConfigParser
+import subprocess
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class AutoBackupRun(Qt.QDialog):
+    def __init__(self,parent,connection, exetype='pg_dump'):
+        QtGui.QDialog.__init__(self)
+        # Set up the user interface from Designer.
+        self.ui = Ui_AutoSaveUI()
+        self.ui.setupUi(self)
+        self.parent = parent
+        self.connection = connection
+        self.cursor = self.connection.cursor()
+        self.thread = None
+        self.LOGIN = ''
+        self.PASSWORD = ''
+        self.FILESAVE = ''
+        self.CURRENT_DB = ''
+        self.CURRENT_USER = ''
+        self.NOM_BASE = None
+        self.output = []
+        self.type = exetype
+        self.dirname = os.path.expanduser('~')
+        self.filename = None
+        self.db_config = DbConfig.DbConfig()
+        self.launch()
+
+
+    def get_pgdump_path(self):
+        setting = None
+        cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        try:
+            cursor.execute("SELECT setting FROM pg_settings where name like 'data_directory'")
+            row = cursor.fetchone()
+            setting = row["setting"]
+        except Exception as e:
+            print(e)
+        cursor.close()
+        if setting is None:
+            return None
+        b = os.path.dirname(setting)
+        return str(os.path.join(b, "bin\\%s.exe" % self.type))
+
+
+    def launch(self):
+        # id_projet = int(globalvars.id_projet)
+        if self.dirname == "":
+            return
+        print("launch on")
+        pgdump = self.get_pgdump_path()
+        print ("****pgdump******")
+        print (pgdump)
+        # self.message_added("Recuperation de l'executable %s" % self.type)
+
+        try:
+            self.myThread = AutoBackupThread(pgdump=pgdump, dirname=self.dirname, connection=self.connection, parent = self)
+        except Exception as err:
+            print(err)
+        self.progress(30)
+
+        try:
+            self.myThread.doneSignal.connect(self.termine)
+            print("AFTER CONNECTING TO TERMINE")
+        except Exception as err:
+            print(err)
+        self.progress(60)
+        try:
+            self.myThread.start()
+        except Exception as err:
+            print(err)
+
+    def termine(self):
+        self.progress(100)
+        QtGui.QMessageBox.information(
+            self,
+            "Termine",
+            "L'export automatique de la base est termine" if self.type == "pg_dump" else
+            "L'import de la base est termine\nL'application va maintenant se fermer.")
+        #subprocess.Popen(r'explorer /select,' + self.filename + '')
+        self.close()
+
+    def progress(self, p):
+        self.ui.progressBar.setValue(p)

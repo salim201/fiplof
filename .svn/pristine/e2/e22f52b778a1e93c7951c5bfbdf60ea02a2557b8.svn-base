@@ -1,0 +1,1 @@
+INSERT INTO consistance_batiment(consistance, mombamombanytany) VALUES('Tafo bozaka', 'Tafo bozaka'), ('Tafo fanitso', 'Tafo fanitso');

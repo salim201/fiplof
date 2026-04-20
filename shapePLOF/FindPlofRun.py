@@ -1,0 +1,355 @@
+# -- coding: utf-8 --
+import sys
+import math
+from PyQt4 import QtGui
+from qgis.core import *
+from PyQt4.QtGui import QTableWidgetItem
+from FormRecherchePLOF import Ui_Dialog
+from Utils import Utils
+import globalvars
+
+try:
+	_encoding = QtGui.QApplication.UnicodeUTF8
+	def _translate(context, text, disambig):
+		return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+	def _translate(context, text, disambig):
+		return QtGui.QApplication.translate(context, text, disambig)
+
+class RecherchePlof(QtGui.QDialog):    
+	def __init__(self, connection,parent):
+		sys.setdefaultencoding('utf8')
+		QtGui.QDialog.__init__(self)
+		self.ui = Ui_Dialog()
+		self.ui.setupUi(self)
+		self.parent = parent
+		self.connection = connection
+		self.setWindowTitle("Recherche PLOF")
+		self.ui.tableWidget.setColumnHidden(0, True)
+		self.index = 0
+		self.limit = 20
+
+		self.categories = {
+			0: ["gid","TITRES", "PROPRIETE", "SUR_PLAN", "TITRE_R", "PARCELLE", "PARTIE", "FEUILLE"],
+			1: ["gid","NOM_SECTION", "SECTION", "PARCELLE", "NOM_PLAN"],
+			2: ["gid","FN_FG", "DEMANDEUR", "SUR_PLAN"],
+			3: ["gid","FN_FG", "DEMANDEUR", "SUR_PLAN", "OBSERVATION"]
+		}
+  
+		self.headers = self.categories[self.index]
+		self.ui.tableWidget.setSelectionBehavior(1)
+		self.ui.tableWidget.setAlternatingRowColors(True)
+		self.initActions()
+
+	def initActions(self):
+		self.ui.comboListecouche.currentIndexChanged.connect(self.check_liste_couche)
+		self.ui.checkBox_1.stateChanged.connect(lambda: self.toggleField(self.ui.checkBox_1, self.ui.lineEdit_1))
+		self.ui.checkBox_2.stateChanged.connect(lambda: self.toggleField(self.ui.checkBox_2, self.ui.lineEdit_2))
+		self.ui.comboBoxNumPage.currentIndexChanged.connect(self.changer_page)
+		self.ui.pushButtonFermer.clicked.connect(self.close)
+		self.ui.pushButtonAfficherTous.clicked.connect(self.showAll)
+		self.ui.tableWidget.cellClicked.connect(self.cellSelected)
+		self.ui.pushButtonRechercher.clicked.connect(self.find_plof)
+		self.ui.btnPrecedent.clicked.connect(lambda: self.page_suivante_precedente("precedent"))
+		self.ui.btnSuivant.clicked.connect(lambda: self.page_suivante_precedente("suivant"))
+		self.ui.btnFin.clicked.connect(lambda: self.aller_page("fin"))
+		self.ui.btnDebut.clicked.connect(lambda: self.aller_page("debut"))
+		self.ui.btnDebut.setEnabled(False)
+		self.ui.btnFin.setEnabled(False)
+		self.ui.btnPrecedent.setEnabled(False)
+		self.ui.btnSuivant.setEnabled(False)
+
+	def aller_page(self, position):
+		if position == "debut":
+			current_page = 1
+		elif position == "fin":
+			current_page = self.total_pages
+		else:
+			return 
+
+		offset = (current_page - 1) * self.limit
+
+		if hasattr(self, 'search_where') and self.search_where:
+			data = self.getAll_where(self.limit, offset, self.search_where)
+		else:
+			data = self.getAll(self.limit, offset)
+
+		self.ui.tableWidget.setRowCount(0)
+		for row_data in data:
+			row_num = self.ui.tableWidget.rowCount()
+			self.ui.tableWidget.insertRow(row_num)
+			for col_num, value in enumerate(row_data):
+				self.ui.tableWidget.setItem(row_num, col_num, QTableWidgetItem(str(value)))
+
+		self.ui.lineEditNumPage.setText(str(current_page))
+		self.ui.comboBoxNumPage.setCurrentIndex(current_page - 1)
+
+	def page_suivante_precedente(self, direction):
+		current_page = int(self.ui.lineEditNumPage.text())
+		
+		if direction == "suivant" and current_page < self.total_pages:
+			current_page += 1
+		elif direction == "precedent" and current_page > 1:
+			current_page -= 1
+
+		offset = (current_page - 1) * self.limit
+
+		if hasattr(self, 'search_where') and self.search_where:
+			data = self.getAll_where(self.limit, offset, self.search_where)
+		else:
+			data = self.getAll(self.limit, offset)
+
+
+		self.ui.tableWidget.setRowCount(0)
+		for row_data in data:
+			row_num = self.ui.tableWidget.rowCount()
+			self.ui.tableWidget.insertRow(row_num)
+			for col_num, value in enumerate(row_data):
+				self.ui.tableWidget.setItem(row_num, col_num, QTableWidgetItem(str(value)))
+
+		self.ui.lineEditNumPage.setText(str(current_page))
+		self.ui.comboBoxNumPage.setCurrentIndex(current_page - 1)
+
+	def total_ligne_recherche(self, where):
+		table_name = str(self.ui.comboListecouche.currentText()).lower()
+		sql = "SELECT count(*) FROM {} {}".format(table_name, where)
+		cursor = self.connection.cursor()
+		try:
+			cursor.execute(sql)
+			count = cursor.fetchone()[0]
+		except Exception as err:
+			print("Erreur lors du comptage des résultats de la recherche")
+			print("Erreur SQL {}".format(err))
+			count = 0
+		cursor.close()
+		return count
+
+	def find_plof(self):
+		checkBox_1 = self.ui.checkBox_1.isChecked()
+		checkBox_2 = self.ui.checkBox_2.isChecked()
+		where = ' WHERE '
+		conditions = []
+
+		if self.ui.lineEdit_1.text() == '' and self.ui.lineEdit_2.text() == '':
+			message = u"Veuiller ajouter des données au recherche"
+			Utils.alert(message,u"Erreur trouver")
+			return
+			
+		if checkBox_1:
+			conditions.append("{} ILIKE '%{}%'".format(
+				self.headers[1], self.ui.lineEdit_1.text()))
+
+		if checkBox_2:
+			conditions.append("{} ILIKE '%{}%'".format(
+				self.headers[2], self.ui.lineEdit_2.text()))
+
+		if not conditions:
+			return
+
+		where += ' AND '.join(conditions)
+
+		table_name = str(self.ui.comboListecouche.currentText()).lower()
+		sql_count = "SELECT COUNT(*) FROM {} {}".format(table_name, where)
+		cursor = self.connection.cursor()
+		try:
+			cursor.execute(sql_count)
+			count = cursor.fetchone()[0]
+		except Exception as e:
+			print("Erreur SQL dans le comptage des résultats : {}".format(e))
+			cursor.close()
+			return
+		cursor.close()
+
+		self.total_pages = (count + self.limit - 1) // self.limit
+		self.ui.comboBoxNumPage.clear()
+		for page_number in range(1, self.total_pages + 1):
+			self.ui.comboBoxNumPage.addItem("{}/{}".format(page_number, self.total_pages))
+
+		if self.total_pages > 0:
+			current_page = 1
+			offset = (current_page - 1) * self.limit
+			data = self.getAll_where(self.limit, offset, where)
+
+			self.ui.tableWidget.setRowCount(0)
+			for row_data in data:
+				row_num = self.ui.tableWidget.rowCount()
+				self.ui.tableWidget.insertRow(row_num)
+				for col_num, value in enumerate(row_data):
+					self.ui.tableWidget.setItem(row_num, col_num, QTableWidgetItem(str(value)))
+
+			self.ui.lineEditNumPage.setText(str(current_page))
+			self.ui.comboBoxNumPage.setCurrentIndex(current_page - 1)
+			self.search_where = where
+			self.ui.btnDebut.setEnabled(True)
+			self.ui.btnFin.setEnabled(True)
+			self.ui.btnPrecedent.setEnabled(True)
+			self.ui.btnSuivant.setEnabled(True)
+		else:
+			message = u"Aucune donnée {} trouvée !".format(str(self.ui.comboListecouche.currentText()).lower())
+			Utils.alert(message, u"Résultat Recherche")
+
+
+	def checkLayerName(self):
+		couche = self.ui.comboListecouche.currentText()
+		if couche == "DemandeFN":
+			couche = "Demande FN"
+		return couche
+	
+	def cellSelected(self, row):
+		try:
+			couche = self.checkLayerName()
+			gid = self.ui.tableWidget.item(row, 0).text()
+			titre = self.parent.registry.mapLayersByName(couche)[0]
+			canvas = self.parent.canvas
+			for layer in canvas.layers():
+				if layer.type() == layer.VectorLayer:
+					layer.removeSelection()
+
+			canvas.refresh()
+			canvas.setSelectionColor(QtGui.QColor(str(globalvars.SelectionColor)))
+			titre.select(int(gid))
+			canvas.zoomToSelected(titre)
+
+		except Exception as e:
+			print(e)
+
+	def changer_page(self):
+		page_info = self.ui.comboBoxNumPage.currentText()
+		page = int(page_info.split("/")[0])
+		offset = (page - 1) * self.limit
+
+		self.ui.tableWidget.setRowCount(0)
+		if hasattr(self, 'search_where') and self.search_where:
+			data = self.getAll_where(self.limit, offset, self.search_where)
+		else:
+			data = self.getAll(self.limit, offset)
+
+		for row_data in data:
+			row_num = self.ui.tableWidget.rowCount()
+			self.ui.tableWidget.insertRow(row_num)
+			for col_num, value in enumerate(row_data):
+				self.ui.tableWidget.setItem(row_num, col_num, QTableWidgetItem(str(value)))
+
+		self.ui.lineEditNumPage.setText(str(page))
+
+	def total_ligne_table (self):
+		table_name = str(self.ui.comboListecouche.currentText()).lower()
+		sql = "select count(*) from {}".format(table_name)
+		cursor = self.connection.cursor()
+		cursor.execute(sql)
+		data = cursor.fetchone()[0]
+		cursor.close()
+		return data
+	
+	def process_pagination_offset(self, nombre_total, taille_page):
+		dernier_page = math.ceil(nombre_total/taille_page)
+		offset = (dernier_page - 1) * taille_page
+		return offset
+
+	def nombre_total_page_table(self, count):
+		total_pages = (count + self.limit - 1) // self.limit
+		self.ui.comboBoxNumPage.clear()
+		for page_number in range(1, total_pages + 1):
+			self.ui.comboBoxNumPage.addItem("{}/{}".format(page_number, total_pages))
+		self.total_pages = total_pages
+
+		self.ui.comboBoxNumPage.currentIndexChanged.connect(self.sync_line_edit_page)
+
+	def sync_line_edit_page(self, index):
+		self.ui.lineEditNumPage.setText(str(index + 1))
+
+	def showAll(self):
+		try:
+			self.nombre_total_page_table(self.total_ligne_table())
+			self.ui.lineEditNumPage.setText("1")
+			data = self.getAll(self.limit, 0)
+			if len(data) > 0:
+				self.ui.tableWidget.setRowCount(len(data))	
+				for row, rowData in enumerate(data):
+					for col, value in enumerate(rowData):
+						self.ui.tableWidget.setItem(row, col, QTableWidgetItem(str(value)))
+				self.ui.tableWidget.resizeColumnsToContents()
+				self.ui.btnDebut.setEnabled(True)
+				self.ui.btnFin.setEnabled(True)
+				self.ui.btnPrecedent.setEnabled(True)
+				self.ui.btnSuivant.setEnabled(True)
+				if hasattr(self, 'search_where'):
+					delattr(self, 'search_where')
+			else:
+				message = u"Aucun donnée {} trouvé !".format(str(self.ui.comboListecouche.currentText()).lower())
+				Utils.alert(message,u"Résultat Recherche")
+		except Exception as e:
+			print(e)
+
+	def showAll_where(self, where,offset):
+		try:
+			data = self.getAll_where(self.limit, offset, where)
+			if len(data) > 0:
+				self.ui.tableWidget.setRowCount(len(data))	
+				for row, rowData in enumerate(data):
+					for col, value in enumerate(rowData):
+						self.ui.tableWidget.setItem(row, col, QTableWidgetItem(str(value)))
+				self.ui.tableWidget.resizeColumnsToContents()
+			else:
+				message = u"Aucun donnée {} trouvé !".format(str(self.ui.comboListecouche.currentText()).lower())
+				Utils.alert(message,u"Résultat Recherche")
+		except Exception as e:
+			print(e)
+
+	def getAll_where(self, limit, offset, where):
+		data = []
+		table_name = str(self.ui.comboListecouche.currentText()).lower()
+		columns = [str(header).lower() for header in self.headers]
+		columns_str = ", ".join(columns)
+		sql = "select {} from {} {}  limit {} offset {}".format(columns_str,table_name, where, limit, offset)
+		cursor = self.connection.cursor()
+		try:
+			cursor.execute(sql)
+			data = cursor.fetchall()
+		except Exception as err:
+			print("Erreur Recherche PLOF")
+			print("Erreur SQL {}".format(err))
+			
+		cursor.close()
+		return data
+
+	def getAll(self, limit, offset):
+		data = []
+		table_name = str(self.ui.comboListecouche.currentText()).lower()
+		columns = [str(header).lower() for header in self.headers]
+		columns_str = ", ".join(columns)
+		sql = "select {} from {} limit {} offset {}".format(columns_str,table_name, limit, offset)
+		cursor = self.connection.cursor()
+		try:
+			cursor.execute(sql)
+			data = cursor.fetchall()
+		except Exception as err:
+			print("Erreur Recherche PLOF")
+			print("Erreur SQL {}".format(err))
+			
+		cursor.close()
+		return data
+
+	def toggleField(self, checkbox, lineedit):
+		lineedit.setEnabled(checkbox.isChecked())
+
+	def check_liste_couche(self):
+		self.ui.lineEditNumPage.setText('')
+		self.ui.comboBoxNumPage.clear()
+		self.index = self.ui.comboListecouche.currentIndex()
+		self.ui.tableWidget.setRowCount(0)
+		self.ui.tableWidget.clear()
+		self.ui.btnDebut.setEnabled(False)
+		self.ui.btnFin.setEnabled(False)
+		self.ui.btnPrecedent.setEnabled(False)
+		self.ui.btnSuivant.setEnabled(False)
+
+		if self.index in self.categories:  
+			self.headers = self.categories[self.index]
+			self.ui.checkBox_1.setText(self.headers[1])
+			self.ui.checkBox_2.setText(self.headers[2] if len(self.headers) > 1 else "")
+			self.ui.lineEdit_1.setText('')
+			self.ui.lineEdit_2.setText('')
+			self.ui.tableWidget.setColumnCount(len(self.headers))
+			self.ui.tableWidget.setHorizontalHeaderLabels(self.headers)
+			self.ui.tableWidget.resizeColumnsToContents()

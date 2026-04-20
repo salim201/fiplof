@@ -1,0 +1,554 @@
+# coding: utf8
+from PyQt4.QtCore import QThread, SIGNAL
+from osgeo import gdal, ogr
+#import ogrinfo
+import sys
+import os
+import os.path
+import globalvars
+from datetime import datetime
+import psycopg2
+import time
+from xlrd import open_workbook
+import xlrd
+import io
+import qgis
+from qgis.core import *
+from PyQt4 import QtCore, QtGui
+from logs import xlsLogger
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+
+class ImportShapePLOFThread(QThread):
+    def __init__(self, filename, connection,comboListecouche):
+        QThread.__init__(self)
+        self.filename, self.connection,self.comboListecouche = filename, connection, comboListecouche
+        self.current_step =-1
+        self.logger = xlsLogger.xlsLogger("Import_Shapefile")
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        if self.filename == "":
+            self.emit(SIGNAL("alert(QString)"), "Veuillez choisir un fichier")
+            return
+    
+        self.current_step = -1
+
+        #IMPORT PARCELLE
+        self.emit(SIGNAL("stepInit(int)"), self.current_step + 1)
+
+        if self.comboListecouche == "Titre":
+            self.importTitre()
+
+        if self.comboListecouche == "Cadastre":
+            self.importCadastre()
+
+        if self.comboListecouche == "Demande FN":
+            self.importDemandeFn()
+
+        if self.comboListecouche == "TSS":
+            self.importTerrain_Status_Specifique()
+
+        self.emit(SIGNAL("stepDone(int)"), self.current_step)
+        self.logger.write()
+
+    def checkGeomEquality(self, str_geom,couche):
+        try:
+            cur = self.connection.cursor()
+            sql = "SELECT geom FROM " + couche + " WHERE ST_OrderingEquals(ST_GeomFromText(%s,"+str(globalvars.EPSG_SCR)+"), geom)"
+            cur.execute(sql, (str_geom,))
+            res = cur.fetchall()
+            cur.close()
+            return res
+        except Exception as err:
+            print(err)
+            self.connection.rollback()
+            return None
+
+    def importTerrain_Status_Specifique(self):
+        title = ["FN_FG","DEMANDEUR","SUR_PLAN","OBSERVATION","ETAT_INSERTION"]
+        dataToLog = []
+        self.current_step = self.current_step + 1
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+
+        layer = QgsVectorLayer(_fromUtf8(str(self.filename)), "dataFromPLOFPapers", "ogr")
+        features = layer.getFeatures()
+        countFeatures = layer.featureCount()
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+        try:
+            provider = layer.dataProvider()
+            fields = provider.fields()
+            fn_fg,demandeur,sur_plan,obs = 0,0,0,0 
+            counter = 0
+            verifcolonne = 0
+
+            for field in fields:
+                header = str(field.name()).lower()
+            
+                if header == "fn_fg":
+                    fn_fg = counter
+                    counter = counter + 1 
+                    verifcolonne = verifcolonne + 1 
+                
+                elif header == "demandeur":
+                    demandeur = counter
+                    counter = counter + 1
+                    verifcolonne = verifcolonne + 1 
+                
+                elif header == "sur_plan":
+                    sur_plan = counter
+                    counter = counter + 1
+                    verifcolonne = verifcolonne + 1 
+                
+                elif header == "obs":
+                    obs = counter
+                    counter = counter + 1
+                    verifcolonne = verifcolonne + 1 
+                else:
+                    counter = counter + 1
+      
+            if verifcolonne >= 4:
+                i = 0
+                for f in features:
+                    try:
+                        geometry = f.geometry()
+                        if geometry.wkbType() == QGis.WKBPolygon:
+                            x = geometry.asPolygon()
+                        if geometry.wkbType() == QGis.WKBMultiPolygon:
+                            x = geometry.asMultiPolygon()[0]
+                        attrs = f.attributes()
+
+                        name_fn_fg = str(attrs[fn_fg].toPyObject())
+                        name_demandeur = str(attrs[demandeur].toPyObject())
+                        name_sur_plan = str(attrs[sur_plan].toPyObject())
+                        name_obs = str(attrs[obs].toPyObject())
+
+                        if name_fn_fg == "":
+                            name_fn_fg = None
+                        
+                        if name_demandeur == "":
+                            name_demandeur = None
+
+                        if name_sur_plan == "":
+                            name_sur_plan = None
+                        else:
+                            name_sur_plan = float(name_sur_plan)
+                        
+                        if name_obs == "":
+                            name_obs = None
+
+                        if len(self.checkGeomEquality(str(geometry.exportToWkt()),"terain_status_specifique")) == 0:
+                            try:
+                                cursor = self.connection.cursor()
+                                exe = cursor.execute(
+                                        "INSERT INTO terain_status_specifique (fn_fg,demandeur,sur_plan,obs,geom) VALUES ("
+                                            "%s,%s,%s,%s,ST_GeomFromText(%s, "+str(globalvars.EPSG_SCR) + "))",
+                                        (name_fn_fg,name_demandeur,name_sur_plan,name_obs,str(geometry.exportToWkt()),))
+                                    
+                                self.connection.commit()
+                                cursor.close()
+                                self.emit(SIGNAL("addSubStep(int, QString, QString)"), self.current_step,
+                                u"Parcelle %s insérée dans la base de données" % (str(name_fn_fg)), "green")
+                                etat_insertion = "INSERTION  REUSSIE"
+                            except Exception as err:
+                                print(err)
+                                self.connection.rollback()
+                        else:
+                            self.emit(SIGNAL("addSubStep(int, QString, QString)"), self.current_step,
+                              u"Parcelle %s existe déjà dans la base de données" % name_fn_fg , "red")
+                            etat_insertion = "PARCELLE EN DOUBLON"
+                    except Exception as e:
+                        print(' parcelle ayant des probleme de geometrie')
+                    p = (i + 1) * 100 / countFeatures
+                    self.emit(SIGNAL("progress(int)"), p)
+                    i = i + 1
+                    dataToLog.append({"FN_FG": name_fn_fg,"DEMANDEUR": name_demandeur,"SUR_PLAN": name_sur_plan,"OBSERVATION": name_obs,
+                                      "ETAT_INSERTION": etat_insertion})
+                try:
+                    self.logger.addSheetShapePLOF(title=title, data = dataToLog, sheet_name="Log_Import_Shape_TSS")
+                except Exception as e:
+                    print("-----------------Erreur-------------")
+                    print(e)
+            else:
+                self.emit(SIGNAL("alert(QString)"), u"Veuillez bien respecter la nomenclature des tables attributaires Terrain Status Spécifique")      
+        except Exception as e:
+            print("-----------------Erreur-------------")
+            print(e) 
+
+    def importCadastre(self):
+        title = ["NOM_SECTION","SECTION","PARCELLE","NOM_PLAN","ETAT_INSERTION"]
+        dataToLog = []
+        self.current_step = self.current_step + 1
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+
+        layer = QgsVectorLayer(_fromUtf8(str(self.filename)), "dataFromPLOFPapers", "ogr")
+        features = layer.getFeatures()
+        countFeatures = layer.featureCount()
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+        try:
+            provider = layer.dataProvider()
+            fields = provider.fields()
+            nom_section = 0
+            section = 0
+            parcelle = 0
+            nom_plan = 0
+            counter = 0
+            verifcolonne = 0
+
+            for field in fields:
+                header = str(field.name()).lower()
+            
+                if header == "nom_sectio":
+                    nom_section = counter
+                    counter = counter + 1 
+                    verifcolonne = verifcolonne + 1 
+                
+                elif header == "section":
+                    section = counter
+                    counter = counter + 1
+                    verifcolonne = verifcolonne + 1 
+                
+                elif header == "parcelle":
+                    parcelle = counter
+                    counter = counter + 1
+                    verifcolonne = verifcolonne + 1 
+                
+                elif header == "nom_plan":
+                    nom_plan = counter
+                    counter = counter + 1
+                    verifcolonne = verifcolonne + 1 
+                else:
+                    counter = counter + 1
+      
+            if verifcolonne >= 4:
+                i = 0
+                for f in features:
+                    try:
+                        geometry = f.geometry()
+                        if geometry.wkbType() == QGis.WKBPolygon:
+                            x = geometry.asPolygon()
+                        if geometry.wkbType() == QGis.WKBMultiPolygon:
+                            x = geometry.asMultiPolygon()[0]
+                        attrs = f.attributes()
+
+                        name_nom_section = str(attrs[nom_section].toPyObject())
+                        name_section = str(attrs[section].toPyObject())
+                        name_parcelle = str(attrs[parcelle].toPyObject())
+                        name_nom_plan = str(attrs[nom_plan].toPyObject())
+
+                        if name_nom_section == "":
+                            name_nom_section = None
+                        
+                        if name_section == "":
+                            name_section = None
+
+                        if name_parcelle == "":
+                            name_parcelle = None
+                        
+                        if name_nom_plan == "":
+                            name_nom_plan = None
+
+                        if len(self.checkGeomEquality(str(geometry.exportToWkt()),"cadastre")) == 0:
+                            try:
+                                cursor = self.connection.cursor()
+                                exe = cursor.execute(
+                                        "INSERT INTO cadastre (nom_section,section,parcelle,nom_plan,geom) VALUES ("
+                                            "%s,%s,%s,%s,ST_GeomFromText(%s, "+str(globalvars.EPSG_SCR) + "))",
+                                        (name_nom_section,name_section,name_parcelle,name_nom_plan,str(geometry.exportToWkt()),))
+                                    
+                                self.connection.commit()
+                                cursor.close()
+                                self.emit(SIGNAL("addSubStep(int, QString, QString)"), self.current_step,
+                                u"Parcelle %s insérée dans la base de données" % (str(name_parcelle)), "green")
+                                etat_insertion = "INSERTION  REUSSIE"
+                            except Exception as err:
+                                print(err)
+                                self.connection.rollback()
+                        else:
+                            self.emit(SIGNAL("addSubStep(int, QString, QString)"), self.current_step,
+                              u"Parcelle %s existe déjà dans la base de données" % name_parcelle , "red")
+                            etat_insertion = "PARCELLE EN DOUBLON"
+                    except Exception as e:
+                        print(' parcelle ayant des probleme de geometrie')
+                    p = (i + 1) * 100 / countFeatures
+                    self.emit(SIGNAL("progress(int)"), p)
+                    i = i + 1
+                    dataToLog.append({"NOM_SECTION": name_nom_section,"SECTION": name_section,"PARCELLE": name_parcelle,"NOM_PLAN": name_nom_plan,
+                                      "ETAT_INSERTION": etat_insertion})
+                try:
+                    self.logger.addSheetShapePLOF(title=title, data = dataToLog, sheet_name="Log_Import_Shape_Cadastre")
+                except Exception as e:
+                    print("-----------------Erreur-------------")
+                    print(e)
+            else:
+                self.emit(SIGNAL("alert(QString)"), "Veuillez bien respecter la nomenclature des tables attributaires Cadastre")      
+        except Exception as e:
+            print("-----------------Erreur-------------")
+            print(e)    
+
+    def importDemandeFn(self):
+        title = ["FN_FG","DEMANDEUR","SUR_PLAN","ETAT_INSERTION"]
+        dataToLog = []
+        self.current_step = self.current_step + 1
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+
+        layer = QgsVectorLayer(_fromUtf8(str(self.filename)), "dataFromPLOFPapers", "ogr")
+        features = layer.getFeatures()
+        countFeatures = layer.featureCount()
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+        try:
+            provider = layer.dataProvider()
+            fields = provider.fields()
+            fn_fg = 0
+            demandeur = 0
+            sur_plan = 0
+            counter = 0
+            verifcolonne = 0
+
+            for field in fields:
+                header = str(field.name()).lower()
+            
+                if header == "fn_fg":
+                    fn_fg = counter
+                    counter = counter + 1 
+                    verifcolonne = verifcolonne + 1 
+                
+                elif header == "demandeur":
+                    demandeur = counter
+                    counter = counter + 1
+                    verifcolonne = verifcolonne + 1 
+                
+                elif header == "sur_plan":
+                    sur_plan = counter
+                    counter = counter + 1
+                    verifcolonne = verifcolonne + 1 
+                
+                else:
+                    counter = counter + 1  
+            print(verifcolonne)
+            if verifcolonne >= 3:
+                i = 0
+                for f in features:
+                    try:
+                        geometry = f.geometry()
+                        if geometry.wkbType() == QGis.WKBPolygon:
+                            x = geometry.asPolygon()
+                        if geometry.wkbType() == QGis.WKBMultiPolygon:
+                            x = geometry.asMultiPolygon()[0]
+                        attrs = f.attributes()
+
+                        name_fn_fg = str(attrs[fn_fg].toPyObject())
+                        name_demandeur = str(attrs[demandeur].toPyObject())
+                        name_sur_plan = str(attrs[sur_plan].toPyObject())
+
+                        if name_fn_fg == "":
+                            name_fn_fg = None
+                        
+                        if name_demandeur == "":
+                            name_demandeur = None
+
+                        if name_sur_plan == "":
+                            name_sur_plan = None
+
+                        if len(self.checkGeomEquality(str(geometry.exportToWkt()),"demandefn")) == 0:
+                            try:
+                                cursor = self.connection.cursor()
+                                exe = cursor.execute(
+                                        "INSERT INTO demandefn (fn_fg,demandeur,sur_plan,geom) VALUES ("
+                                            "%s,%s,%s,ST_GeomFromText(%s, "+str(globalvars.EPSG_SCR) + "))",
+                                        (name_fn_fg,name_demandeur,name_sur_plan,str(geometry.exportToWkt()),))
+                                    
+                                self.connection.commit()
+                                cursor.close()
+                                self.emit(SIGNAL("addSubStep(int, QString, QString)"), self.current_step,
+                                    u"Parcelle %s insérée dans la base de données" % (str(name_fn_fg)), "green")
+                                etat_insertion = "INSERTION  REUSSIE"
+                            except Exception as err:
+                                print(err)
+                                self.connection.rollback()
+                        else:
+                            self.emit(SIGNAL("addSubStep(int, QString, QString)"), self.current_step,
+                              u"Parcelle %s existe déjà dans la base de données" % name_fn_fg , "red")                       
+                            etat_insertion = "PARCELLE EN DOUBLON"
+                    except Exception as e:
+                        print("-----------------Erreur-------------")
+                        print(e)
+                    p = (i + 1) * 100 / countFeatures
+                    self.emit(SIGNAL("progress(int)"), p)
+                    i = i + 1
+                    dataToLog.append({"FN_FG": name_fn_fg,"DEMANDEUR": name_demandeur,"SUR_PLAN": name_sur_plan,"ETAT_INSERTION": etat_insertion})
+                try:
+                    self.logger.addSheetShapePLOF(title=title, data = dataToLog, sheet_name="Log_Import_Shape_DemandeFN")
+                except Exception as e:
+                    print("-----------------Erreur-------------")
+                    print(e)
+            else:
+                self.emit(SIGNAL("alert(QString)"), "Veuillez bien respecter la nomenclature des tables attributaires Demande FN")
+        except Exception as e:
+            print("-----------------Erreur-------------")
+            print(e)    
+
+    def importTitre(self):
+        title = ["TITRES","PROPRIETE","SUR_PLAN","TITRE_R","PARCELLE","PARTIE","FEUILLE","ETAT_INSERTION"]
+        dataToLog = []
+        self.current_step = self.current_step + 1
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+
+        layer = QgsVectorLayer(_fromUtf8(str(self.filename)), "dataFromPLOFPapers", "ogr")
+        features = layer.getFeatures()
+        countFeatures = layer.featureCount()
+        self.emit(SIGNAL("clearSubstep(int)"), self.current_step)
+        try:
+            provider = layer.dataProvider()
+            fields = provider.fields()
+            titres_req = 0
+            propriete = 0
+            sur_plan = 0
+            titre_r = 0
+            partie = 0
+            feuille = 0
+            parcelle = 0
+            counter = 0
+            verifColonne = 0
+
+            for field in fields:
+                header = str(field.name()).lower()
+
+                if header == "titres":
+                    titres_req = counter
+                    counter = counter + 1 
+                    verifColonne = verifColonne + 1 
+                
+                elif header == "propriete":
+                    propriete = counter
+                    counter = counter + 1 
+                    verifColonne = verifColonne + 1
+                
+                elif header == "sur_plan":
+                    sur_plan = counter
+                    counter = counter + 1 
+                    verifColonne = verifColonne + 1
+                
+                elif header == "titre_r":
+                    titre_r = counter
+                    counter = counter + 1 
+                    verifColonne = verifColonne + 1
+                
+                elif header == "partie":
+                    partie = counter
+                    counter = counter + 1 
+                    verifColonne = verifColonne + 1
+                
+                elif header == "feuille":
+                    feuille = counter
+                    counter = counter + 1 
+                    verifColonne = verifColonne + 1
+                
+                elif header == "parcelle":
+                    parcelle = counter
+                    counter = counter + 1 
+                    verifColonne = verifColonne + 1
+                else:
+                    counter = counter + 1
+
+            if verifColonne >= 7:
+                i = 0
+                for f in features:
+                    try:
+                        geometry = f.geometry()
+                        if geometry.wkbType() == QGis.WKBPolygon:
+                            x = geometry.asPolygon()
+                        if geometry.wkbType() == QGis.WKBMultiPolygon:
+                            x = geometry.asMultiPolygon()[0]
+                        attrs = f.attributes()
+
+                        name_titre = str(attrs[titres_req].toPyObject())
+                        name_Propriete = str(attrs[propriete].toPyObject())
+                        name_sur_plan = str(attrs[sur_plan].toPyObject())
+                        name_titre_R = str(attrs[titre_r].toPyObject())
+                        name_parcelle = str(attrs[parcelle].toPyObject())
+                        name_partie = str(attrs[partie].toPyObject())
+                        name_feuille = str(attrs[feuille].toPyObject())
+
+
+                        if name_sur_plan == "":
+                            name_sur_plan = None
+                        else:
+                            name_sur_plan = float(name_sur_plan)
+                        
+                        if name_titre == "":
+                            name_titre = None
+
+                        if name_titre_R == "":
+                            name_titre_R = None
+
+                        if name_Propriete == "":
+                            name_Propriete = None
+
+                        if name_parcelle == "":
+                            name_parcelle = None
+
+                        if name_partie == "":
+                            name_partie = None
+
+                        if name_feuille == "":
+                            name_feuille = None
+
+                        if len(self.checkGeomEquality(str(geometry.exportToWkt()),"titre")) == 0:
+                            try:
+                                cursor = self.connection.cursor()
+                                exe = cursor.execute(
+                                        "INSERT INTO titre (titres,propriete,sur_plan,titre_r,parcelle,partie,feuille,geom) VALUES ("
+                                            "%s,%s,%s,%s,%s,%s,%s,ST_GeomFromText(%s, "+str(globalvars.EPSG_SCR) + "))",
+                                        (name_titre,name_Propriete,name_sur_plan, name_titre_R,name_parcelle,name_partie,name_feuille,str(geometry.exportToWkt()),))
+                                    
+                                self.connection.commit()
+                                cursor.close()
+                                self.emit(SIGNAL("addSubStep(int, QString, QString)"), self.current_step,
+                                    u"Parcelle %s insérée dans la base" % (str(name_titre)), "green")
+                                etat_insertion = "INSERTION  REUSSIE"
+                            except Exception as err:
+                                print(err)
+                                self.connection.rollback()
+                        else:
+                            self.emit(SIGNAL("addSubStep(int, QString, QString)"), self.current_step,
+                              u"Parcelle %s existe déjà dans la base de données" % name_titre , "red")  
+                            etat_insertion = "PARCELLE EN DOUBLON"
+                    except Exception as e:
+                        print("-----------------Erreur-------------")
+                        print(e)
+                    p = (i + 1) * 100 / countFeatures
+                    self.emit(SIGNAL("progress(int)"), p)
+                    i = i + 1
+                    dataToLog.append({"TITRES": name_titre,"PROPRIETE": name_Propriete,"SUR_PLAN": name_sur_plan,"TITRE_R": name_titre_R,
+                                      "PARCELLE": name_parcelle,"PARTIE": name_partie,"FEUILLE": name_feuille,
+                                      "ETAT_INSERTION": etat_insertion})
+                try:
+                    self.logger.addSheetShapePLOF(title=title, data = dataToLog, sheet_name="Log_Import_Shape_Titre ")
+                except Exception as e:
+                    print("-----------------Erreur-------------")
+                    print(e)
+            else:
+                self.emit(SIGNAL("alert(QString)"), "Veuillez bien respecter la nomenclature des tables attributaires Titre")
+        except Exception as e:
+            print("-----------------Erreur-------------")
+            print(e)    
+    
+
+
+
+

@@ -1,0 +1,48 @@
+# -*- coding: utf-8 -*-
+import psycopg2
+import psycopg2.extras
+class ConnectRemote:
+    def __init__(self):
+        self.file = None
+        self.lines=None
+
+    @staticmethod
+    def connectToRemote(self):
+        try:
+
+            param = []
+            path = "Configuration/remote.ini"
+            from Helpers.FiPlofFile import FiPlofFile
+            content = FiPlofFile.readFile(self, path)
+            for i in range(len(content)):
+                if i != 0 and i < 6:
+                    data = content[i].split()
+                    param.append(data[2])
+            print param
+            from models.ConnectRemoteModel import ConnectRemoteModel
+            connRemote = ConnectRemoteModel.connectToRemote(self, param)
+            return connRemote
+        except Exception as e:
+            return False
+            print(e.message)
+
+    @staticmethod
+    def connectToLocal(self):
+        try:
+            from Configuration import DbConfig
+            db_config=DbConfig.DbConfig()
+            connLocal=psycopg2.connect(database=db_config.db_name, user=db_config.db_user,
+                                           password=self.db_config.db_pass, host=self.db_config.db_host)
+            return connLocal
+
+        except Exception as e:
+            return False
+            print(e.message)
+
+
+    @staticmethod
+    def connectDBs(self):
+        remoteConn=ConnectRemote.connectToRemote(self)
+        print 'eto eeeeee'
+        print remoteConn
+        localConn =ConnectRemote.connectToLocal(self)

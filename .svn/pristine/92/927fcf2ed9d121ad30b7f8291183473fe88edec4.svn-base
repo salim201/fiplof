@@ -1,0 +1,55 @@
+demandStyles = {'color': '255,0,0,0', 'outline_color': '93,182,255,255', 'outline_width': '0.3'}
+certificateStyles = {
+    u'outline_width': u'0.3', u'outline_color': u'253,191,111,255', u'offset_unit': u'MM',
+    u'color': u'227,26,28,255', u'outline_style': u'solid', u'style': u'b_diagonal',
+    u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+    u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+}
+
+fiscaliteStyles = {'color': '0,0,255,0', u'outline_width': u'0.3', u'outline_color': u'202,90,208,255'}
+titreFoncierStyles = {
+    u'outline_width': u'0.3', u'outline_color': u'255,0,174,255', u'offset_unit': u'MM',
+    u'color': u'58,226,206,255', u'outline_style': u'solid', u'style': u'b_diagonal',
+    u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+    u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+}
+aireSpecifiqueStyles = {
+    u'outline_width': u'0.3', u'outline_color': u'255,228,196,255', u'offset_unit': u'MM',
+    u'color': u'0,255,169,255', u'outline_style': u'solid', u'style': u'b_diagonal',
+    u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+    u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+}
+domainePubliqueStyles = {
+    u'outline_width': u'0.3', u'outline_color': u'167,35,255,255', u'offset_unit': u'MM',
+    u'color': u'255,251,125,255', u'outline_style': u'solid', u'style': u'b_diagonal',
+    u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+    u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+}
+
+titreStyles = {
+    u'outline_width': u'0.5', u'outline_color': u'255,255,0,255', u'offset_unit': u'MM',
+    u'color': u'255,255,0,75', u'outline_style': u'solid', u'style': u'b_fill',
+    u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+    u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+}
+
+cadastreStyles = {
+    u'outline_width': u'0.5', u'outline_color': u'0,191,255,255', u'offset_unit': u'MM',
+    u'color': u'0,191,255,75', u'outline_style': u'solid', u'style': u'b_fill',
+    u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+    u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+}
+
+demandefnStyles = {
+    u'outline_width': u'0.5', u'outline_color': u'238,130,238,255', u'offset_unit': u'MM',
+    u'color': u'238,130,238,75', u'outline_style': u'solid', u'style': u'b_fill',
+    u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+    u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+}
+
+tssStyles = {
+    u'outline_width': u'0.5', u'outline_color': u'198, 169, 105,255', u'offset_unit': u'MM',
+    u'color': u'198, 169, 105,150', u'outline_style': u'solid', u'style': u'b_fill',
+    u'joinstyle': u'bevel', u'outline_width_unit': u'MM', u'border_width_map_unit_scale': u'0,0',
+    u'offset': u'0,0', u'offset_map_unit_scale': u'0,0'
+}

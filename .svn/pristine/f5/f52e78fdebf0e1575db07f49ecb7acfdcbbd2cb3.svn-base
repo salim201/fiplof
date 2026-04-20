@@ -1,0 +1,7 @@
+[database]
+host = 10.148.22.4
+port = 5432
+user = postgres
+pass = postgres
+name = plof_antanetibe_mahazaza_test_interco
+

@@ -1,0 +1,342 @@
+# -*- coding: utf-8 -*-
+import os
+import sys
+import os
+import os.path
+from PyQt4 import QtCore, QtGui
+from qgis.core import *
+from qgis.gui import *
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import *
+from .EchangeCF import Ui_Dialog
+import globalvars
+
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class EchangeTotalRun(QtGui.QDialog):
+    def __init__(self,parent):
+        QtGui.QDialog.__init__(self)
+        # Set up the user interface from Designer.
+        self.ui = Ui_Dialog()
+        self.parent = parent
+        self.id_projet = self.parent.id_projet
+        self.connection = self.parent.connection
+
+        self.details = self.parent.details
+        self.CF = self.parent.numCf
+        print "self.CF"
+        print self.CF
+        self.Parcelled = self.parent.idGeom
+        self.idcertificat = self.parent.idCertificat
+        self.proprioCF = []
+        self.data = []
+        self.temp = []
+        self.idCF = 0
+        self.vente = []
+
+        #self.cur = self.parent.connection.cursor()
+        self.ui.setupUi(self)
+        self.initActions()
+        self.ui.enregistrer.clicked.connect(self.saveAll)
+
+    def saveAll(self):
+        print 'save DATA'
+        print self.data
+        id_parcelle_1 = None
+        id_parcelle_2 = None
+        for dt in self.data:
+            if id_parcelle_1 is None:
+                id_parcelle_1 = dt[1]
+            if dt[1] != id_parcelle_2 and id_parcelle_1 is not None and id_parcelle_2 is None and dt[1] != id_parcelle_1:
+                id_parcelle_2 = dt[1]
+
+        print "id_parcelle_1"
+        print id_parcelle_1
+        print "id_parcelle_2"
+        print id_parcelle_2
+        dataInverted = []
+        if len(self.data ) >= 2 :
+            for d in self.data:
+                temp_data = d
+
+                if d[1] == id_parcelle_1:
+                    temp_data[1] = id_parcelle_2
+                    dataInverted.append(temp_data)
+                    continue
+                if d[1] == id_parcelle_2:
+                    temp_data[1] = id_parcelle_1
+                    dataInverted.append(temp_data)
+                    continue
+            print "self.DATA"
+            print self.data
+            print "Data inverted"
+            print dataInverted
+            """
+            d1 = self.data[0]
+            d2 = self.data[1]
+            cursor = self.connection.cursor()
+            cursor.execute("UPDATE proprietaireparcelle SET idpersonne=(%s) WHERE idparcelle = (%s)",
+                           (int(d2[2]), int(d1[1])))
+            self.connection.commit()
+
+            cursor.execute("UPDATE proprietaireparcelle SET idpersonne=(%s) WHERE idparcelle = (%s)",
+                           (int(d1[2]), int(d2[1])))
+            self.connection.commit()
+            """
+        if len(dataInverted) >= 2:
+            try:
+                curs = self.connection.cursor()
+                curs.execute("delete from proprietaireparcelle WHERE idparcelle=%s", [int(id_parcelle_1)])
+            except Exception as err:
+                print ("erreur suppression proprietaire dans echange totale")
+                print (err)
+
+            try:
+                curs = self.connection.cursor()
+                curs.execute("delete from personnemoraleparcelle_d WHERE idparcelle=%s", [int(id_parcelle_1)])
+            except Exception as err:
+                print ("erreur suppression proprietaire dans echange totale")
+                print (err)
+
+            try:
+                curss = self.connection.cursor()
+                curss.execute("delete from proprietaireparcelle WHERE idparcelle=%s", [int(id_parcelle_2)])
+            except Exception as err:
+                print ("erreur suppression proprietaire dans echange totale")
+                print (err)
+
+            try:
+                curss = self.connection.cursor()
+                curss.execute("delete from personnemoraleparcelle_d WHERE idparcelle=%s", [int(id_parcelle_2)])
+            except Exception as err:
+                print ("erreur suppression proprietaire dans echange totale")
+                print (err)
+
+            i = 0
+            for di in dataInverted:
+                if len(di) == 4:
+                    try:
+                        cursor = self.connection.cursor()
+                        cursor.execute("INSERT INTO proprietaireparcelle (idpersonne, representant, idparcelle) VALUES(%s, %s, %s)",
+                                       (int(di[2]), di[3], int(di[1])))
+                        self.connection.commit()
+                    except Exception as err:
+                        print ("Erreur maj proprietaire-Echange CF boucle %s", err)
+                        print (err)
+                        self.connection.rollback()
+
+                    avdm = []
+
+                    try:
+                        exe = cursor.execute("SELECT * FROM avoir_demande WHERE idparcelle = %s ", (int(di[1]),))
+                        avdm = cursor.fetchall()
+                    except Exception as e:
+                        print(e)
+                        self.connection.rollback()
+                    if len(avdm) == 0:
+                        try:
+                            exe = cursor.execute(
+                                "INSERT INTO avoir_demande (idpersonne,representant, idparcelle)" \
+                                " VALUES (%s,%s, %s) RETURNING idparcelle ",
+                                (int(di[2]), di[3], int(di[1])))
+                            self.connection.commit()
+                        except Exception as e:
+                            print(e)
+                            self.connection.rollback()
+                if len(di)  == 3:
+                    try:
+                        cursor = self.connection.cursor()
+                        cursor.execute("INSERT INTO personnemoraleparcelle_d (idpersonne, idparcelle) VALUES(%s, %s)",
+                                       (int(di[2]), int(di[1])))
+                        self.connection.commit()
+                    except Exception as err:
+                        print ("Erreur maj proprietaire-Echange CF boucle %s", i)
+                        print (err)
+
+                i = i + 1
+
+            QtGui.QMessageBox.information(self, u"Données ", u"Données sauvegardées")
+            self.close()
+
+    def initActions(self):
+
+        print "ident"
+        i = 0
+        n = len(self.CF)
+        self.temp  = []
+        cursor = self.connection.cursor()
+        while (i < n) :
+            #add numCF
+            #self.proprioCF.append(self.CF[i])
+            #add Type Personne
+            cursor.execute("SELECT *  FROM certificat where numerocertificat =%s ", [str(self.CF[i])])
+            rs = cursor.fetchone()
+            print ("rs cf")
+            print rs
+            #idCf = rs[1].split('-')
+            #idgeom = idCf[2]  # idparcelle
+
+            idcf = int(rs[8])
+            cursor.execute("SELECT *  FROM parcelle_d where idcertificat =%s ", [int(idcf)])
+            row = cursor.fetchone()
+            print "***HORS DE LA BOUCLE****"
+            # idCf = self.numD.split('-')
+            idgeom = int(row[0])  # idparcelle
+
+            print "***HORS DE LA BOUCLE TEMP****"
+            print self.temp
+            cursor.execute("SELECT ph.*, phd.representant from personne ph" 
+                             " INNER  JOIN proprietaireparcelle phd ON  phd.idpersonne = ph.idpersonne "
+                             " INNER  JOIN parcelle_d pc ON  phd.idparcelle = pc.gid "
+                             " WHERE pc.gid = %s AND pc.idcertificat = %s",
+                             [int(idgeom),int(rs[8])])
+            rw = cursor.fetchall()
+
+            cursor.execute("SELECT ph.* from personnemorale ph"
+                           " INNER  JOIN personnemoraleparcelle_d phd ON  phd.idpersonne = ph.idpersonnemorale "
+                           " INNER  JOIN parcelle_d pc ON  phd.idparcelle = pc.gid "
+                           " WHERE pc.gid = %s AND pc.idcertificat = %s",
+                           [int(idgeom), int(rs[8])])
+            rx = cursor.fetchall()
+            print "*****Rw******"
+            print rw
+
+            print "******RX*********"
+            print rx
+            #self.temp.append(rw[0])
+            for r in rw:
+                print "***DANS LA BOUCLE****"
+                self.temp.append(idcf)
+                self.temp.append(idgeom)
+                self.temp.append(r[0])
+                self.temp.append(r[len(r)-1])
+                self.proprioCF.append(self.CF[i])
+                if(len(r) >= 1 ):
+                    typePersonne = "Personne physique"
+                    self.proprioCF.append(typePersonne)
+                    self.proprioCF.append(r[1])
+                    self.proprioCF.append(r[2])
+
+
+                self.proprioCF.append(rs[8])
+                self.addValueTable(self.proprioCF)
+                self.proprioCF = []
+                self.data.append(self.temp)
+                print "***TEMP****"
+                print self.temp
+                self.temp = []
+            for b in rx:
+                print "***DANS LA BOUCLE****"
+                self.temp.append(idcf)
+                self.temp.append(idgeom)
+                self.temp.append(b[6])
+                #self.temp.append(b[len(b) - 1])
+                self.proprioCF.append(self.CF[i])
+                if (len(b) >= 1):
+                    typePersonne = "Personne morale"
+                    self.proprioCF.append(typePersonne)
+                    self.proprioCF.append(b[1])
+                    self.proprioCF.append(b[2])
+
+
+                self.proprioCF.append(rs[8])
+                self.addValueTable(self.proprioCF)
+                self.proprioCF = []
+                self.data.append(self.temp)
+                print
+                "***TEMP****"
+                print
+                self.temp
+                self.temp = []
+
+            i = i + 1
+        print " self.proprioCF "
+        print self.proprioCF
+
+        print "*****SELF DATA*****"
+        print self.data
+        self.addValueTable(self.proprioCF)
+        self.ui.tableWidget.setSelectionBehavior(1)
+        self.ui.tableWidget.cellClicked.connect(self.cellSelected)
+        #self.ui.ajouter.clicked.connect(self.ajoutProprio)
+        #self.ui.decedee.clicked.connect(self.Decedee)
+
+
+    def addValueTable(self,data,table = 0):
+        columns = len(data)
+
+        if (table == 0) :
+            table = self.ui.tableWidget
+        else :
+            table = self.ui.tableWidget_2
+
+        rowPosition = table.rowCount()
+        #self.tbDemande.setColumnCount(columns)
+
+        table.insertRow(rowPosition)
+        for i in range(len(data)):
+            item = QtGui.QTableWidgetItem()
+            item.setText(_translate("", str(data[i]), None))
+            table.setItem(rowPosition, i, item)
+
+    def cellSelected(self, row):
+        #ID = self.gids[row]
+        ID = self.ui.tableWidget.item(row, 4).text()
+        self.vente.append(self.ui.tableWidget.item(row,0).text())
+        self.vente.append(self.ui.tableWidget.item(row, 1).text())
+        self.vente.append(self.ui.tableWidget.item(row, 2).text())
+        self.vente.append(self.ui.tableWidget.item(row, 3).text())
+        self.vente.append(self.ui.tableWidget.item(row, 4).text())
+
+        self.idCF = int(ID)
+
+    def PersonneDetails(self):
+        from Personnes.PersonnePhysiqueRun import PersonnePhysiqueRun
+        GP = PersonnePhysiqueRun(self.parent)
+        GP.exec_()
+
+    def ajoutProprio(self):
+        from Certificat.GestionProprietaireRun import GestionProprietaireRun
+        GP = GestionProprietaireRun(self.connection)
+        GP.exec_()
+
+    def enregistrer(self):
+        print "enregistrer"
+        if not self.check():
+            return
+
+        self.save()
+        self.accept()
+
+
+    def check(self):
+        print "demande"
+
+
+    def save(self):
+
+        import time
+        import datetime
+        try:
+            print "try in"
+        except Exception as e:
+            print e
+
+
+
+
+

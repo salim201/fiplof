@@ -1,0 +1,86 @@
+from PyQt4 import QtGui, Qt
+from Utilisateur.Utilisateurs import Ui_Dialog
+from Utilisateur.EditUtilisateurRun import EditUtilisateurRun
+from PgCrud import PgSql, PgColumn
+from models.Utilisateur import Utilisateur
+
+
+class UtilisateursRun(QtGui.QDialog):
+    def __init__(self, connection):
+        QtGui.QDialog.__init__(self)
+        self.connection = connection
+        self.pgsql = PgSql.Table(self.connection, "utilisateur")
+        self.pgsql.addColumn("idutilisateur", "Id", True, PgColumn.ColumnType.INTEGER)
+        self.pgsql.addColumn("nomutilisateur", "Nom")
+        self.pgsql.addColumn("prenomutilisateur", "Prenom")
+        self.pgsql.addColumn("loginutilisateur", "Login")
+        self.pgsql.addColumn("groupe.nom", "Groupe", alias="groupe_nom")
+        self.pgsql.join("groupe", "groupe.id = utilisateur.groupe_id")
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.init_actions()
+        self.refresh()
+
+    def init_actions(self):
+        self.ui.pushButtonFermer.clicked.connect(self.reject)
+        self.ui.pushButtonNouveau.clicked.connect(self.nouveau)
+        self.ui.tableWidget.itemSelectionChanged.connect(self.table_selected)
+        self.ui.pushButtonModifier.clicked.connect(self.modifier)
+        self.ui.pushButtonSupprimer.clicked.connect(self.supprimer)
+        self.ui.pushButtonPrivileges.clicked.connect(self.openPrivileges)
+        self.ui.tableWidget.cellDoubleClicked.connect(self.modifier)
+
+    def nouveau(self):
+        dialog = EditUtilisateurRun(self.connection)
+        if dialog.exec_():
+            self.refresh()
+
+    def modifier(self):
+        uid = self.pgsql.getSelectedId(self.ui.tableWidget)
+        if uid is None:
+            return
+        dialog = EditUtilisateurRun(self.connection, uid)
+        if dialog.exec_():
+            self.refresh()
+
+    def supprimer(self):
+        uid = self.pgsql.getSelectedId(self.ui.tableWidget)
+        if uid is None:
+            return
+        if not self.is_deletable():
+            Qt.QMessageBox.critical(self, "Attention", "Vous ne pouvez pas supprimer le seul Administrateur du systeme")
+            return
+        reply = Qt.QMessageBox.question(self, "Confirm", "Voulez-vous supprimer l'utilisateur ?",
+                                        Qt.QMessageBox.Yes | Qt.QMessageBox.No, Qt.QMessageBox.No)
+        if reply == Qt.QMessageBox.No:
+            return
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute("DELETE FROM utilisateur WHERE idutilisateur=%s", (uid,))
+            self.connection.commit()
+        except:
+            self.connection.rollback()
+        cursor.close()
+        self.refresh()
+
+    def refresh(self):
+        self.pgsql.fillTable(self.ui.tableWidget, [], "idutilisateur")
+        self.table_selected()
+
+    def table_selected(self):
+        self.ui.pushButtonModifier.setEnabled(True)
+        self.ui.pushButtonPrivileges.setEnabled(True)
+        self.ui.pushButtonSupprimer.setEnabled(self.is_deletable())
+
+    def is_deletable(self):
+        uid = self.pgsql.getSelectedId(self.ui.tableWidget)
+        if uid is None:
+            return False
+        model = Utilisateur(self.connection)
+        u = model.find_by_id(uid)
+        return u.is_deletable()
+
+    def openPrivileges(self):
+        from .PrivilegesRun import PrivilegesRun
+        dialog = PrivilegesRun(self.connection)
+        dialog.exec_()

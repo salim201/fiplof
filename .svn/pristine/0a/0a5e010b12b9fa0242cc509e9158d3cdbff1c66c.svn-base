@@ -1,0 +1,76 @@
+import os
+import psycopg2
+import psycopg2.extras
+from Configuration import DbConfig
+db_config = DbConfig.DbConfig()
+
+from Helpers import Helper_crypt
+
+class IntercoConfig:
+    def __init__(self):
+        connection = psycopg2.connect(database=db_config.db_name, user=db_config.db_user, password=db_config.db_pass, host=db_config.db_host)
+        row = self.getAllConfigFromDB(connection)
+        crypt_helper = Helper_crypt.Helper_crypt()
+        if row is not None:
+            i = 0
+            for col in row:
+                if col is None:
+                    row[i] = ''
+                i = i + 1
+
+            self.host_remote = str(row['host_remote']).strip()
+            self.port_remote = str(row['port_remote']).strip()
+            self.user_remote = str(row['user_remote']).strip()
+            if str(row['password_remote']).strip() != '':
+                self.password_remote = crypt_helper.caesar_cipher_decrypt(str(row['password_remote']).strip(),5)
+            else:
+                self.password_remote = ''
+            self.dbname_remote = str(row['dbname_remote']).strip()
+            # Config for backup
+            self.host_backup = str(row['host_backup']).strip()
+            self.port_backup = str(row['port_backup']).strip()
+            self.user_backup = (row['user_backup']).strip()
+            if str(row['password_backup']).strip() != '':
+                self.password_backup = crypt_helper.caesar_cipher_decrypt(str(row['password_backup']).strip(),5)
+            else:
+                self.password_backup = ''
+            self.dbname_backup = str(row['dbname_backup']).strip()
+
+            if str(row['auto_save_path']).strip() == '':
+                os.path.expanduser('~')
+            else:
+                self.auto_save_path = str(row['auto_save_path']).strip()
+
+            self.has_z_certifiable = row['has_z_certifiable']
+            self.online_interco = row['online_interco']
+        else:
+            self.host_remote = ''
+            self.port_remote = ''
+            self.user_remote = ''
+            self.password_remote = ''
+            self.dbname_remote = ''
+            # Config for backup
+            self.host_backup = ''
+            self.port_backup = ''
+            self.user_backup = ''
+            self.password_backup = ''
+            self.dbname_backup = ''
+
+            self.auto_save_path = ''
+
+            self.has_z_certifiable = False
+            self.online_interco = False
+
+    def getAllConfigFromDB(self, connection):
+        row = None
+        try:
+            cur = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            cur.execute("SELECT * FROM public.configuration WHERE id_configuration=(SELECT MIN(id_configuration) FROM configuration)")
+            row = cur.fetchone()
+            cur.close()
+        except Exception as err:
+            print ("Erreur lors de la lecture de la configuration! " + str(err))
+            connection.rollback()
+
+        return row
+

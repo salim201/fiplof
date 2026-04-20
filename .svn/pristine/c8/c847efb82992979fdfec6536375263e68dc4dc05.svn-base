@@ -1,0 +1,73 @@
+body, table {
+    font-family: "Times New Roman", serif;
+    font-size: 9pt;
+  }
+  table th, table td {
+    padding: 5px;
+  }
+  table{
+    word-break: break-word;
+  }
+  tr, td{
+    page-break-inside: avoid;
+  }
+  .enlarge{
+	  table-layout:fixed;
+	  height:150px;
+  }
+  .big{
+    font-size: 28pt;
+    font-weight: normal;
+  }
+  .norm{
+    font-size: 15pt;
+    font-weight: normal;
+  }
+  .serif {
+    font-family: "Gloucester MT Extra Condensed", "Times New Roman", serif;
+  }
+  .left {
+    text-align: left;
+  }
+  .center{
+    text-align: center;
+  }
+  .right {
+    text-align: right;
+  }
+  .justify {
+	  text-align: justify;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .italic {
+    font-style: italic;
+  }
+  .fullwidth {
+      width: 100%;
+  }
+  .border-all * {
+      border: solid 1px;
+  }
+  .border-collapse {
+      border-collapse: collapse;
+  }
+.margin-left-1 {
+    margin-left: 5px;
+}
+
+.margin-left-2 {
+    margin-left: 10px;
+}
+
+.padding-1 {
+    padding: 5px;
+}
+.padding-2 {
+    padding: 10px;
+}
+
+table td.u {
+    text-decoration: underline;
+}

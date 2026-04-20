@@ -1,0 +1,515 @@
+# coding: utf-8
+
+# Form implementation generated from reading ui file 'DetailsDemande.ui'
+#
+# Created: Tue Feb 13 19:51:12 2018
+#      by: PyQt4 UI code generator 4.9.4
+#
+# WARNING! All changes made in this file will be lost!
+import os
+import sys
+import os
+import os.path
+import psycopg2
+import qgis
+from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui, uic
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+from PyQt4.QtCore import QFileInfo
+import time
+import datetime, globalvars
+import datetime
+from datetime import date
+
+from models.ProjetCouche import ProjetCouche
+
+import qgis
+import psycopg2
+from qgis.core import *
+
+from qgis.gui import *
+import os
+#from qgis.gui import QgisInterface
+import psycopg2
+import psycopg2.extras
+from Utils import Utils
+#import  processing
+
+import  globalvars
+
+import sys
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+from DetailsDemandes import Ui_CreationDemande
+
+# create the dialog for qgsPlof
+class DetailsDemandeRunn(QtGui.QDialog):
+  def __init__(self,parent):
+    QtGui.QDialog.__init__(self)
+    from Configuration import DbConfig
+    self.setModal(True)
+    self.ui = Ui_CreationDemande ()
+    self.ui.setupUi(self)
+    self.setModal(True)
+    self.db_config = DbConfig.DbConfig()
+    self.parent = parent
+    print self.parent
+    self.coddistrict = 0
+    self.codecommune = 0
+    self.edition = self.parent.stateEdition
+    self.geomid = self.parent.geomid
+    self.canvas = self.parent.canvas
+    self.tool = self.parent.tool
+    self.connection = self.parent.connection
+    #self.parent.currvalDemande = parent.currvalDemande
+    #self.currvalDemande = self.parent.currvalDemande
+    self.iddemandeForJournal = None
+    self.iddemande = 0
+    self.idopposition = 0
+    self.gid = self.parent.idDemande
+    print "gid= " + str(self.gid)
+    print "self.edition in"
+    print self.edition
+    print "self.edition out"
+    self.filenamepreview = ""
+    try:
+      self.parentDlg = self.parent.dlg
+    except:
+      pass
+    self.dlg = ""
+    self.utils = Utils(self.connection)
+    self.initActions()
+    self.getDemande()
+    self.ui.pushButton_6.clicked.connect(self.callDemandeur)
+    self.ui.pushButton.clicked.connect(self.callOpposition)
+    self.ui.pushButton_2.clicked.connect(self.callRejectDemande)
+    self.ui.fokontanyComboBox.currentIndexChanged.connect(self.fillFokontany)
+    self.ui.dateDeReconnaissanceLineEdit.dateChanged.connect(self.evaluateDateReconnaissance)
+    #self.ui.dateDemandeLineEdit.dateChanged.connect(self.evaluateDateReconnaissance)
+
+    self.raster_path, self.layer_raster, self.layer_shape, self.rect = None, None, None, None
+    # self.id_projet = self.parent.id_projet
+    self.init_layers()
+    self.load_raster()
+    self.init_canvas()
+
+  def init_layers(self):
+    couches = ProjetCouche.find_by_projet_commune(self.connection, globalvars.id_projet_commune)
+    for couche in couches:
+      if couche.type_couche == 'R':
+        self.raster_path = couche.fichier
+        break
+
+  def load_raster(self):
+    if self.raster_path is None:
+      return
+    fileInfo = QFileInfo(self.raster_path)
+    baseName = fileInfo.baseName()
+    layer = QgsRasterLayer(self.raster_path, baseName)
+    if not layer.isValid():
+      print("Layer " + self.raster_path + " is not valid raster")
+      return None
+    # QgsMapLayerRegistry.instance().addMapLayer(layer)
+    self.layer_raster = layer
+
+  def init_canvas(self):
+    style = {
+      u'outline_width': u'0.3',
+      u'outline_color': u'244,0,0,255',
+      u'offset_unit': u'MM',
+      u'color': u'227,26,28,255',
+      u'outline_style': u'solid',
+      u'style': u'b_diagonal',
+      u'joinstyle': u'bevel',
+      u'outline_width_unit': u'MM',
+      u'border_width_map_unit_scale': u'0,0',
+      u'offset': u'0,0',
+      u'offset_map_unit_scale': u'0,0'
+    }
+    self.cv = QgsMapCanvas()
+    # self.idparcelle;
+    # add canvas  ad form
+    self.ui.horizontalLayout_3.addWidget(self.cv)
+    self.cv.show()
+    uri = QgsDataSourceURI()
+    uri.setConnection(
+      self.db_config.db_host,
+      self.db_config.db_port,
+      self.db_config.db_name,
+      self.db_config.db_user,
+      self.db_config.db_pass
+    )
+    uri.setDataSource("public", "parcelle_d", "geom", "gid=%s" % (self.gid,))
+    uri.setKeyColumn("gid")
+    layer = QgsVectorLayer(uri.uri(), "Demande", "postgres")
+    if not layer.isValid():
+      return
+    crs = QgsCoordinateReferenceSystem(globalvars.EPSG_SCR, QgsCoordinateReferenceSystem.EpsgCrsId)
+    layer.setCrs(crs)
+    symbol_layer = QgsFillSymbolV2.createSimple(style)
+    layer.rendererV2().setSymbol(symbol_layer)
+    QgsMapLayerRegistry.instance().addMapLayer(layer)
+    QgsMapLayerRegistry.instance().addMapLayer(self.layer_raster)
+    # self.cv.setLayerSet([QgsMapCanvasLayer(self.layer_raster)])
+    self.cv.setLayerSet([QgsMapCanvasLayer(layer), QgsMapCanvasLayer(self.layer_raster)])
+    self.cv.setExtent(layer.extent())
+
+
+  def evaluateDateReconnaissance(self):
+
+    from datetime import date
+    date_format = "%d/%m/%Y"
+    # a = datetime.strptime(self.dateDemandeLineEdit.text(), date_format)
+    # b = datetime.strptime(self.dateDeReconnaissanceLineEdit.text(), date_format)
+
+    a = self.ui.dateDemandeLineEdit.text()
+    a = a.split("/")
+    a = date(int(a[2]), int(a[1]), int(a[0]))
+
+    b = self.ui.dateDeReconnaissanceLineEdit.text()
+    b = b.split("/")
+    b = date(int(b[2]), int(b[1]), int(b[0]))
+
+    diffdate = b - a
+
+    self.ddDate = diffdate.days
+    if self.ddDate < 15:
+      QMessageBox.critical(self.ui.dateDeReconnaissanceLineEdit, "Erreur",
+                           "La date de reconnaissance doit etre 15 jours apres")
+
+      # self.dateDeReconnaissanceLineEdit.setText("")
+      # self.dateDeReconnaissanceLineEdit.setReadOnly(True)
+
+  def initActions(self):
+
+    import globalvars
+    idcommune = globalvars.id_commune
+    print "----------------globalvars.id_commune----------------"
+    print globalvars.id_commune
+    print "--------------------globalvars.id_commune-----------"
+    cursor = self.connection.cursor()
+    cursor.execute("SELECT *   FROM commune  WHERE idcommune=%s", [int(idcommune)])
+    dm = cursor.fetchone()
+    if (len(dm) >= 1):
+      iddistrict = dm[1]
+      cursor.execute("SELECT *   FROM district  WHERE iddistrict=%s", [int(iddistrict)])
+      dm = cursor.fetchone()
+      idregion = dm[1]
+
+    cursor.execute("SELECT nomregion  FROM region  WHERE idregion=%s", [int(idregion)])
+    dm = cursor.fetchone()
+    if (len(dm) >= 1):
+      region = dm[0]
+
+    cursor.execute("SELECT *  FROM district  WHERE iddistrict=%s", [int(iddistrict)])
+    dm = cursor.fetchone()
+    if (len(dm) >= 1):
+      coddistrict = dm[2]
+      self.coddistrict = coddistrict
+
+    cursor.execute("SELECT *  FROM commune  WHERE idcommune=%s", [int(idcommune)])
+    dm = cursor.fetchone()
+    if (len(dm) >= 1):
+      codeCommune = dm[2]
+      self.codecommune = codeCommune
+
+    if self.edition == 2:
+      self.ui.pushButton_4.clicked.connect(self.updateGeometrie)
+      self.ui.lineEditDistrict.setEnabled(False)
+      self.ui.coutLineEdit.setReadOnly(True)
+      self.ui.lineEditRegion.setReadOnly(True)
+      self.ui.dateDemandeLineEdit.setReadOnly(True)
+      self.ui.dateDeReconnaissanceLineEdit.setReadOnly(True)
+      self.ui.lineEditDemande.setReadOnly(True)
+      self.ui.pushButton_2.setEnabled(False)
+      self.ui.pushButton.setEnabled(False)
+      self.ui.pushButton_6.setEnabled(False)
+      self.ui.communeComboBox.setReadOnly(True)
+      self.ui.fokontanyComboBox.setDisabled(True)
+      self.ui.pushButton_4.setText(QtGui.QApplication.translate("CreationDemande", "Modifier la Geometrie", None, QtGui.QApplication.UnicodeUTF8))
+      self.setWindowTitle(QtGui.QApplication.translate("CreationDemande", "Modification de la geometrie", None, QtGui.QApplication.UnicodeUTF8))
+
+    if self.edition == 1:
+      self.ui.pushButton_4.clicked.connect(self.updateInfos)
+      self.ui.pushButton_4.setText(QtGui.QApplication.translate("CreationDemande", "Modifier les Informations", None,QtGui.QApplication.UnicodeUTF8))
+      self.ui.pushButton_5.setText(QtGui.QApplication.translate("CreationDemande", "Annuler", None, QtGui.QApplication.UnicodeUTF8))
+      self.setWindowTitle(QtGui.QApplication.translate("CreationDemande", "Modification des Informations", None, QtGui.QApplication.UnicodeUTF8))
+
+    if self.edition == 0 :
+      print "ffsd"
+      print " self.edition == 0 "
+      self.ui.pushButton_4.setVisible(False)
+      self.ui.pushButton_5.setVisible(False)
+      self.ui.pushButton.setVisible(False)
+      self.ui.pushButton_6.setVisible(False)
+      self.ui.pushButton_2.setVisible(False)
+      self.ui.lineEditDemande.setEnabled(True)
+      self.ui.lineEditDemande.setReadOnly(True)
+      self.ui.coutLineEdit.setReadOnly(True)
+      self.ui.lineEditRegion.setReadOnly(True)
+      self.ui.lineEditDistrict.setReadOnly(True)
+      self.ui.communeComboBox.setEnabled(True)
+      self.ui.communeComboBox.setReadOnly(True)
+      self.ui.dateDeReconnaissanceLineEdit.setReadOnly(True)
+      self.ui.dateDemandeLineEdit.setReadOnly(True)
+
+      self.setWindowTitle(QtGui.QApplication.translate("CreationDemande", "Consultation Demande", None, QtGui.QApplication.UnicodeUTF8))
+
+
+  def fillFokontany(self):
+    print "fill fokontany"
+    self.idfokontany = self.utils.getComboValue(self.ui.fokontanyComboBox)
+    self.generateDemandeKey()
+
+  def generateDemandeKey(self):
+
+    connection = self.connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT *   FROM fokontany  WHERE idfokontany=%s",
+                   [int(self.utils.getComboValue(self.ui.fokontanyComboBox))])
+    dm = cursor.fetchone()
+    chFkt = str(dm[2]).strip()
+    chDistrict = str(self.coddistrict).strip()
+    chCommune = str(self.codecommune).strip()
+
+    # chfkt = str(idfkt.strip())
+    self.ui.lineEditDemande.setText(
+      _fromUtf8(chDistrict + chCommune + "_" + chFkt) + "-F-" + str(self.gid))
+    self.ui.lineEditDemande.setReadOnly(True)
+
+  def getDemande(self):
+    cursor = self.connection.cursor()
+    cursor = self.connection.cursor()
+
+    cursor.execute("SELECT *   FROM demande  WHERE gid=%s", [self.gid])
+    res = cursor.fetchone()
+
+    cursor.execute("SELECT *   FROM commune  WHERE idcommune=%s", [int(res[17])])
+    commune = cursor.fetchone()
+    # Load Oppositions
+
+
+    # cursor.execute("SELECT *   FROM oppositions  WHERE gid=%s", [self.gid])
+    # opposition = cursor.fetchone()
+
+    if (len(res) >= 1):
+      print
+      " res in "
+
+      dateDemande = res[9].isoformat()
+      year, month, day = res[9].isoformat().split("-")
+      dateDemande = date(int(year), int(month), int(day))
+      self.ui.dateDemandeLineEdit.setDate(dateDemande)
+
+      dateReconnaissance = res[10].isoformat()
+      year, month, day = res[10].isoformat().split("-")
+      dateReconnaissance = date(int(year), int(month), int(day))
+      self.ui.dateDeReconnaissanceLineEdit.setDate(dateReconnaissance)
+
+      self.iddemandeForJournal = res[0]  # Recuperation de l'id de la table demande
+      self.ui.lineEditDemande.setText(str(res[2]))
+      self.iddemande = int(res[0])
+      self.ui.coutLineEdit.setText(str(res[19]))
+      self.ui.lineEditRegion.setText(str(res[11]))
+      self.ui.lineEditDistrict.setText(str(res[12]))
+      self.ui.communeComboBox.setText(str(commune[3]))
+      self.loadFokontany(int(commune[0]))
+      self.loadConsistance()
+      self.filenamepreview = self.preview()
+      #self.ui.label_2.setPixmap(QtGui.QPixmap(self.filenamepreview))
+
+      self.ui.lineEditDemande.setReadOnly(True)
+      self.ui.coutLineEdit.setEnabled(True)
+      self.ui.lineEditRegion.setReadOnly(True)
+      self.ui.lineEditDistrict.setReadOnly(True)
+      #self.ui.communeComboBox.setReadOnly(True)
+
+  def callRejectDemande(self):
+    print "Reject demande"
+    from RejetDemandeRun import RejetDemandeRun
+    rejet = RejetDemandeRun(self)
+    rejet.show()
+    result = rejet.exec_()
+
+  def callDemandeur(self):
+
+    from CreateDemandeurCertificat import CreateDemandeurCertificat
+    Demandeur = CreateDemandeurCertificat(self)
+    Demandeur.show()
+    result = Demandeur.exec_()
+
+  def callOpposition(self):
+
+    from OppositionRunn import OppositionRunn
+    print
+    "call opposition "
+    numDmd = str(self.ui.lineEditDemande.text())
+    self.numDemande = numDmd
+    opp = OppositionRunn(self)
+    print
+    opp
+    opp.show()
+    result = opp.exec_()
+
+  def loadConsistance(self):
+    cursor = self.connection.cursor()
+    cursor.execute("SELECT *   FROM consistance")
+    cs = cursor.fetchall()
+    size = len(cs)
+    if (size >= 1):
+      consistance = cs[0]
+      for row in cs:
+        ligneconsistance = row[2]
+        self.ui.consistanceComboBox.addItem(_fromUtf8(row[1]), row[0])
+
+  def loadFokontany(self, idcommune):
+
+    cursor = self.connection.cursor()
+    cursor.execute("SELECT *  FROM fokontany  WHERE idcommune=%s", [int(idcommune)])
+    dm = cursor.fetchall()
+    size = len(dm)
+    if (size >= 1):
+      district = dm[0]
+      self.ui.fokontanyComboBox.clear()
+      for row in dm:
+        lignefkt = row[3]
+        self.ui.fokontanyComboBox.addItem(_fromUtf8(row[3]), row[0])
+    else:
+      self.ui.fokontanyComboBox.clear()
+
+  def updateGeometrie(self):
+    # Ecriture dans le journal
+    from Projet.journalRunn import journal
+    journal = journal(self.connection)
+    journal.inserToJournal(globalvars.id_user, self.iddemandeForJournal, u"Demande",
+                           u"Edition de la géometrie d'une demande")
+    # fin ecritude dans le journal
+    self.close()
+    self.canvas.setMapTool(self.tool)
+    self.parent.activateChangeOngeom.setEnabled(True)
+
+    # self.selectionButton.setDefaultAction(self.selectionButton.sender())
+    # if self.ui.actionEditing_Node_Layers.isChecked() :
+    #    self.canvas.setMapTool(self.parentool)
+    #    self.ui.actionEnregistrer.setEnabled(True)
+    # else:
+    #   self.canvas.unsetMapTool(self.tool)
+    #    self.ui.actionEnregistrer.setEnabled(False)
+    # self.MainWindow.canvas.refresh()
+
+  def updateInfos(self):
+
+    from datetime import date
+    date_format = "%d/%m/%Y"
+
+    print('--UPDATE infos--')
+    # a = datetime.strptime(self.dateDemandeLineEdit.text(), date_format)
+    # b = datetime.strptime(self.dateDeReconnaissanceLineEdit.text(), date_format)
+
+    a = self.ui.dateDemandeLineEdit.text()
+    a = a.split("/")
+    a = date(int(a[2]), int(a[1]), int(a[0]))
+
+    b = self.ui.dateDeReconnaissanceLineEdit.text()
+    b = b.split("/")
+    b = date(int(b[2]), int(b[1]), int(b[0]))
+
+    diffdate = b - a
+
+    self.ddDate = diffdate.days
+
+    if self.ddDate < 15:
+      QMessageBox.critical(self.ui.dateDeReconnaissanceLineEdit, "Erreur",
+                           "La date de reconnaissance doit etre  au moins 15 jours apres")
+      #self.ui.dateDeReconnaissanceLineEdit.setFocus(Qt.Qt.OtherFocusReason)
+      return
+    if self.ui.coutLineEdit.text() == "":
+      QMessageBox.critical(self.ui.coutLineEdit, "Erreur", "Le cout ne doit pas etre vide")
+      #self.ui.coutLineEdit.setFocus(Qt.Qt.OtherFocusReason)
+      return
+
+    if self.ui.lineEditConsistances.text() == "":
+      QMessageBox.critical(self.ui.lineEditConsistances, "Erreur", "Veuillez remplir le champ  consistance")
+      # self.ui.coutLineEdit.setFocus(Qt.Qt.OtherFocusReason)
+      return
+
+    cursor = self.connection.cursor()
+    numDmd = str(self.ui.lineEditDemande.text())
+    print " num demande in"
+    print numDmd
+    print " num demande out"
+    self.numDemande = numDmd
+    dateDemande = self.ui.dateDemandeLineEdit.text()
+    dtDmande = dateDemande.split('/')
+
+    dateReconnaissance = self.ui.dateDeReconnaissanceLineEdit.text()
+    dtReconnaissance = dateReconnaissance.split('/')
+
+    cout = int(self.ui.coutLineEdit.text())
+    region = str(self.ui.lineEditRegion.text())
+    district = str(self.ui.lineEditDistrict.text())
+    # commune = str(self.commune.text())
+    fokontany = str(self.ui.fokontanyComboBox.currentText())
+    consistance = str(self.ui.consistanceComboBox.currentText())
+    try :
+      cursor.execute("UPDATE demande SET cout=(%s), datedemande= (%s), numdemande=(%s) , datereconnaissance=(%s) , consistance=(%s)  WHERE gid = (%s)",
+                     (cout, datetime.date(int(dtDmande[2]), int(dtDmande[1]), int(dtDmande[0])),numDmd,datetime.date(int(dtReconnaissance[2]), int(dtReconnaissance[1]), int(dtReconnaissance[0])),consistance, int(self.gid)))
+
+      self.connection.commit()
+    except Exception as e:
+      print(e)
+
+    try :
+      cursor.execute("UPDATE parcelle_d SET numdemande=(%s) WHERE gid = (%s)", (numDmd, self.gid))
+      self.connection.commit()
+    except Exception as e:
+      print(e)
+
+    # Ecriture dans le journal
+    from Projet.journalRunn import journal
+    journal = journal(self.connection)
+    journal.inserToJournal(globalvars.id_user, self.iddemandeForJournal, u"Demande",
+                           u"Edition des informations d'une demande")
+    # fin ecritude dans le journal
+    # self.dialog.close()
+
+    cLayer = self.parent.current_layer
+    mc = self.parent.canvas
+    #        mc = qgis.utils.iface.mapCanvas()
+    for layer in mc.layers():
+      if layer.type() == layer.VectorLayer:
+        layer.removeSelection()
+
+    mc.refresh()
+    mc.refresh()
+    mc.refresh()
+    mc.refresh()
+    mc.refresh()
+    mc.refresh()
+    self.parent.showAll()
+    self.close()
+
+  def preview(self):
+    sql = "SELECT ST_AsPNG(" \
+          "ST_AsRaster(" \
+          "ST_Buffer(geom, 10),200,200,ARRAY['8BUI', '8BUI', '8BUI'], ARRAY[118,154,118], ARRAY[0,0,0]" \
+          ")) png " \
+          "from parcelle_d WHERE gid=%s"
+    connection = self.connection
+    #        cursor = connection.cursor()
+    cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cursor.execute("SET bytea_output TO escape")
+    cursor.execute(sql, (self.gid,))
+    row = cursor.fetchone()
+    filename = "preview.png"
+    f = open(filename, "wb")
+    f.write(row['png'])
+    f.close()
+    cursor.close()
+    return filename
+

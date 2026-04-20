@@ -1,0 +1,128 @@
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="pdf.css" />
+	<meta http-equiv="Content-Type" content="text/html" ; charset="UTF-8">
+</head>
+
+<body>
+	<div class="center" style="border:0px solid black; margin:auto; width:30%; text-align:left;top: 0;">
+		<p style=""><span class="bold">REPUBLIQUE DE MADAGASCAR</span> <br>
+			<span class="italic">Fitiavana - Tanindrazana - Fandrosoana</span>
+
+		</p>
+		<p ><span class="bold">FILAZANA FANDOAVAN-KETRA</span> <br>
+			Araky ny fanambarana nataon'Atoa/Rtoa:<br>
+			$maire <br>
+			sy ny fanisana ireo singafototra misy eo ampelatanan'ny Sampandraharaha, dia<br>
+			ferana toy izao ny hetra aloanao ho an'ny taona $anneavis ($anneavis,)
+		</p>
+	</div>
+	<div style="position:absolute; top: 0; width: 300;border:0px solid">
+		<p>KAOMININA : $commune <br>
+			N° : $ref <br>
+			NR : $NR
+		</p>
+		<p>
+			Anarana: $nom_c <br>
+			Fanampiny: $prenom_c <br>
+			CIN: $cin_c<br>
+			Adiresy: $adr_c <br>
+			Fokontany: $fkt_c
+		</p>
+	</div>
+	<br>
+	<br>
+
+	<table class="fullwidth border-collapse center" >
+		<thead>
+			<tr> 
+				<td class="bordered">
+					<p class="center   bold">N°</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold" >Karazany</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold" >Toerana misy azy</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold">Fototra amerana ny hetra</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold" >Taha / Sanda</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold" >Hetra ny taona teo aloha</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold" >Hetra aloa taona $anneavis</p>
+				</td>
+				<td class="bordered">
+					<p class="center bold">Fitambarany</p>
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+			{REPEAT $infoimpot:$info}
+			<tr>
+
+					<td class="bordered">
+						<p class="center" >$info.num</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.type_ppt</p>
+					</td>
+					<td class="bordered">
+						<p class="center" >$info.emplacement</p>
+					</td>
+					<td class="bordered">
+						<p class="center" >$info.calcul</p>
+					</td>
+					<td class="bordered">
+						<p class="center" >$info.tarif</p>
+					</td>
+					<td class="bordered">
+						<p class="center" >$info.impot_anterieur</p>
+					</td>
+					<td class="bordered">
+						<p class="center" >$info.impot_anneeencours</p>
+					</td>
+					<td class="bordered">
+						<p class="center">$info.sstotal</p>
+					</td>
+
+			</tr>
+			{ENDREPEAT $infoimpot}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="7" class="right bold" style="border: none"> FITAMBARANY</td>
+				<td class="bordered">$total</td>
+			</tr>
+		</tfoot>
+	</table>
+      <table style="width:100%">
+        <tr>
+            <td>
+                <p class="left">Faranana ity fandoavan-ketra ity amin'ny tambatra : $lettre  Ariary<br>
+                    Iangaviana ianao mba handoa io vola io eny amin'ny Biraon'ny Kaominina, ao anatin'ny <span class="bold">telo volana</span>
+                </p>
+            </td>
+            <td>
+                 <p class="right">Daty : $date</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+               <p class="left">Fanamarinan'ny Ivon-ketra</p>
+            </td>
+            <td>
+               <p class="right">Ny Ben'ny Tanàna</p>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="pdf.css"/>
+    <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+</head>
+<body>
+  <p class="center bold">REPOBLIKAN'I MADAGASIKARA</p>
+  <p class="center italic">Fitiavana - Tanindrazana - Fandrosoana</p>
+  <p class="center">BIRAO IFOTON'NY FANANAN-TANY</p>
+  <table style="position:absolute; top: 0; width: 300">
+    <tr>
+      <td class="u">FARITRA: </td><td>$faritra</td>
+    </tr>
+    <tr>
+      <td class="u">DISTRIKA:</td><td> $distrika</td>
+    </tr>
+    <tr>
+      <td class="u">KAOMININA:</td><td> $kaominina</td>
+    </tr>
+    <tr>
+      <td class="u">FOKONTANY:</td><td>$fokontany</td>
+    </tr>
+    <tr>
+      <td class="u">VOHITRA:</td><td>$vohitra</td>
+    </tr>
+  </table>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <p class="left"><strong>FANAPAHANA LAHARANA FAHA-</strong>  <strong style="text-decoration:underline;">$numDecision</strong> tamin'ny <strong style="text-decoration:underline;">$daatedecision</strong></p>
+  <p class="left"><strong>Mahakasika ny fitsirihina ifotony</strong></p>
+  <p class="left bold">NY BEN'NY TANANA</p>
+  <ul>
+	<li>Arakan ny lalam-panorenana</li>
+	<li>Araka ny Lal&agrave;na laharana faha 94.007 tamin'ny 26 Aprily 1995, mikasika ireo fahefana sy tandrifim-pahefana ny fahaiza-manao ny loharanom-bolan'ny vondrom-paritra anapriaham-pahefana;</li>
+	<li>Araka ny Lal&agrave;na faha 94.008 tamin'ny 26 Aprily 1995, mikasika ny fitsipika mifehy ny fandaminana ny fomba fiasa ary ny anjara andraikitry ny vondrom-paritra anapariaham-pahefana</li>
+	<li>Araka ny Lal&agrave;na laharana faha 2005-019 tamin'ny 17 oktobra 2005 mifehy ny satan'ny tany eto Madagasikara</li>
+      <li>Araka ny Lalàna laharana faha 2022-013 tamin'ny 1 Aogositra 2022 manavao ny lalana 2006-031 ary mametra ny fitondrana fananantany an'olon-tsotra tsy vita Titra;</li>
+      <li>Araka ny didim-panjakana laharana faha 2022-1250tamin’ny 31 Aogositra 2022 fampiharana ny Lalàna mametra ny fitondrana fananantany an'olon-tsotra tsy vita Titra;</li>
+      <li>Araka ny didim-panjakana laharana faha 2023-28 tamin’ny 26 janoary 2023 fampiharana ny Lalàna mametra ny fitondrana fananantany an'olon-tsotra tsy vita Titra sy fanaovana ny karatany faobe.</li>
+      <li>Araka ny didim-panjakana laharana faha 96-898 tamin'ny 25 Septambra 1996 mamaritra ny anjara raharahan'ny Ben'ny Tanàna;</li>
+    <li>Araka ny didim-pitsarana laharana faha 24-731-2011 enti-mamaritra ireo fepetra mikasika ny fitantanana ny fananam-panjakana azo amidy</li>
+  </ul>
+  <p>Dia manapaka fa :</p>
+  <p><i style="text-decoration:underline;font-weight:bold;">Andininy voalohany</i> : Rehefa nodinihana ireto fangatahana Karatany voaray teto anivon'ny Birao Ifoton'ny Fananan-tany, atao tovana manaraka ireto, dia azo raisina, ka hotsirihana
+      amin'ny datin'ny <strong>$daatereconnaissance</strong> eny amin'ny toernana misy ny tany</p>
+  <p><i style="text-decoration:underline;font-weight:bold;">Andininy faharoa</i> : Tendrena ary antsoina ho mpikambana aoamin'ny <strong>Komity mpitsirika</strong> ifotony,  ao amin'ny Fokontany <strong>$fokontany</strong> vohitra <strong>$vohitra</strong><br/>
+  ireto olona voalaza manaraka ireto:
+  </p>
+  <table class="fullwidth ">
+    <tr>
+      <td width="22%"><strong>Ny Solotenan’ny Kaominina	:</strong></td>
+      <td>$solotenaKaominina</td>
+      <td><strong>Na</strong></td>
+      <td>$solotenaMpisoloKaominina</td>
+    </tr>
+    <tr>
+      <td><strong>Ny Solotenan’ny Fokontany	:</strong></td>
+      <td>$solotenaFkt</td>
+      <td><strong>Na</strong></td>
+      <td>$solotenaMpisoloFkt</td>
+    </tr>
+    <tr>
+      <td><strong>Ray aman-dReny 1	:</strong></td>
+      <td>$rad1</td>
+      <td><strong>Na</strong></td>
+      <td>$radMpisolo1</td>
+    </tr>
+    <tr>
+      <td><strong>Ray aman-dReny 2	:</strong></td>
+      <td>$rad2</td>
+      <td><strong>Na</strong></td>
+      <td>$radMpisolo2</td>
+    </tr>
+    <tr>
+      <td><strong>Ray aman-dReny 3   :</strong></td>
+      <td>$rad3</td>
+      <td><strong>Na</strong></td>
+      <td>$radMpisolo3</td>
+    </tr>
+    <tr>
+      <td><strong>Ny Mpiasan’ny Birao Ifoton’ny Fananan-tany   :</strong></td>
+      <td>$bif</td>
+      <td><strong>Na</strong></td>
+      <td>$soloBif</td>
+    </tr>
+  </table>
+
+
+  <p>Amin'ny tany izay nangatahan'ireto olona voalaza anarana amin'ny lisitra atao tovana manaraka ireto</p>
+  <p><i style="text-decoration:underline;font-weight:bold;">Andininy fahatelo :</i> Soratana sy aely ary ampahafantarina amin'ny alàlan'ny peta-drindrina sy izay rehetra mila azy ny voalazan'ity Fanapahana ity.</p>
+  <!--<p><i>Andininy Faha 2 :</i> Atao filazana eo anatrehan'ny besinimaro ny voalazan'ity fanapahana ity </p>-->
+
+
+  <p class="right">Natao teto <strong>$kaominina</strong> Androany faha &nbsp; . . / . . / . . . . </p>
+  <p class="right">Ny Ben'ny Tanàna</p>
+  <p>ANDEFASANA :</p>
+  <!--<ul>
+      <li>Ny Fokontany</li>
+      <li>Ny voakasika</li>
+      <li>Tahiry (Kaominina, BIF)</li>
+  </ul>-->
+
+<!--<table class="fullwidth border-all border-collapse">
+    <tr>
+        <th colspan = "5"></th>
+        <th colspan = "4">Mpifanila tany / Voisins</th>
+        <th></th>
+        <th></th>
+    </tr>
+      <tr>
+          <th>Laharana tany /<br/> Numero</th>
+          <th>Laharana fangatahana/ <br/>Numero de demande</th>
+          <th>Datin'ny fangatahana / <br/>Date de demande</th>
+          <th>Anaran'ny Mpangataka karatany / <br/>Nom demandeur</th>
+          <th>Adiresy/ <br/>Adresse</th>
+          <th>Avaratra / Nord</th>
+          <th>Atsimo / Sud</th>
+          <th>Atsinana / Est</th>
+          <th>Andrefana / Ouest</th>
+          <th>KAODY PLANCHE "PLOF"</th>
+          <th>Date RL</th>
+      </tr>
+      {REPEAT $rows:$r}
+       <tr>
+          <td>$r.codeParcelle</td>
+          <td>$r.num</td>
+          <td>$r.date</td>
+          <td>$r.nom</td>
+          <td>$r.adiresy</td>
+          <td>$r.voisinNord</td>
+           <td>$r.voisinSud</td>
+           <td>$r.voisinEst</td>
+           <td>$r.voisinOuest</td>
+          <td>$r.planchePlof</td>
+          <td>$daatereconnaissance</td>
+      </tr>
+      {ENDREPEAT $rows}
+  </table>-->
+
+</body>
+</html>

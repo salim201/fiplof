@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>780</width>
+    <height>497</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Saisie informations</string>
+  </property>
+  <widget class="QWidget" name="gridLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>761</width>
+     <height>381</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>3</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Choix de la parcelle objet du nouveau certificat</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="geometry">
+         <rect>
+          <x>390</x>
+          <y>10</y>
+          <width>331</width>
+          <height>321</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Première parcelle morcellé</string>
+        </property>
+        <widget class="QWidget" name="horizontalLayoutWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>311</width>
+           <height>181</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+        </widget>
+        <widget class="QGroupBox" name="horizontalGroupBox_3">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>210</y>
+           <width>171</width>
+           <height>35</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="margin">
+           <number>4</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="precedent">
+            <property name="text">
+             <string>&lt;&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="suivant">
+            <property name="text">
+             <string>&gt;&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QGroupBox" name="formGroupBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>250</y>
+           <width>311</width>
+           <height>62</height>
+          </rect>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <property name="leftMargin">
+           <number>8</number>
+          </property>
+          <property name="topMargin">
+           <number>8</number>
+          </property>
+          <property name="rightMargin">
+           <number>10</number>
+          </property>
+          <property name="bottomMargin">
+           <number>8</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="nDeLaParcelleObjetDuNouveauCFLabel">
+            <property name="text">
+             <string>N° de la parcelle objet du nouveau CF</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="nDeLaParcelleObjetDuNouveauCFLineEdit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="nombreDeParcellesLabel">
+            <property name="text">
+             <string>Nombre de parcelles</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="nombreDeParcellesLineEdit"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>351</width>
+          <height>291</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>CF Mère</string>
+        </property>
+        <widget class="QWidget" name="horizontalLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>321</width>
+           <height>241</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout"/>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Nouveau Certificat</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>731</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>CF qui garde l'ancien numéro </string>
+        </property>
+        <widget class="QLineEdit" name="surfaceLineEdit_10">
+         <property name="geometry">
+          <rect>
+           <x>240</x>
+           <y>50</y>
+           <width>133</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="surfaceLineEdit_11">
+         <property name="geometry">
+          <rect>
+           <x>380</x>
+           <y>50</y>
+           <width>133</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="surfaceLineEdit_12">
+         <property name="geometry">
+          <rect>
+           <x>520</x>
+           <y>50</y>
+           <width>141</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="comboBox">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>70</y>
+           <width>131</width>
+           <height>22</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="surfaceLineEdit_9">
+         <property name="geometry">
+          <rect>
+           <x>99</x>
+           <y>47</y>
+           <width>133</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="surfaceLabel_3">
+         <property name="geometry">
+          <rect>
+           <x>11</x>
+           <y>47</y>
+           <width>37</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Surface</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="numRoCertificatLabel_3">
+         <property name="geometry">
+          <rect>
+           <x>11</x>
+           <y>21</y>
+           <width>82</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Numéro certificat</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="numRoCertificatLineEdit_3">
+         <property name="geometry">
+          <rect>
+           <x>99</x>
+           <y>21</y>
+           <width>561</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="consistanceLabel_3">
+         <property name="geometry">
+          <rect>
+           <x>11</x>
+           <y>73</y>
+           <width>61</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string> Consistance</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>731</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Nouveau CF</string>
+        </property>
+        <widget class="QGroupBox" name="groupBox_12">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>100</y>
+           <width>731</width>
+           <height>101</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>CF qui garde l'ancien numéro </string>
+         </property>
+         <widget class="QLineEdit" name="surfaceLineEdit_5">
+          <property name="geometry">
+           <rect>
+            <x>240</x>
+            <y>50</y>
+            <width>133</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="surfaceLineEdit_6">
+          <property name="geometry">
+           <rect>
+            <x>380</x>
+            <y>50</y>
+            <width>133</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="surfaceLineEdit_7">
+          <property name="geometry">
+           <rect>
+            <x>530</x>
+            <y>50</y>
+            <width>133</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="numRoCertificatLineEdit_2">
+          <property name="geometry">
+           <rect>
+            <x>102</x>
+            <y>24</y>
+            <width>571</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="numRoCertificatLabel_2">
+          <property name="geometry">
+           <rect>
+            <x>14</x>
+            <y>24</y>
+            <width>82</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Numéro certificat</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="surfaceLineEdit_8">
+          <property name="geometry">
+           <rect>
+            <x>102</x>
+            <y>50</y>
+            <width>133</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="surfaceLabel_2">
+          <property name="geometry">
+           <rect>
+            <x>14</x>
+            <y>50</y>
+            <width>37</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Surface</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="consistanceComboBox_2">
+          <property name="geometry">
+           <rect>
+            <x>102</x>
+            <y>76</y>
+            <width>69</width>
+            <height>20</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QLabel" name="consistanceLabel_2">
+          <property name="geometry">
+           <rect>
+            <x>14</x>
+            <y>76</y>
+            <width>58</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Consistance</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QLineEdit" name="numRoCertificatLineEdit">
+         <property name="geometry">
+          <rect>
+           <x>102</x>
+           <y>24</y>
+           <width>561</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="numRoCertificatLabel">
+         <property name="geometry">
+          <rect>
+           <x>14</x>
+           <y>24</y>
+           <width>82</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Numéro certificat</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="surfaceLineEdit">
+         <property name="geometry">
+          <rect>
+           <x>102</x>
+           <y>50</y>
+           <width>133</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="surfaceLabel">
+         <property name="geometry">
+          <rect>
+           <x>14</x>
+           <y>50</y>
+           <width>71</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>N° Demande</string>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="consistanceComboBox">
+         <property name="geometry">
+          <rect>
+           <x>102</x>
+           <y>76</y>
+           <width>69</width>
+           <height>20</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="consistanceLabel">
+         <property name="geometry">
+          <rect>
+           <x>14</x>
+           <y>76</y>
+           <width>58</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Consistance</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_11">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>220</y>
+          <width>731</width>
+          <height>131</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Localisation</string>
+        </property>
+        <widget class="QGroupBox" name="formGroupBox_2">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>711</width>
+           <height>109</height>
+          </rect>
+         </property>
+         <layout class="QFormLayout" name="formLayout_3">
+          <property name="horizontalSpacing">
+           <number>10</number>
+          </property>
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>15</number>
+          </property>
+          <property name="bottomMargin">
+           <number>10</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="rGionLabel">
+            <property name="text">
+             <string>Région</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="districtLabel">
+            <property name="text">
+             <string>District</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="communeLabel">
+            <property name="text">
+             <string>Commune</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="fokontanyLabel">
+            <property name="text">
+             <string>Fokontany</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditRegion"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditDistrict"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEditCommune"/>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="comboFokontany"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Propriétaires</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>731</width>
+          <height>151</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Propriétaires du CF restant</string>
+        </property>
+        <widget class="QGroupBox" name="horizontalGroupBox_6">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>711</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="detail">
+            <property name="text">
+             <string>Détail</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="gridLayoutWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>70</y>
+           <width>711</width>
+           <height>73</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="tableWidget">
+            <column>
+             <property name="text">
+              <string>Nom</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Prenoms</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Sexe</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>DateNaissance</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>170</y>
+          <width>731</width>
+          <height>151</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Propriétaire du nouveau CF</string>
+        </property>
+        <widget class="QGroupBox" name="horizontalGroupBox_7">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>711</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QPushButton" name="remove">
+            <property name="text">
+             <string>Enlever</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonAddition">
+            <property name="text">
+             <string>Ajouter</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="details">
+            <property name="text">
+             <string>Détails</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="gridLayoutWidget_3">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>70</y>
+           <width>711</width>
+           <height>80</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="tableWidget_2">
+            <column>
+             <property name="text">
+              <string>Noms</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Prenoms</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Sexe</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Date</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>Limites de la parcelle</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_9">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>731</width>
+          <height>151</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Limites de la parcelle pour le CF restant</string>
+        </property>
+        <widget class="QGroupBox" name="horizontalGroupBox_10">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>711</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QPushButton" name="Enlever">
+            <property name="text">
+             <string>Enlever</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Ajouter_LimiteAncien">
+            <property name="text">
+             <string>Ajouter</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEditCFRestant"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="gridLayoutWidget_6">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>70</y>
+           <width>711</width>
+           <height>73</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="tableWidget_5">
+            <column>
+             <property name="text">
+              <string>Reperes</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Description</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Position</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_10">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>170</y>
+          <width>731</width>
+          <height>161</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Limite de la parcelle du nouveau CF</string>
+        </property>
+        <widget class="QGroupBox" name="horizontalGroupBox_11">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>711</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item>
+           <widget class="QPushButton" name="Enlever_2">
+            <property name="text">
+             <string>Enlever</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Ajouter_LimiteNew">
+            <property name="text">
+             <string>Ajouter</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEditNouveauCF"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="gridLayoutWidget_7">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>70</y>
+           <width>711</width>
+           <height>81</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="tableWidget_6">
+            <column>
+             <property name="text">
+              <string>Reperes</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Description</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Position</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>400</y>
+     <width>761</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="precedent_2">
+      <property name="text">
+       <string>Précédent</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="suivant_2">
+      <property name="text">
+       <string>Suivant</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox_5">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>450</y>
+     <width>761</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <item>
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="save">
+      <property name="text">
+       <string>Enregistrer</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="cancel">
+      <property name="text">
+       <string>Annuler</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

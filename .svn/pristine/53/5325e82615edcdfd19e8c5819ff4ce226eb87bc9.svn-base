@@ -1,0 +1,52 @@
+from GeometryLoader.GeometryDataSource import GeometryDataSource
+from GeometryLoader.LayerProperties import LayerProperties
+import LayerStyles
+
+
+class PlofLayersCollection:
+    PlofStandardLayers = []  # type: list[LayerProperties]
+
+    def __init__(self, communeId, namePrefix="", idCF = None):
+        if self.PlofStandardLayers:
+            del self.PlofStandardLayers[:]
+        CONDITION_COMMUNE = "idcommune=%s or idcommune is null" % communeId
+        
+        if idCF is None:
+            CONDITION_CF = CONDITION_COMMUNE
+        else:
+            CONDITION_CF = "idcertificat != %s" % idCF
+
+        layerDemand = LayerProperties(0, "Demandes Parcelle", namePrefix)
+        layerDemand.styles = LayerStyles.demandStyles
+        layerDemand.dataSource = GeometryDataSource("vw_demande", "numdemande", CONDITION_COMMUNE)
+        layerDemand.setCurrent()
+        self.PlofStandardLayers.append(layerDemand)
+
+        layerCertificate = LayerProperties(1, "Certificats", namePrefix)
+        layerCertificate.styles = LayerStyles.certificateStyles
+        layerCertificate.dataSource = GeometryDataSource("vw_certificat", "numerocertificat", CONDITION_CF)
+        self.PlofStandardLayers.append(layerCertificate)
+        
+
+        layerFiscalite = LayerProperties(2, "Fiscalite", namePrefix)
+        layerFiscalite.styles = LayerStyles.fiscaliteStyles
+        layerFiscalite.dataSource = GeometryDataSource("vw_fiscalite", "numero")
+        self.PlofStandardLayers.append(layerFiscalite)
+
+        layerTitreFoncier = LayerProperties(3, "Proposition de titre", namePrefix)
+        layerTitreFoncier.styles = LayerStyles.titreFoncierStyles
+        layerTitreFoncier.dataSource = GeometryDataSource("titrefoncier", "numerotitre")
+        self.PlofStandardLayers.append(layerTitreFoncier)
+
+        layerAireSpecifique = LayerProperties(4, "Proposition d'aire a statut specifique", namePrefix)
+        layerAireSpecifique.styles = LayerStyles.aireSpecifiqueStyles
+        layerAireSpecifique.dataSource = GeometryDataSource('aireastatutspecifique', 'nom')
+        self.PlofStandardLayers.append(layerAireSpecifique)
+
+        layerDomainePublique = LayerProperties(5, "Proposition de domaine publique", namePrefix)
+        layerDomainePublique.styles = LayerStyles.domainePubliqueStyles
+        layerDomainePublique.dataSource = GeometryDataSource('domainepublique', 'nom')
+        self.PlofStandardLayers.append(layerDomainePublique)
+
+    def getStandardLayers(self):
+        return self.PlofStandardLayers

@@ -1,0 +1,322 @@
+# coding: utf8
+from PyQt4.QtCore import QThread, SIGNAL, pyqtSignal
+# import ogrinfo
+import sys
+import datetime,time
+import os
+import os.path
+from qgis.core import *
+from PyQt4 import QtCore, QtGui
+from logs import xlsLogger
+import subprocess
+from Configuration import DbConfig
+#from Configuration import ParamsConfig
+from Configuration import IntercoConfig
+import datetime
+import globalvars
+import psycopg2
+import hashlib
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+class AutoRestoreThread(QThread):
+    messageAddedSignal = pyqtSignal(str)
+    errorAddedSignal = pyqtSignal(str)
+    doneSignal = pyqtSignal()
+
+    def __init__(self, pgdump, dirname, connection, parent, isOnlineRestore = False):
+        QThread.__init__(self)
+        self.filename, self.connection = None, connection
+        self.parent = parent
+        self.dirname = dirname
+        self.pgdump = pgdump
+        self.current_step = -1
+        self.interco_config = IntercoConfig.IntercoConfig()
+        self.db_config = DbConfig.DbConfig()
+        if isOnlineRestore:
+            self.nomBase = self.interco_config.dbname_backup
+            self.dbPort = self.interco_config.port_backup
+            self.dbUser = self.interco_config.user_backup
+            self.dbPass = self.interco_config.password_backup
+            self.dbHost = self.interco_config.host_backup
+        else:
+            self.nomBase = self.db_config.db_name
+            self.dbPort = self.db_config.db_port
+            self.dbUser = self.db_config.db_user
+            self.dbPass = self.db_config.db_pass
+            self.dbHost = self.db_config.db_host
+        #
+
+
+        self.filename = None
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        if self.filename == "":
+            self.emit(SIGNAL("alert(QString)"), "Veuillez choisir un dossier")
+            return
+
+        self.current_step = -1
+
+        self.emit(SIGNAL("stepInit(int)"), self.current_step + 1)
+        #date_jour = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+        nom_commune = self.get_commune_name().replace(" ", "_").lower()
+        if self.interco_config.auto_save_path != None and os.path.exists(str(self.interco_config.auto_save_path)):
+            self.dirname = self.interco_config.auto_save_path
+
+        most_recent_file = None
+
+        print(self.dirname)
+        try:
+            liste_fic = self.lister_fichiers_sql(self.dirname,nom_commune)
+            most_recent_file = self.get_the_most_recent_file(liste_fic, nom_commune)
+        except Exception as err:
+            print(err)
+
+        print (most_recent_file)
+
+        if most_recent_file == None:
+            self.errorAddedSignal.emit(u"Aucun fichier de sauvegarde trouvé")
+            return
+        else:
+            self.filename = os.path.join(self.dirname, most_recent_file)
+            self.parent.filename = self.filename
+
+            try:
+                self.run_import()
+            except Exception as err:
+                print (err)
+
+    def run_dump(self):
+        os.putenv("PGPASSWORD", self.dbPass)
+        proc = subprocess.Popen(
+            [
+                "%s" % (self.pgdump,),
+                "-U", self.dbUser,
+                "-h", self.dbHost,
+                "--file", self.filename,
+                "--format", "p",
+                "--blobs",
+                #"--create",
+                "--verbose",
+                "%s" % self.nomBase
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            shell=True
+        )
+        while True:
+            output = proc.stdout.readline()
+            if output == '' and proc.poll() is not None:
+                break
+            if output:
+                self.messageAddedSignal.emit(output.strip())
+        proc.poll()
+        self.doneSignal.emit()
+
+    def get_commune_name(self):
+        res = None
+        try:
+            cur = self.connection.cursor()
+            cur.execute("SELECT nomcommune from commune where idcommune = %s", (globalvars.id_commune,))
+            res = cur.fetchone()
+        except Exception as err:
+            print ("Erreur get nomcommune " + str(err))
+        if res is not None:
+            return str(res[0]).strip()
+        else:
+            return ""
+
+    def run_import(self):
+
+        nom_commune = self.get_nom_commune()
+        res = self.compare_filename_to_commune(nom_commune, self.filename)
+        if not res:
+            print res
+            self.errorAddedSignal.emit(u"La commune correspondante au fichier n'existe pas dans la base de données")
+            self.doneSignal.emit()
+            return
+
+        print ("commune existante!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+        bat = self.create_batfile()
+        proc = subprocess.Popen([bat], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+        while True:
+            output = proc.stdout.readline()
+            if output == '' and proc.poll() is not None:
+                break
+            if output:
+                if ('PGPASSWORD' not in output.strip()):
+                    self.messageAddedSignal.emit(output.strip())
+                    #print (output.strip())
+                if (('psql:' in output.strip()) and ('timed out' in output.strip() or 'FATAL' in output.strip())):
+                    self.errorAddedSignal.emit(output.strip())
+                    print (output.strip())
+                    return
+
+        proc.poll()
+        os.remove(bat)
+        self.doneSignal.emit()
+
+    def create_batfile(self):
+        #os.putenv("PGPASSWORD", self.dbPass)
+        restore_exe = self.pgdump
+        psql_exe = os.path.dirname(restore_exe) + "/psql.exe"
+        dirname = os.path.dirname(__file__)
+
+        file_extension = open(dirname + "/create_extension.sql", "r")
+        content_extension = file_extension.read()
+        print (content_extension)
+
+        string_schema = "UPDATE pg_database SET datallowconn = 'false' WHERE datname = '"+self.nomBase+"';" \
+        "\nSELECT pg_terminate_backend(pid)"\
+        "\nFROM pg_stat_activity"\
+        "\nWHERE datname = '"+self.nomBase+"';"\
+        "\nDROP DATABASE IF EXISTS "+self.nomBase+";"\
+        "\n--"\
+        "\n-- TOC entry 4775 (class 1262 OID 93991)"\
+        "\n-- Name: "+self.nomBase+"; Type: DATABASE; Schema: -; Owner: "+self.dbUser+""\
+        "\n--" \
+        "\n DROP USER IF EXISTS plof ;" \
+        "\n CREATE ROLE plof LOGIN PASSWORD 'plof';" \
+        "\nCREATE DATABASE "+self.nomBase+" WITH TEMPLATE = template0 ENCODING = 'UTF8';" \
+        "\nUPDATE pg_database SET datallowconn = 'true' WHERE datname = '" + self.nomBase + "';" \
+        "\n\c "+self.nomBase+";"\
+        "\nSET postgis.gdal_enabled_drivers = 'ENABLE_ALL';"\
+
+        string_schema = string_schema + content_extension
+        print ("after string schema")
+        #string_schema.replace('postgres', self.db_config.db_user)
+
+        fichier = open(dirname + "/schema_plof.sql", "w")
+        fichier.write(string_schema)
+        fichier.close()
+        schema_filename = dirname + "/schema_plof.sql"
+        plof_schema = dirname + "/plof_schema.sql"
+        bat = dirname + "/import.bat"
+        fd = os.open(bat, os.O_WRONLY | os.O_CREAT)
+        os.write(fd, "@echo on\n")
+        # os.write(fd, "SET PGPASSWORD=postgres\n" % self.db_config.db_pass)
+        os.write(fd, "SET PGPASSWORD=%s\n" % (self.dbPass,))
+        print("after setting password")
+
+        #os.write(fd, "\"%s\" -U postgres < \"%s\"\n" % (psql_exe, plof_schema))
+        #os.write(fd, "\"%s\" --host localhost "
+                     #"--port 5432 "
+                     #"--username \"postgres\" --dbname \"%s\"  "
+                     #"--verbose \"%s\"\n" % (restore_exe, self.db_config.db_name, self.filename))
+
+        os.write(fd, "psql --host \"%s\" "
+                         "--port \"%s\" "
+                         "--username \"%s\" "
+                         "-f \"%s\"\n" % (self.dbHost, self.dbPort, self.dbUser, schema_filename))
+        os.write(fd, "psql --host \"%s\" "
+                     "--port \"%s\" "
+                     "--username \"%s\" -d \"%s\"  "
+                     "-f \"%s\"\n" % (self.dbHost, self.dbPort, self.dbUser, self.nomBase, self.filename))
+        os.close(fd)
+        print("after bat creation")
+        return bat
+
+    def get_nom_commune(self):
+        connection = psycopg2.connect(database=self.db_config.db_name, user=self.db_config.db_user,
+                                      password=self.db_config.db_pass, host=self.db_config.db_host)
+        res = None
+        try:
+            cur = connection.cursor()
+            cur.execute("SELECT nomcommune FROM commune WHERE idcommune = %s", (globalvars.id_commune,))
+            res = cur.fetchone()
+        except Exception as err:
+            print ("Error to get the name of the commune " + str(err))
+        if res is None:
+            return ""
+        else:
+            return str(res[0]).strip()
+
+
+    def compare_filename_to_commune(self, nom_commune, nom_fichier):
+        print ("***********FILENAME*********")
+        print (nom_fichier)
+
+        nom_comm = nom_commune.replace(" ", "_").lower()
+        tab_fic = nom_fichier.split("/")
+
+        print (tab_fic)
+        fic = tab_fic[len(tab_fic) - 1]
+        print (fic)
+        if nom_comm in fic:
+            return True
+        else:
+            return False
+
+    def lister_fichiers_sql(self, repertoire,nom_commune = ''):
+        files = []
+        if nom_commune == '':
+            for racine, repertoires, fichiers in os.walk(repertoire):
+                for fichier in fichiers:
+                    if fichier.endswith(('.sql')):
+                        #print (os.path.join(racine, fichier))
+                        files.append(os.path.join(racine, fichier))
+        else:
+            for racine, repertoires, fichiers in os.walk(repertoire):
+                for fichier in fichiers:
+                    if fichier.endswith(('.sql')):
+                        if ((nom_commune in fichier) and ('autobackup' in fichier)):
+                            #print (os.path.join(racine, fichier))
+                            files.append(os.path.join(racine, fichier))
+
+        return files
+
+    def get_the_most_recent_file(self, files, nom_commune):
+        dates = []
+        dates_str = []
+        nom_fichier = []
+        for fic in files:
+            filename = os.path.basename(fic)
+            tab_file = filename.split('_comm_')
+            if len(tab_file) > 1:
+                if nom_commune in tab_file[1]:
+                    try:
+                        dates.append(time.strptime(tab_file[0], "%Y-%m-%d_%H-%M"))
+                        dates_str.append(tab_file[0])
+                    except Exception as err:
+                        print ("Erreur transformation en date " + str(err))
+
+                    try:
+                        nom_fichier.append(filename)
+                    except Exception as err:
+                        print ("Erreur de copie de nom de fichier " + str(err))
+                    print (filename)
+                else:
+                    continue
+
+        if len(dates) >= 1 and len(nom_fichier) >= 1 :
+            try:
+                best_date = self.get_the_most_recent_date(dates)
+            except Exception as err:
+                print ("Erreur de best_date")
+                print (err)
+            date_str = time.strftime("%Y-%m-%d_%H-%M", best_date)
+            print (str(dates_str.index(date_str)))
+            return nom_fichier[dates_str.index(date_str)]
+        else:
+            return None
+
+    def get_the_most_recent_date(self, dates):
+        max_date = None
+        if len(dates) >= 2:
+            for i in range(0, len(dates)):
+                if dates[i] > dates[i + 1]:
+                    max_date = dates[i]
+                else:
+                    max_date = dates[i + 1]
+
+                if i + 1 == len(dates) - 1:
+                    break
+
+        return max_date

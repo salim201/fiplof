@@ -1,0 +1,1 @@
+﻿ALTER TABLE public.demande ADD COLUMN idrejet integer;

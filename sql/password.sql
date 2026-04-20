@@ -1,0 +1,1 @@
+update utilisateur set passwordutilisateur=upper(md5(passwordutilisateur));

@@ -1,0 +1,72 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'PopupInfosDemandeFn.ui'
+#
+# Created: Thu Mar 14 06:51:38 2024
+#      by: PyQt4 UI code generator 4.11.3
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class Ui_INFORMATIONS(object):
+    def setupUi(self, INFORMATIONS):
+        INFORMATIONS.setObjectName(_fromUtf8("INFORMATIONS"))
+        INFORMATIONS.resize(343, 133)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/sig/icone/information.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        INFORMATIONS.setWindowIcon(icon)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(INFORMATIONS)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.fn_fg = QtGui.QLineEdit(INFORMATIONS)
+        self.fn_fg.setObjectName(_fromUtf8("fn_fg"))
+        self.verticalLayout.addWidget(self.fn_fg)
+        self.demandeur = QtGui.QLineEdit(INFORMATIONS)
+        self.demandeur.setObjectName(_fromUtf8("demandeur"))
+        self.verticalLayout.addWidget(self.demandeur)
+        self.sur_plan = QtGui.QLineEdit(INFORMATIONS)
+        self.sur_plan.setObjectName(_fromUtf8("sur_plan"))
+        self.verticalLayout.addWidget(self.sur_plan)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.line = QtGui.QFrame(INFORMATIONS)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName(_fromUtf8("line"))
+        self.verticalLayout_2.addWidget(self.line)
+        self.buttonsLayout = QtGui.QHBoxLayout()
+        self.buttonsLayout.setObjectName(_fromUtf8("buttonsLayout"))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.buttonsLayout.addItem(spacerItem)
+        self.pushButtonEditFisc = QtGui.QPushButton(INFORMATIONS)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/std/icone/if_pencil_14623.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButtonEditFisc.setIcon(icon1)
+        self.pushButtonEditFisc.setObjectName(_fromUtf8("pushButtonEditFisc"))
+        self.buttonsLayout.addWidget(self.pushButtonEditFisc)
+        self.verticalLayout_2.addLayout(self.buttonsLayout)
+
+        self.retranslateUi(INFORMATIONS)
+        QtCore.QMetaObject.connectSlotsByName(INFORMATIONS)
+
+    def retranslateUi(self, INFORMATIONS):
+        INFORMATIONS.setWindowTitle(_translate("INFORMATIONS", "Infos", None))
+        self.pushButtonEditFisc.setText(_translate("INFORMATIONS", "Editer", None))
+
+import icons_rc

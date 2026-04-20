@@ -1,0 +1,3 @@
+pg_dump -U postgres -c -d tsaramandroso_test -t titre -f C:\Users\User\Desktop\titre.sql
+
+pg_dump -U postgres -a --column-inserts -d tsaramandroso_test -T acces -T titre -T cadastre -T demandefn -T terain_status_specifique -T z_certifiable  -T utilisateur -T param_layer -T projet -T projet_commune -T projetcouche -T propositiondomainepublic -T proprietaireparcelle_d -T spatial_ref_sys -T titrefoncier -T postgis_topology -T pgrouting -T postgis -T fuzzystrmatch -T address_standardizer -T plpgsql -T topology -T tiger_data -T tiger -T public -T groupe -T groupe_acces -T region -T district -T commune -f "C:\Users\User\Desktop\gf_data.sql" 

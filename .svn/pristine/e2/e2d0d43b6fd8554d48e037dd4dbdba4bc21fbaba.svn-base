@@ -1,0 +1,168 @@
+# -*- coding: utf-8 -*-
+import os
+import sys
+import os
+import os.path
+from PyQt4 import QtCore, QtGui
+from qgis.core import *
+from qgis.gui import *
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import *
+from .PartageCF import Ui_Dialog
+import globalvars
+
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class PartageCFRun(QtGui.QDialog):
+    def __init__(self,parent):
+        QtGui.QDialog.__init__(self)
+        # Set up the user interface from Designer.
+        self.ui = Ui_Dialog()
+        self.parent = parent
+        self.title = self.parent.title
+        self.typeOp = self.parent.typeOp
+        self.id_projet = self.parent.id_projet
+        self.connection = self.parent.connection
+
+        self.details = self.parent.details
+        self.CF = self.parent.numCf
+        self.Parcelled = self.parent.idGeom
+        self.idcertificat = self.parent.idCertificat
+        self.proprioCF = []
+        self.idCF = 0
+        self.setWindowTitle(self.title)
+
+        self.vente = []
+
+        #self.cur = self.parent.connection.cursor()
+        self.ui.setupUi(self)
+        self.initActions()
+
+
+    def initActions(self):
+
+        print "ident"
+        i = 0
+        n = len(self.CF)
+        cursor = self.connection.cursor()
+        while (i < n) :
+            #add numCF
+            self.proprioCF.append(self.CF[i])
+
+            #add Type Personne
+            cursor.execute("SELECT *  FROM certificat where numerocertificat =%s ", [str(self.CF[i])])
+            rs = cursor.fetchone()
+
+            print  "RS cf"
+            print rs
+
+            idCf = rs[1].split('-')
+            idgeom = idCf[2]  # idparcelle
+
+            cursor.execute("SELECT * from personne ph" 
+                             " INNER  JOIN proprietaireparcelle phd ON  phd.idpersonne = ph.idpersonne "
+                             " INNER  JOIN parcelle_d pc ON  phd.idparcelle = pc.gid "
+                             " WHERE pc.gid = %s AND pc.idcertificat = %s",
+                             [int(idgeom),int(rs[8])])
+            rw = cursor.fetchone()
+            if(len(rw) >= 1 ):
+                typePersonne = "Personne physique"
+                self.proprioCF.append(typePersonne)
+                self.proprioCF.append(rw[1])
+                self.proprioCF.append(rw[2])
+
+            else :
+                typePersonne = "Personne Morale"
+            self.proprioCF.append(rs[8])
+            self.addValueTable(self.proprioCF)
+            self.proprioCF = []
+
+            i = i + 1
+        print " self.proprioCF "
+        print self.proprioCF
+        self.addValueTable(self.proprioCF)
+        self.ui.tableWidget.setSelectionBehavior(1)
+        self.ui.tableWidget.cellClicked.connect(self.cellSelected)
+
+        self.ui.ajouter.clicked.connect(self.ajoutProprio)
+        #self.ui.decedee.clicked.connect(self.Decedee)
+
+
+    def addValueTable(self,data,table = 0):
+        columns = len(data)
+
+        if (table == 0) :
+            table = self.ui.tableWidget
+        else :
+            table = self.ui.tableWidget_2
+
+        rowPosition = table.rowCount()
+        #self.tbDemande.setColumnCount(columns)
+
+        table.insertRow(rowPosition)
+        for i in range(len(data)):
+            item = QtGui.QTableWidgetItem()
+            item.setText(_translate("", str(data[i]), None))
+            table.setItem(rowPosition, i, item)
+
+    def cellSelected(self, row):
+        #ID = self.gids[row]
+        ID = self.ui.tableWidget.item(row, 4).text()
+        self.vente.append(self.ui.tableWidget.item(row,0).text())
+        self.vente.append(self.ui.tableWidget.item(row, 1).text())
+        self.vente.append(self.ui.tableWidget.item(row, 2).text())
+        self.vente.append(self.ui.tableWidget.item(row, 3).text())
+        self.vente.append(self.ui.tableWidget.item(row, 4).text())
+
+        self.idCF = int(ID)
+
+    def PersonneDetails(self):
+        from .PersonnePhysiqueRun import PersonnePhysique
+        GP = PersonnePhysique(self.parent)
+        GP.exec_()
+
+    def ajoutProprio(self):
+        from Certificat.GestionProprietaireRun import GestionProprietaireRun
+        GP = GestionProprietaireRun(self.connection)
+        GP.exec_()
+
+    def enregistrer(self):
+        print "enregistrer"
+        if not self.check():
+            return
+
+        self.save()
+        self.accept()
+
+
+    def check(self):
+        print "demande"
+
+
+    def save(self):
+
+        import time
+        import datetime
+        try:
+            print "try in"
+        except Exception as e:
+            print e
+
+
+
+
+

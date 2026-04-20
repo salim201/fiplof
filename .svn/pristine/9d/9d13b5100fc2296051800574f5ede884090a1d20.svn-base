@@ -1,0 +1,166 @@
+from PyQt4 import QtGui, Qt
+from .EditUtilisateur import Ui_Dialog
+import psycopg2.extras
+from Utils import Utils
+from models.Utilisateur import Utilisateur
+import hashlib
+
+
+class EditUtilisateurRun(QtGui.QDialog):
+    def __init__(self, connection, uid=0):
+        QtGui.QDialog.__init__(self)
+        self.connection, self.id = connection, uid
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.init_actions()
+        if uid == 0:
+            self.ui.checkBoxMotdepasse.setChecked(True)
+            self.ui.listWidgetComplexity.setVisible(True)
+        else:
+            self.ui.listWidgetComplexity.setVisible(False)
+        u = Utils(self.connection)
+        u.fillComboWithSql(self.ui.comboBoxGroupe, "SELECT id, nom FROM groupe ORDER BY nom", "nom", "id")
+        model = Utilisateur(self.connection)
+        u = model.find_by_id(uid)
+        if u:
+            self.ui.comboBoxGroupe.setEnabled(u.is_deletable())
+
+    def exec_(self):
+        if not self.prefill():
+            return
+        return super(EditUtilisateurRun, self).exec_()
+
+    def init_actions(self):
+        self.ui.pushButtonAnnuler.clicked.connect(self.reject)
+        self.ui.pushButtonEnregistrer.clicked.connect(self.enregistrer)
+        self.ui.checkBoxMotdepasse.stateChanged.connect(self.checkpwd)
+        self.ui.lineEditMotdepasse.textChanged.connect(self.check_pwd_complexity)
+
+    def checkpwd(self):
+        enabled = self.ui.checkBoxMotdepasse.isChecked()
+        self.ui.lineEditMotdepasse.setEnabled(enabled)
+        self.ui.lineEditMotdepasse2.setEnabled(enabled)
+        self.ui.listWidgetComplexity.setVisible(enabled)
+        self.ui.listWidgetComplexity.setEnabled(enabled)
+
+    def enregistrer(self):
+        if not self.check():
+            return
+        self.save()
+        self.accept()
+
+    def check(self):
+        if self.ui.lineEditNom.text() == "":
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Veuillez remplir le nom")
+            self.ui.lineEditNom.setFocus(Qt.Qt.OtherFocusReason)
+            return False
+        if self.ui.lineEditIdentifiant.text() == "":
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Veuillez remplir l'identifiant")
+            self.ui.lineEditIdentifiant.setFocus(Qt.Qt.OtherFocusReason)
+            return False
+        if self.ui.checkBoxMotdepasse.isChecked() and self.ui.lineEditMotdepasse.text() == "":
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Veuillez remplir le mot de passe")
+            self.ui.lineEditMotdepasse.setFocus(Qt.Qt.OtherFocusReason)
+            return False
+        if not self.check_pwd_complexity():
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Le mot de passe n'est pas assez complexe.")
+            self.ui.lineEditMotdepasse.setFocus(Qt.Qt.OtherFocusReason)
+            return False
+        if self.ui.lineEditMotdepasse.text() != self.ui.lineEditMotdepasse2.text():
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Le champ mot de passe n'est pas identique a la confirmation")
+            self.ui.lineEditMotdepasse2.setFocus(Qt.Qt.OtherFocusReason)
+            return False
+        if self.exists_login():
+            QtGui.QMessageBox.warning(self, "FIPLOF", "Le login existe deja")
+            self.ui.lineEditIdentifiant.setFocus(Qt.Qt.OtherFocusReason)
+            return False
+        return True
+
+    def exists_login(self):
+        sql = "SELECT * FROM utilisateur WHERE loginutilisateur = %s AND idutilisateur != %s"
+        cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute(sql, (str(self.ui.lineEditIdentifiant.text()), self.id, ))
+        row = cursor.fetchone()
+        cursor.close()
+        if row is None:
+            return False
+        return True
+
+    def save(self):
+        u = Utils(self.connection)
+        pwd = hashlib.md5(str(self.ui.lineEditMotdepasse.text())).hexdigest().upper()
+        sql = "INSERT INTO utilisateur" \
+              "(nomutilisateur, prenomutilisateur, loginutilisateur, " \
+              "passwordutilisateur, telephone, adresse, fonction, groupe_id) " \
+              "values" \
+              "(%s, %s, %s, %s, %s, %s, %s, %s)"
+        params = (str(self.ui.lineEditNom.text()),
+                  str(self.ui.lineEditPrenom.text()),
+                  str(self.ui.lineEditIdentifiant.text()),
+                  pwd,
+                  str(self.ui.lineEditTelephone.text()),
+                  str(self.ui.plainTextEditAdresse.toPlainText()),
+                  str(self.ui.lineEditFonction.text()),
+                  u.getComboValue(self.ui.comboBoxGroupe))
+        if self.id:
+            sql = "UPDATE utilisateur SET nomutilisateur=%s, prenomutilisateur=%s, loginutilisateur=%s, " \
+                  "telephone=%s, adresse=%s, fonction=%s, groupe_id=%s"
+
+            params = (str(self.ui.lineEditNom.text()),
+                      str(self.ui.lineEditPrenom.text()),
+                      str(self.ui.lineEditIdentifiant.text()),
+                      str(self.ui.lineEditTelephone.text()),
+                      str(self.ui.plainTextEditAdresse.toPlainText()),
+                      str(self.ui.lineEditFonction.text()),
+                      u.getComboValue(self.ui.comboBoxGroupe))
+            if self.ui.checkBoxMotdepasse.isChecked():
+                sql = sql + ", passwordutilisateur=%s"
+                params = params + (pwd,)
+            sql = sql + " WHERE idutilisateur=%s"
+            params = params + (self.id, )
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(sql, params)
+            self.connection.commit()
+        except Exception as e:
+            print(e)
+            self.connection.rollback()
+        cursor.close()
+
+    def check_pwd_complexity(self):
+        if not self.ui.checkBoxMotdepasse.isChecked():
+            return True
+        ok = ":/std/icone/accept.png"
+        ko = ":/std/icone/bullet_red.png"
+        p = self.ui.lineEditMotdepasse.text()
+        c0 = (len(p) >= 8)
+        c1 = Utils.has_lowercase(p)
+        c2 = Utils.has_uppercase(p)
+        c3 = Utils.has_specialcharacters(p)
+        c4 = Utils.has_number(p)
+        self.ui.listWidgetComplexity.item(0).setIcon(QtGui.QIcon(ok if c0 else ko))
+        self.ui.listWidgetComplexity.item(1).setIcon(QtGui.QIcon(ok if c1 else ko))
+        self.ui.listWidgetComplexity.item(2).setIcon(QtGui.QIcon(ok if c2 else ko))
+        self.ui.listWidgetComplexity.item(3).setIcon(QtGui.QIcon(ok if c3 else ko))
+        self.ui.listWidgetComplexity.item(4).setIcon(QtGui.QIcon(ok if c4 else ko))
+        return c0 & c1 & c2 & c3 & c4
+
+    def prefill(self):
+        if self.id == 0:
+            return True
+        sql = "SELECT * FROM utilisateur WHERE idutilisateur = %s"
+        cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute(sql, (self.id,))
+        row = cursor.fetchone()
+        cursor.close()
+        if row is None:
+            return False
+        self.ui.lineEditNom.setText(row['nomutilisateur'] if row['nomutilisateur'] is not None else '')
+        self.ui.lineEditPrenom.setText(row['prenomutilisateur'] if row['prenomutilisateur'] is not None else '')
+        self.ui.lineEditIdentifiant.setText(row['loginutilisateur'] if row['loginutilisateur'] is not None else '')
+        self.ui.lineEditTelephone.setText(row['telephone'] if row['telephone'] is not None else '')
+        self.ui.plainTextEditAdresse.setPlainText(row['adresse'] if row['adresse'] is not None else '')
+        self.ui.lineEditFonction.setText(row['fonction'] if row['fonction'] is not None else '')
+        u = Utils(self.connection)
+        u.setComboValue(self.ui.comboBoxGroupe, row["groupe_id"])
+        return True

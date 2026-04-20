@@ -1,0 +1,1235 @@
+# -*- coding: utf-8 -*-
+import os
+import sys
+import os
+import os.path
+import psycopg2
+import qgis
+#from qgis.utils import iface
+from PyQt4.QtGui import *
+from PyQt4 import QtCore, QtGui
+from qgis.gui import *
+import time
+import datetime
+import globalvars
+from PyQt4 import QtGui, Qt
+from qgis.core import *
+from qgis.gui import *
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+from PyQt4 import QtGui, Qt
+from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui, Qt
+from PyQt4 import Qt, QtGui
+import psycopg2
+from psycopg2 import extras
+from Utils import Utils
+from PyQt4.QtCore import *
+from models.ProjetCouche import ProjetCouche
+import globalvars
+#import PyQt4.Qt
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+from DemandeForm import Ui_CreateDemandeForm
+
+class DemandeFormRun(QtGui.QDialog):
+
+  def __init__(self,parent, fromPopup = False, codeParc = ''):
+    QtGui.QDialog.__init__(self)
+    # Set up the user interface from Designer.
+
+    self.parent = parent
+
+    #self.setModal(True)
+    self.ui = Ui_CreateDemandeForm()
+    self.ui.setupUi(self)
+    self.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
+    self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowCloseButtonHint)
+    self.setWindowFlags((QtCore.Qt.CustomizeWindowHint))
+    self.tabWigdets = self.ui.tabWidgetOppositionDemande
+    self.tbDemande = self.ui.tableDemande
+    self.tbVoisin = self.ui.tableVoisin
+    self.ui.groupBoxDates.clicked.connect(self.updateStateDates)
+    self.ui.groupBoxDates.setChecked(False)
+    self.ui.checkBoxDateDecision.setChecked(False)
+    self.ui.checkBoxDateReconnaissance.setChecked(False)
+    self.ui.checkBoxNumDecision.setChecked(False)
+    self.ui.checkBoxDebutAffichage.setChecked(False)
+    self.ui.checkBoxFinAffichage.setChecked(False)
+
+    self.fromPopup = fromPopup
+    self.ui.lineEditCodeParcelle.setText(codeParc)
+
+    self.ui.dateDecision.hide()
+    self.ui.dateReconnaissanceDateEdit.hide()
+    self.ui.lineEditNumDecision.hide()
+    self.ui.dateEditDebutAffichage.hide()
+    self.ui.dateEditFinAffichage.hide()
+
+    self.ui.checkBoxNumDecision.stateChanged.connect(self.checkState)
+    self.ui.checkBoxDateReconnaissance.stateChanged.connect(self.checkState)
+    self.ui.checkBoxDateDecision.stateChanged.connect(self.checkState)
+    self.ui.checkBoxDebutAffichage.stateChanged.connect(self.checkState)
+    self.ui.checkBoxFinAffichage.stateChanged.connect(self.checkState)
+
+    self.ui.numeroGrilleLabel.setText("Numero Grille (Planche Plof)")
+
+    #        self.dialog = dialog
+    os.chdir(self.resolve(".."))
+    dr = os.getcwd()
+    self.CreationDemande = ""
+
+    sys.path.append(os.path.dirname(dr))
+    from Configuration import DbConfig
+    #        from Configuration import DbConfig
+    self.db_config = DbConfig.DbConfig()
+    self.coddistrict = 0
+    self.codecommune = 0
+    self.idfokontany = 0
+    self.iddemande = 0
+    self.idopposition = 0
+    self.connection = ""
+    self.ddDate = 0
+    self.codeGuichet = 0
+    self.initMasks()
+    #        self.setModal(True)
+    self.cvs = self.parent.MainWindow.canvas
+
+    self.currentGeomIdParcelle = self.parent.currentGeomIdParcelle
+    self.autoincrementkeydemande = 0
+    self.opposition = []
+    self.demandeurs = []
+    self.data = []
+    self.filenamepreview = ""
+    self.connection = self.parent.connection
+    self.cursor = self.connection.cursor()
+    self.utils = Utils(self.connection)
+    self.idparcelle = self.parent.idparcelle
+    self.raster_path, self.layer_raster, self.layer_shape, self.rect = None, None, None, None
+
+    self.parent.currvalDemande = parent.currvalDemande
+    self.id_projet = self.parent.id_projet
+    self.demandheurs = []
+
+    #connection = self.parent.connection
+    #self.setModal(True)
+    #self.filenamepreview = self.preview()
+
+    self.init_layers()
+    self.load_raster()
+    self.init_canvas()
+    os.chdir(self.resolve(".."))
+    dr = os.getcwd()
+    sys.path.append(os.path.dirname(dr))
+    #Doris 12-05-2022
+    self.ui.numeroDemandeLineEdit1.setReadOnly(True)
+
+    idcommune = globalvars.id_commune
+    print "----------------globalvars.id_commune----------------"
+    print globalvars.id_commune
+    print "--------------------globalvars.id_commune-----------"
+    try:
+        self.cursor.execute("SELECT *   FROM commune  WHERE idcommune=%s", [str(idcommune)])
+        dm = self.cursor.fetchone()
+    except Exception as err:
+        print ('erreur commune demande form')
+        print (err)
+
+    print dm
+
+    iddistrict = None
+    idregion = None
+
+    if (len(dm) >= 1):
+        iddistrict = dm[1]
+        self.codeGuichet = dm[9]
+        self.cursor.execute("SELECT *   FROM district  WHERE iddistrict=%s", [int(iddistrict)])
+        dm = self.cursor.fetchone()
+        idregion = dm[1]
+
+    print "iddistrict=" + str(iddistrict)
+    print "idregion=" + str(idregion)
+
+    self.cursor.execute("SELECT *   FROM commune  WHERE idcommune=%s", [int(globalvars.id_commune)])
+    commune = self.cursor.fetchone()
+    self.currentValDemande = commune[8]
+
+    self.ui.dateDemandeDateEdit.setDisplayFormat("dd/MM/yyyy")
+    self.ui.dateDemandeDateEdit.setDate(QDate.currentDate())
+    self.ui.dateDemandeDateEdit.setEnabled(True)
+    self.ui.dateDemandeDateEdit.setCalendarPopup(True)
+
+    self.ui.dateReconnaissanceDateEdit.setEnabled(True)
+    self.ui.dateReconnaissanceDateEdit.setCalendarPopup(True)
+    self.ui.dateReconnaissanceDateEdit.setDisplayFormat("dd/MM/yyyy")
+    self.ui.dateReconnaissanceDateEdit.setDate(QDate.currentDate())
+
+
+    self.ui.dateDecision.setEnabled(True)
+    self.ui.dateDecision.setCalendarPopup(True)
+    self.ui.dateDecision.setDisplayFormat("dd/MM/yyyy")
+    self.ui.dateDecision.setDate(QDate.currentDate())
+
+    self.ui.dateEditDebutAffichage.setDate(QDate.currentDate())
+    self.ui.dateEditFinAffichage.setDate(QDate.currentDate())
+
+
+
+    self.ui.dateReconnaissanceDateEdit.dateChanged.connect(self.evaluateDateReconnaissance)
+    # self.ui.dateEditFinAffichage.dateChanged.connect(self.evaluateDateAffichage)
+    # self.ui.dateEditDebutAffichage.dateChanged.connect(self.evaluateDebutAffichage)
+    validator = QtGui.QDoubleValidator()
+    self.ui.coutLineEdit.setValidator(validator)
+    self.ui.regionLineEdit.setReadOnly(True)
+    self.ui.districtLineEdit.setReadOnly(True)
+    self.ui.coutLineEdit.setText('0')
+
+    self.loadCommune(self.connection, idcommune)
+    self.ui.fokontanyComboBox.currentIndexChanged.connect(self.fillComboHameau)
+    self.fillComboHameau()
+    try:
+        self.loadRegionDistrictCommune(self.connection, idregion, iddistrict, idcommune)
+    except Exception as err:
+        print ("erreur loading region district commune")
+        print (err)
+    print ('in contructeur demandeForm')
+    self.loadConsistance(self.connection)
+    self.ui.fokontanyComboBox.currentIndexChanged.connect(self.fillFokontany)
+    self.generateDemandeKey()
+
+    #self.pushButton.clicked.connect(self.callDemandeur)
+    # self.dateDeReconnaissanceLineEdit.mousePressEvent.connect(self.evaluateDateReconnaissance)
+    #self.pushButton_2.clicked.connect(self.callOpposition)
+
+    #self.ui.label.setPixmap(QtGui.QPixmap(self.filenamepreview))
+    self.isIn = 0
+    #if self.ui.tabWidgetOppositionDemande.
+    self.currentIndex = -1
+    print "current index in"
+    print self.currentIndex
+    print " current index out"
+    #self.ui.tabWidgetOppositionDemande.connect(self.ui.tabWidgetOppositionDemande, QtCore.SIGNAL("currentChanged(int)"), self.tabSelected)
+    #self.loadForm()
+    self.ui.addBtn.clicked.connect(self.loadForm)
+    self.ui.BtnCreate.clicked.connect(self.commitDemande)
+    self.ui.tableVoisin.cellClicked.connect(self.cellSelected)
+    self.ui.tableVoisin.setSelectionBehavior(1)
+
+    self.ui.tableDemande.cellClicked.connect(self.cellSelected)
+    self.ui.tableDemande.setSelectionBehavior(1)
+
+    #self.ui.tableOpposition.setSelectionBehavior(1)
+    self.ui.delBtn.clicked.connect(self.removeRow)
+    self.ui.BtnCancel.clicked.connect(self.CancelData)
+    self.ui.toolButtonHameau.clicked.connect(self.openHameau)
+    from Personnes.ListePersonnePqueRun import ListePersonnePqueRun
+    self.p = ListePersonnePqueRun(self.connection)
+    self.p.ui.btnSelectionner.clicked.connect(self.selPersonne)
+    #self.ui.tableOpposition.setVisible(True)
+    self.cur = self.connection.cursor()
+
+    validator = QtGui.QIntValidator()
+    lEditX = self.ui.numeroDemandeLineEdit2
+    self.markers = []
+    lEditX.setValidator(validator)
+    self.updateCptDemande()
+
+  def updateStateDates(self):
+      if self.ui.groupBoxDates.isChecked():
+          self.ui.checkBoxDateDecision.setChecked(True)
+          self.ui.checkBoxDateReconnaissance.setChecked(True)
+          self.ui.checkBoxNumDecision.setChecked(True)
+          self.ui.checkBoxDebutAffichage.setChecked(True)
+          self.ui.checkBoxFinAffichage.setChecked(True)
+      else:
+          self.ui.checkBoxDateDecision.setChecked(False)
+          self.ui.checkBoxDateReconnaissance.setChecked(False)
+          self.ui.checkBoxNumDecision.setChecked(False)
+          self.ui.checkBoxDebutAffichage.setChecked(False)
+          self.ui.checkBoxFinAffichage.setChecked(False)
+
+  def CancelData(self):
+      print(" cancel geometry")
+      #self.idparcelle
+      if not self.fromPopup:
+          try:
+              self.cursor.execute("delete from parcelle_d WHERE gid=%s", [int(self.idparcelle)])
+          except psycopg2.Error as e:
+              self.connection.rollback()
+          self.connection.commit()
+
+      mc = self.parent.MainWindow.canvas
+      #mc.unsetMapTool(self.tool_select_geometry)
+      #cLayer.triggerRepaint()
+      for layer in mc.layers():
+          if layer.type() == layer.VectorLayer:
+              layer.removeSelection()
+      mc.refresh()
+
+      for layer in mc.layers():
+          layer.triggerRepaint()
+      mc.refresh()
+      self.close()
+
+  def selPersonne(self):
+      print " selPersonne "
+      self.isIn = 0
+      #print len(self.p.idpersonne)
+      #sizeP = len(self.p.idpersonnes)
+      currentRWO = self.p.ui.tableWidget.currentRow()
+      if currentRWO == -1 :
+          print "veuillez selectionner"
+          QMessageBox.critical(self.p.ui.tableWidget, "Erreur", "Veuillez entrer au moins choisir une ligne")
+      else :
+          print "veuillez  not selectionner"
+          print self.p.idpersonne
+          print self.p.idpersonnes
+          self.cursor.execute("SELECT * FROM personne WHERE idpersonne = %s", (self.p.idpersonne,))
+          demandheurs = self.cursor.fetchone()
+          d = self.cursor.fetchone()
+          print " self.cursor.fetchone() "
+          print demandheurs
+          data = (str(demandheurs[1]),str(demandheurs[2]),demandheurs[4],str(demandheurs[7]),str(demandheurs[3]),demandheurs[0])
+          self.addValueTable(data)
+          #print self.p.idpersonnes
+
+          #print self.demandheurs
+          self.p.close()
+
+  def addValueTable(self, data):
+      #self.ui.comboBoxPrincipale.clear()
+      columns = len(data)
+      print "add data in"
+      self.isIn = 0
+      rowPosition = self.ui.tableDemande.rowCount()
+      i = 0
+      print("DATA-id")
+
+      print(data[5])
+      print "addItem to combo"
+      #self.ui.comboBoxPrincipale.addItem(data[0])
+      if rowPosition >= 1 :
+          while (i < rowPosition ) :
+              j = 0
+              idD = self.ui.tableDemande.item(i,5).text()
+              if int(idD) == int(data[5]):
+                  self.isIn = 1
+                  break
+              i = i + 1
+
+      if self.isIn == 1:
+          QMessageBox.critical(self.ui.tableDemande, "Erreur", "Demandeur deja enregistrE")
+          return
+      else :
+          self.ui.tableDemande.setColumnCount(columns)
+          self.ui.tableDemande.insertRow(rowPosition)
+          self.isIn = 0
+          self.ui.comboBoxPrincipale.addItem(data[0] + " " +  data[1], data[5])
+          for i in range(len(data)):
+              item = QtGui.QTableWidgetItem()
+              item.setText(_translate("", str(data[i]), None))
+              self.ui.tableDemande.setItem(rowPosition, i, item)
+  def addDemandeurs(self):
+
+      isvalid = self.readInput()
+      if isvalid:
+          self.sexe = ""
+          self.nom = self.ui.nomLineEdit.text()
+          self.prenom = self.ui.prenomLineEdit.text()
+          # self.dateNaissance = datetime.date(self.ui.lineEditDateActeNaiss.date().year(), self.ui.lineEditDateActeNaiss.date().month(), self.ui.lineEditDateActeNaiss.date().day())
+          self.dateNaissance = self.ui.lineEditDateNaiss.text()
+          self.CIN = unicode(self.ui.lineEditCIN_1.text()).encode('utf-8') + unicode(
+              self.ui.lineEditCIN_2.text()).encode('utf-8') + unicode(self.ui.lineEditCIN_3.text()).encode(
+              'utf-8') + unicode(self.ui.lineEditCIN_4.text()).encode('utf-8')
+          if self.ui.radioBtnMale.isChecked():
+              self.sexe = "masculin"
+          elif self.ui.radioBtnFemale.isChecked():
+              self.sexe = "feminin"
+
+          cursor = self.connection.cursor()
+          # print " self.parent.demandeurs IN"
+          # print self.demandeurs
+
+          self.dtemp = []
+
+          if ((str(self.nom) != "") or (str(self.prenom) != "")):
+              print
+              "dqdqs"
+              self.dtemp.append(str(self.nom))
+              self.dtemp.append(str(self.prenom))
+              # self.demandeurs.append(self.dtemp)
+              # exe = cursor.execute("INSERT INTO demandeur (nom,prenom) VALUES (%s,%s) RETURNING id ",(str(self.nom), str(self.prenom)))
+              # connection.commit()
+              # self.id_of_new_row = cursor.fetchone()[0]
+              # data = (self.nom, self.prenom, self.id_of_new_row)
+              data = (self.nom, self.prenom, self.dateNaissance, self.CIN, self.sexe)
+              self.addValueTable(data)
+          self.ui.nomLineEdit.setText("")
+          self.ui.prenomLineEdit.setText("")
+          self.close()
+      else:
+          return
+          # return  self.demandeurs
+          #
+
+  def getPersonneById(self, idpersonne):
+      self.idConjoint = None
+      self.cursor.execute("SELECT * FROM personne WHERE idpersonne = %s", (idpersonne,))
+      self.idPersonne = idpersonne
+      self.dataToShow = self.cur.fetchone()
+      self.cursor.execute("SELECT * FROM avoirconjoint WHERE idconjoint_a = %s OR idconjoint_b = %s",
+                       (self.idPersonne, self.idPersonne))
+      dataConjoint = self.cursor.fetchone()
+      if dataConjoint is not None:
+          for val in dataConjoint:
+              if val != self.idPersonne:
+                  self.idConjoint = val
+                  print
+                  "id conjoint = " + str(self.idConjoint)
+                  # if self.isFromConjoint == False:
+                  # self.compteur = self.compteur + 1
+
+          if self.compteur == 0:
+              self.ui.btnEtatConjoint.clicked.connect(self.voirConjoint)
+              self.compteur = self.compteur + 1
+              # if self.isFromConjoint == False:
+              # self.compteur = 0
+              # else:
+              # self.ui.btnEtatConjoint.clicked.connect(self.ouvrirListePersonnePque)
+              # if self.dataToShow[14] != None:
+              # self.idConjoint = self.dataToShow[14]
+              # self.ui.btnEtatConjoint.clicked.connect(self.voirConjoint)
+              # else:
+              # self.ui.btnEtatConjoint.clicked.connect(self.ouvrirListePersonnePque)
+
+      print
+      self.dataToShow[1]
+      # self.dataToShow
+      # if self.consulter == 1:
+      # self.showDetails(data)
+      # if self.consulter == 1:
+      # self.showDetails(data)
+
+  def init_canvas(self):
+      style = {
+          u'outline_width': u'0.3',
+          u'outline_color': u'244,0,0,255',
+          u'offset_unit': u'MM',
+          u'color': u'227,26,28,255',
+          u'outline_style': u'solid',
+          u'style': u'b_diagonal',
+          u'joinstyle': u'bevel',
+          u'outline_width_unit': u'MM',
+          u'border_width_map_unit_scale': u'0,0',
+          u'offset': u'0,0',
+          u'offset_map_unit_scale': u'0,0'
+      }
+      self.cv = QgsMapCanvas()
+      #self.idparcelle;
+      # add canvas  ad form
+      self.ui.horizontalLayout_2.addWidget(self.cv)
+      self.cv.show()
+      uri = QgsDataSourceURI()
+      uri.setConnection(
+          self.db_config.db_host,
+          self.db_config.db_port,
+          self.db_config.db_name,
+          self.db_config.db_user,
+          self.db_config.db_pass
+      )
+      uri.setDataSource("public", "parcelle_d", "geom", "gid=%s" % (self.idparcelle,))
+      uri.setKeyColumn("gid")
+      layer = QgsVectorLayer(uri.uri(), "Demande", "postgres")
+      if not layer.isValid():
+        return
+      crs = QgsCoordinateReferenceSystem(globalvars.EPSG_SCR, QgsCoordinateReferenceSystem.EpsgCrsId)
+      layer.setCrs(crs)
+      symbol_layer = QgsFillSymbolV2.createSimple(style)
+      layer.rendererV2().setSymbol(symbol_layer)
+      QgsMapLayerRegistry.instance().addMapLayer(layer)
+      QgsMapLayerRegistry.instance().addMapLayer(self.layer_raster)
+      #self.cv.setLayerSet([QgsMapCanvasLayer(self.layer_raster)])
+      self.cv.setLayerSet([QgsMapCanvasLayer(layer),QgsMapCanvasLayer(self.layer_raster)])
+      self.cv.setExtent(layer.extent())
+
+  def cellSelected(self,row,column):
+      self.selectedRow = row
+  def removeRow(self):
+
+      self.currentIndex = int(self.ui.tabWidgetOppositionDemande.currentIndex())
+      currentRWVoisin= self.ui.tableVoisin.currentRow()
+      currentRWODmd = self.ui.tableDemande.currentRow()
+      rowCount = self.ui.tableDemande.rowCount()
+      columnCount = self.ui.tableDemande.columnCount()
+
+      try :
+          #Si table Demandeurs
+          if self.currentIndex == 0:
+              if currentRWODmd == -1 :
+                  print "dqsd"
+                  QMessageBox.critical(self.ui.tableDemande, "Erreur", "Veuillez entrer au moins choisir une ligne")
+                  return
+              else :
+                  print "test"
+                  self.ui.tableDemande.removeRow(self.selectedRow)
+                  self.ui.comboBoxPrincipale.removeItem(self.selectedRow)
+                  if (len(self.data) >= 1) :
+                      self.data.pop(self.selectedRow)
+
+         #Si table Voisins
+          if self.currentIndex == 1:
+              if currentRWVoisin == -1 :
+                  print "dqsd"
+                  QMessageBox.critical(self.ui.tableVoisin, "Erreur", "Veuillez entrer au moins choisir une ligne")
+                  return
+              else :
+                  print "test"
+                  self.ui.tableVoisin.removeRow(self.selectedRow)
+                  #if (len(self.data) >= 1) :
+                  #    self.data.pop(self.selectedRow)
+      except Exception as e:
+          print(e)
+
+
+  def loadForm(self):
+
+    self.currentIndex = int(self.ui.tabWidgetOppositionDemande.currentIndex())
+    if self.currentIndex == 0:
+        result = self.p.exec_()
+    if self.currentIndex == 1:
+        from VoisinsRun import VoisinsRun
+        numDemande1 = str(self.ui.numeroDemandeLineEdit1.text())
+        numdemande2 = str(self.ui.numeroDemandeLineEdit2.text())
+        numDmd = numDemande1.strip() + "-F-" + numdemande2.strip()
+        #numDmd = str(self.ui.numeroDemandeLineEdit.text())
+        self.numDemande = numDmd
+
+        opp = VoisinsRun(self)
+        opp.show()
+        result = opp.exec_()
+
+  def tabSelected(self, arg=None):
+      print "changed"
+      print arg
+      self.currentIndex = int(arg)
+
+  def preview(self):
+      print " indentation "
+      sql = "SELECT ST_AsPNG(" \
+              "ST_AsRaster(" \
+              "ST_Buffer(geom, -10),200,200,ARRAY['8BUI', '8BUI', '8BUI'], ARRAY[118,154,118], ARRAY[0,0,0]" \
+              ")) png " \
+              "from parcelle_d WHERE gid=%s"
+      connection = self.parent.connection
+        #        cursor = connection.cursor()
+      cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+      cursor.execute("SET bytea_output TO escape")
+
+      cursor.execute(sql, (self.idparcelle,))
+      row = cursor.fetchone()
+      filename = "preview.png"
+      f = open(filename, "wb")
+      f.write(row['png'])
+      f.close()
+      cursor.close()
+      return filename
+
+  def callDemandeur(self):
+      from CreateDemandeurCertificat import CreateDemandeurCertificat
+      Demandeur = CreateDemandeurCertificat(self)
+      Demandeur.show()
+      result = Demandeur.exec_()
+
+
+  def callOpposition(self):
+
+      from OppositionRunn import OppositionRunn
+      print
+      "call opposition "
+      try:
+          numDmd = str(self.ui.numeroDemandeLineEdit.text())
+          self.numDemande = numDmd
+          opp = OppositionRunn(self)
+          print
+          opp
+          opp.show()
+          result = opp.exec_()
+      except Exception as e:
+          print(e)
+
+
+  def resolve(self, name, basepath=None):
+      if not basepath:
+          basepath = os.path.dirname(os.path.realpath(__file__))
+      return os.path.join(basepath, name)
+
+
+  def evaluateDateReconnaissance(self):
+
+      try:
+
+          a = self.ui.dateDecision.text()
+          print "a"
+          print a
+          a = a.split("/")
+          print a[2]
+          print a[1]
+          # a = date(int(a[2]),int(a[1]),int(a[0]))
+
+          b = self.ui.dateReconnaissanceDateEdit.text()
+          b = b.split("/")
+          # b = date(int(b[2]),int(b[1]),int(b[0]))
+
+          from datetime import datetime
+          date_format = "%m/%d/%Y"
+          a = datetime.strptime('' + str(a[1]) + '/' + str(a[0]) + '/' + str(a[2]) + '', date_format)
+          b = datetime.strptime('' + str(b[1]) + '/' + str(b[0]) + '/' + str(b[2]) + '', date_format)
+          delta = b - a
+          diffdate = b - a
+          self.ddDate = delta.days
+          if self.ddDate < 15:
+            QMessageBox.critical(self.ui.dateReconnaissanceDateEdit, "Erreur",
+                                   U"La date de reconnaissance doit etre 15 jours après la décision")
+            return False
+          else:
+            return True
+      except Exception as e:
+          print(e)
+
+  def evaluateDateAffichage(self):
+      try:
+
+          a = self.ui.dateEditDebutAffichage.text()
+          print "a"
+          print a
+          a = a.split("/")
+          print a[2]
+          print a[1]
+          # a = date(int(a[2]),int(a[1]),int(a[0]))
+
+          b = self.ui.dateEditFinAffichage.text()
+          b = b.split("/")
+          # b = date(int(b[2]),int(b[1]),int(b[0]))
+
+          from datetime import datetime
+          date_format = "%m/%d/%Y"
+          a = datetime.strptime('' + str(a[1]) + '/' + str(a[0]) + '/' + str(a[2]) + '', date_format)
+          b = datetime.strptime('' + str(b[1]) + '/' + str(b[0]) + '/' + str(b[2]) + '', date_format)
+          delta = b - a
+          diffdate = b - a
+          self.ddDate = delta.days
+          if self.ddDate < 15:
+              QMessageBox.critical(self.ui.dateReconnaissanceDateEdit, "Erreur",
+                                   u"La date de fin affichage doit être au moins 15 jours après la date de debut d'affichages")
+              return False
+          else:
+              return True
+      except Exception as e:
+          print(e)
+
+  def evaluateDebutAffichage(self):
+      try:
+          a = self.ui.dateDecision.text()
+          print "a"
+          print a
+          a = a.split("/")
+          print a[2]
+          print a[1]
+          # a = date(int(a[2]),int(a[1]),int(a[0]))
+
+          b = self.ui.dateEditDebutAffichage.text()
+          b = b.split("/")
+          # b = date(int(b[2]),int(b[1]),int(b[0]))
+
+          from datetime import datetime
+          date_format = "%m/%d/%Y"
+          a = datetime.strptime('' + str(a[1]) + '/' + str(a[0]) + '/' + str(a[2]) + '', date_format)
+          b = datetime.strptime('' + str(b[1]) + '/' + str(b[0]) + '/' + str(b[2]) + '', date_format)
+          delta = b - a
+          diffdate = b - a
+          self.ddDate = delta.days
+          if self.ddDate < 0:
+              QMessageBox.critical(self.ui.dateReconnaissanceDateEdit, "Erreur",
+                                   u"La date début affichage doit être supérieure ou égale à la date de decision")
+              return False
+          else:
+              return True
+      except Exception as e:
+          print(e)
+
+  def getFokontany(self, idfkt):
+      print
+      " get fokontany "
+
+  def fillFokontany(self):
+      self.idfokontany = self.utils.getComboValue(self.ui.fokontanyComboBox)
+      #self.generateDemandeKey()
+  def generateDemandeKey(self):
+
+      print "generate unique code demande key"
+      self.lineEdit = self.coddistrict
+      print self.coddistrict
+      print self.codecommune
+      connection = self.parent.connection
+      cursor = connection.cursor()
+      cursor.execute("SELECT *   FROM fokontany  WHERE idfokontany=%s",
+                     [int(self.utils.getComboValue(self.ui.fokontanyComboBox))])
+      dm = cursor.fetchone()
+      print " dm FOKONTANY IN"
+      print dm
+      print " dm FOKONTANY OUT"
+
+      chFkt = str(dm[2]).strip()
+      chDistrict = str(self.coddistrict).strip()
+      chCommune = str(self.codecommune).strip()
+      chCodeGuichet = str(self.codeGuichet).strip()
+      if self.codeGuichet < 10:
+          chCodeGuichet = "0" + chCodeGuichet
+      # chfkt = str(idfkt.strip())
+      #self.currentValDemande
+      #self.ui.numeroDemandeLineEdit1.setText(
+      #    _fromUtf8(chDistrict + "-" +chCodeGuichet  ) + "-F-" + str(self.currentValDemande))
+
+      self.ui.numeroDemandeLineEdit1.setText(
+          _fromUtf8(chDistrict + "-" + chCodeGuichet))
+      self.ui.numeroDemandeLineEdit2.setText(str(self.currentValDemande))
+
+      self.ui.numeroDemandeLineEdit1.setReadOnly(True)
+
+
+      #        self.lineEdit.setText(self.coddistrict)
+  def loadConsistance(self, connexion):
+      cursor = connexion.cursor()
+      cursor.execute("SELECT *   FROM consistance")
+      cs = cursor.fetchall()
+      size = len(cs)
+      if (size >= 1):
+          consistance = cs[0]
+          for row in cs:
+              ligneconsistance = row[2]
+              self.ui.consistanceComboBox.addItem(_fromUtf8(row[1]), row[0])
+
+  def loadRegionDistrictCommune(self, connexion, idregion, iddistrict, idcommune):
+      cursor = connexion.cursor()
+      dm = []
+      try:
+        cursor.execute("SELECT nomregion  FROM region  WHERE idregion=%s", [int(idregion)])
+        dm = cursor.fetchone()
+      except Exception as err:
+          print ('Erreur load REgion')
+          print (err)
+      print "dm region in"
+      print dm
+      print "dm region out"
+      if (len(dm) >= 1):
+          region = dm[0]
+          self.ui.regionLineEdit.setText(_fromUtf8(region))
+          self.ui.regionLineEdit.setReadOnly(True)
+      try:
+        cursor.execute("SELECT *  FROM district  WHERE iddistrict=%s", [int(iddistrict)])
+        dm = cursor.fetchone()
+      except Exception as err:
+          print (err)
+      print "dm district in"
+      print dm
+      print "dm district out"
+      if (len(dm) >= 1):
+          coddistrict = dm[2]
+          district = dm[3]
+          self.coddistrict = coddistrict
+
+      self.ui.districtLineEdit.setText(_fromUtf8(district))
+      try:
+        cursor.execute("SELECT *  FROM commune  WHERE idcommune=%s", [int(idcommune)])
+        dm = cursor.fetchone()
+      except Exception as err:
+          print (err)
+      print "dm commune in"
+      print dm
+      print "dm commune out"
+      if (len(dm) >= 1):
+          libelleCommune = dm[3]
+          codeCommune = dm[2]
+          self.codecommune = codeCommune
+          self.ui.communeLineEdit.setText(_fromUtf8(libelleCommune))
+          self.ui.communeLineEdit.setReadOnly(True)
+
+  def loadCommune(self, connexion, idcommune):
+      cursor = connexion.cursor()
+      cursor.execute("SELECT *  FROM fokontany  WHERE idcommune=%s", [int(idcommune)])
+      dm = cursor.fetchall()
+      size = len(dm)
+      if (size >= 1):
+          district = dm[0]
+          self.ui.fokontanyComboBox.clear()
+          for row in dm:
+              lignefkt = row[3]
+              self.ui.fokontanyComboBox.addItem(_fromUtf8(row[3]), row[0])
+              print
+              lignefkt
+      else:
+          self.ui.fokontanyComboBox.clear()
+
+  def fillComboHameau(self):
+      idFkt = self.utils.getComboValue(self.ui.fokontanyComboBox)
+      cur = self.connection.cursor()
+      self.ui.HameauComboBox.clear()
+      try:
+          cur.execute('select idhameau, nomhameau from hameau where idfokontany = %s', (idFkt,))
+          res = cur.fetchall()
+          for row in res:
+              self.ui.HameauComboBox.addItem(_fromUtf8(row[1]), row[0])
+
+      except Exception as err:
+          print err
+          self.connection.rollback()
+
+
+  def init_layers(self):
+      couches = ProjetCouche.find_by_projet_commune(self.connection, globalvars.id_projet_commune)
+      for couche in couches:
+          if couche.type_couche == 'R':
+              self.raster_path = couche.fichier
+              break
+
+  def load_raster(self):
+      if self.raster_path is None:
+          return
+      fileInfo = QFileInfo(self.raster_path)
+      baseName = fileInfo.baseName()
+      layer = QgsRasterLayer(self.raster_path, baseName)
+      if not layer.isValid():
+          print("Layer " + self.raster_path + " is not valid raster")
+          return None
+      #QgsMapLayerRegistry.instance().addMapLayer(layer)
+      self.layer_raster = layer
+  def commitDemande(self):
+      rowCount = self.ui.tableDemande.rowCount()
+      self.voisins = []
+
+
+      print "self.demandeurs IN"
+      print self.data
+
+      if self.ui.checkBoxDateReconnaissance.isChecked():
+        if not self.evaluateDateReconnaissance():
+          return
+      if self.ui.checkBoxDebutAffichage.isChecked():
+        if not self.evaluateDebutAffichage():
+          return
+      if self.ui.checkBoxFinAffichage.isChecked():
+        if not self.evaluateDateAffichage():
+          return
+
+      self.idfokontany = self.utils.getComboValue(self.ui.fokontanyComboBox)
+      print self.idfokontany
+
+      if self.ui.HameauComboBox.currentIndex() == -1:
+          QMessageBox.critical(None, "Erreur", "Vous Devez choisir un Hameau")
+          return
+
+      self.idHameau = self.utils.getComboValue(self.ui.HameauComboBox)
+      print "idHameau = "
+      print self.idHameau
+      if self.ui.checkBoxDateReconnaissance.isChecked():
+          if self.ddDate < 15:
+              self.ui.dateReconnaissanceDateEdit.setFocus(Qt.Qt.OtherFocusReason)
+              return
+
+      rowCountVoisin = self.ui.tableVoisin.rowCount()
+      columnCount = self.ui.tableDemande.columnCount()
+
+
+      try:
+
+          if rowCount == 0:
+              QMessageBox.critical(self.ui.addBtn, "Erreur","Veuillez au moins ajouter un demandeur")
+              return
+
+          if self.ui.coutLineEdit.text() == "":
+              QMessageBox.critical(self.ui.coutLineEdit, "Erreur", "Veuillez remplir le champ cout")
+              #self.ui.coutLineEdit.setFocus(Qt.Qt.OtherFocusReason)
+              return
+
+          if self.ui.lineEditConsistances.text() == "":
+              QMessageBox.critical(self.ui.lineEditConsistances, "Erreur", "Veuillez remplir le champ  consistance")
+              #self.ui.coutLineEdit.setFocus(Qt.Qt.OtherFocusReason)
+              return
+
+      except Exception as e:
+          print(e)
+
+
+      connection = psycopg2.connect(host=self.db_config.db_host, port=self.db_config.db_port,
+                                        database=self.db_config.db_name, user=self.db_config.db_user,
+                                        password=self.db_config.db_pass)
+
+      cursor = connection.cursor()
+      #numDmd = str(self.ui.numeroDemandeLineEdit.text())
+      #strip()
+      numDemande1 = str(self.ui.numeroDemandeLineEdit1.text())
+      numdemande2 = str(self.ui.numeroDemandeLineEdit2.text())
+      numDmd = numDemande1.strip()+"-F-"+numdemande2.strip()
+      print("---Numero demande ---")
+      print(numDmd)
+      Demande = numDmd.split('-F-')
+      print("Demande")
+      print(Demande)
+
+      self.numDemande = numDmd
+      dateDemande = self.ui.dateDemandeDateEdit.text()
+      dtDmande = dateDemande.split('/')
+      #Verification si DateReconnaissance checked
+      if self.ui.checkBoxDateReconnaissance.isChecked():
+          dateReconnaissance = self.ui.dateReconnaissanceDateEdit.text()
+          dtReconnaissance = dateReconnaissance.split('/')
+          dateReconnaissanceToInsert = datetime.date(int(dtReconnaissance[2]), int(dtReconnaissance[1]), int(dtReconnaissance[0]))
+      else:
+          dateReconnaissanceToInsert = None
+      #Verification si dateDecision checked
+      if self.ui.checkBoxDateDecision.isChecked():
+          dateDecision = self.ui.dateDecision.text()
+          dtDecison = dateDecision.split('/')
+          dateDecisionToInsert = datetime.date(int(dtDecison[2]), int(dtDecison[1]), int(dtDecison[0]))
+      else:
+          dateDecisionToInsert = None
+
+      if self.ui.checkBoxDebutAffichage.isChecked():
+          dateDebutAffichage = self.ui.dateEditDebutAffichage.text()
+          dtDebAff = dateDebutAffichage.split('/')
+          dateDebAffToInsert = datetime.date(int(dtDebAff[2]), int(dtDebAff[1]), int(dtDebAff[0]))
+      else:
+          dateDebAffToInsert = None
+
+      if self.ui.checkBoxFinAffichage.isChecked():
+          dateFinAffichage = self.ui.dateEditFinAffichage.text()
+          dtFinAff = dateFinAffichage.split('/')
+          dateFinAffToInsert = datetime.date(int(dtFinAff[2]), int(dtFinAff[1]), int(dtFinAff[0]))
+      else:
+          dateFinAffToInsert = None
+
+
+      duree_occupation = None
+      if self.ui.lineEditDureeMiseEnValeur.text() != '':
+          try:
+              duree_occupation = int(self.ui.lineEditDureeMiseEnValeur.text())
+          except Exception as err:
+              pass
+      origine = None
+      if self.ui.textEditOrigine.toPlainText() != '':
+          origine = str(self.ui.textEditOrigine.toPlainText())
+
+      planche_plof = None
+      if self.ui.numeroGrilleLineEdit.text() != '':
+          planche_plof = str(self.ui.numeroGrilleLineEdit.text())
+
+
+      cout = float(self.ui.coutLineEdit.text())
+      zavamisy = str(self.ui.lineEditConsistances.text())
+      region = str(self.ui.regionLineEdit.text())
+      district = str(self.ui.districtLineEdit.text())
+      commune = str(self.ui.communeLineEdit.text())
+      fokontany = str(self.ui.fokontanyComboBox.currentText())
+      idfkt = self.utils.getComboValue(self.ui.fokontanyComboBox)
+      codeParcelle = None
+      if str(self.ui.lineEditCodeParcelle.text()).strip() != '':
+          codeParcelle = str(self.ui.lineEditCodeParcelle.text()).strip()
+      #Verification si NumDecision checked
+      if self.ui.checkBoxNumDecision.isChecked():
+          numDecision = str(self.ui.lineEditNumDecision.text())
+      else:
+          numDecision = None
+      consistance = str(self.ui.consistanceComboBox.currentText())
+      numeroDemandeSurPapierPLOFLineEdit = str(self.ui.numeroDemandeSurPapierPLOFLineEdit.text())
+      print "numeroDemandeSurPapierPLOFLineEdit "
+      print consistance
+      idcommune = globalvars.id_commune
+      self.idfokontany = idfkt
+
+      if self.fromPopup:
+          try:
+
+              exe = cursor.execute(
+                  "UPDATE demande SET numdemande = %s,datedemande = %s,datereconnaissance = %s,region = %s,district = %s,commune = %s, fokontany = %s,idcommune = %s,idfokontany = %s,cout = %s,categorie = %s,idprojet  = %s,numdemandepaps = %s,datedecision = %s,consistance = %s,numdecision = %s, code_parcelle = %s, duree_occupation = %s, origine = %s, planche_plof = %s, debut_affichage = %s, fin_affichage = %s WHERE gid = %s RETURNING iddemande ",
+                  (numDmd, datetime.date(int(dtDmande[2]), int(dtDmande[1]), int(dtDmande[0])),
+                   dateReconnaissanceToInsert,
+                   region, district, commune, fokontany, idcommune, idfkt, cout, consistance,
+                   int(self.id_projet), numeroDemandeSurPapierPLOFLineEdit, dateDecisionToInsert, zavamisy, numDecision,
+                   codeParcelle, duree_occupation, origine, planche_plof, dateDebAffToInsert, dateFinAffToInsert, self.idparcelle))
+              connection.commit()
+          except psycopg2.Error as e:
+              print(e)
+              if e.pgcode == "23505":
+                  QtGui.QMessageBox.critical(self, "Erreur", u"Ce numero de demande ou ce code parcelle éxiste déjà")
+              connection.rollback()
+      else:
+          if self.checkIfGidExist():
+              try:
+
+                  exe = cursor.execute(
+                      "INSERT INTO demande (numdemande,datedemande,datereconnaissance,gid,region,district,commune, fokontany,idcommune,idfokontany,cout,categorie,idprojet,numdemandepaps,datedecision,consistance,numdecision, code_parcelle, duree_occupation, origine, planche_plof, debut_affichage, fin_affichage) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING iddemande ",
+                      (numDmd, datetime.date(int(dtDmande[2]), int(dtDmande[1]), int(dtDmande[0])),
+                       dateReconnaissanceToInsert,
+                       self.idparcelle, region, district, commune, fokontany, idcommune, idfkt, cout, consistance,
+                       int(self.id_projet), numeroDemandeSurPapierPLOFLineEdit, dateDecisionToInsert, zavamisy, numDecision,
+                       codeParcelle, duree_occupation, origine, planche_plof, dateDebAffToInsert, dateFinAffToInsert))
+                  connection.commit()
+              except psycopg2.Error as e:
+                  print(e)
+                  if e.pgcode == "23505":
+                      QtGui.QMessageBox.critical(self, "Erreur", u"Ce numero de demande ou ce code parcelle éxiste déjà")
+                  connection.rollback()
+          else:
+              QMessageBox.critical(self, "Erreur de geometrie", u"Geométrie inéxistante ou nettoyée au niveau du serveur. Veuillez réessayer la création de la demande")
+              return
+
+
+
+      idDemandePourJournal = cursor.fetchone()
+      i = 0
+      print " init remove in"
+      demandeurs = []
+
+
+
+      while (i < rowCount ) :
+          j = 0
+          representant = None
+          idD = self.ui.tableDemande.item(i,5).text()
+          idRepresentant = self.utils.getComboValue(self.ui.comboBoxPrincipale)
+          if idD == str(idRepresentant):
+              representant = True
+          else:
+              representant = False
+          try:
+              exe = cursor.execute("INSERT INTO avoir_demande (idpersonne,iddemande,idparcelle, representant) VALUES (%s,%s,%s,%s)",
+                                   (int(idD), int(idDemandePourJournal[0]), self.idparcelle, representant))
+              connection.commit()
+          except Exception as err:
+              print err
+              connection.rollback()
+          i = i + 1
+      self.voisins = []
+      #Traitement Voisins
+      try:
+          i = 0
+          OppositionTemp = []
+          if (rowCountVoisin) >= 1:
+              while (i <= rowCountVoisin):
+                  j = 0
+                  while (j <= 2):
+                      item = self.ui.tableVoisin.item(i, j)
+                      if item == None:
+                          print "None"
+                      else:
+                          print item.text()
+                          OppositionTemp.append(item.text())
+
+                      j = j + 1
+                  if len(OppositionTemp) >= 1:
+                      self.voisins.append(OppositionTemp)
+                  OppositionTemp = []
+                  i = i + 1
+      except Exception as e:
+          print(e)
+      print "self.voisins in INNNNNNNNNNN"
+      print self.voisins
+      print "self.voisins outTTTTTTTTTTTTT"
+      #return
+      try:
+          if len(self.voisins) >= 1:
+              for o in self.voisins:
+                  Repere = o[0]
+                  nomRepere = o[1]
+                  idRepere = int(o[2])
+                  exe = cursor.execute(
+                      "INSERT INTO limitesparcelle (idpointscardinaux,idparcelle,description)"
+                      " VALUES (%s,%s,%s)",
+                      (idRepere,self.idparcelle, str(nomRepere)))
+                  connection.commit()
+          i = j = 0
+      except psycopg2.Error as e:
+          print(e)
+          if e.pgcode == "23505":
+              QMessageBox.critical(self, u"Erreur", u"La combinaison position et parcelle existe déjà")
+              connection.rollback()
+      print(" enter self.idparcelle")
+      if codeParcelle is not None:
+          try:
+
+              # Enregistrement de la consistance au niveau de la parcelle liee a la demande creee nampiko kely fa ilaiko any am certificat SALIM
+              if self.ui.consistanceComboBox.currentIndex() == -1:
+                  cursor.execute("UPDATE parcelle_d SET numdemande=(%s), idhameau = %s, codeparcelle =  %s,region = %s,district = %s,commune = %s, fkt = %s WHERE gid = (%s)", (numDmd, self.idHameau,codeParcelle, region, district, commune, fokontany, self.idparcelle))
+              else:
+                  consistanceParcelle = str(self.ui.consistanceComboBox.currentText())
+                  cursor.execute("UPDATE parcelle_d SET numdemande=(%s),consistance = (%s), idhameau = %s, codeparcelle = %s,region = %s,district = %s,commune = %s, fkt = %s WHERE gid = (%s)",
+                                 (numDmd, consistanceParcelle, self.idHameau, codeParcelle,region, district, commune, fokontany, self.idparcelle))
+              connection.commit()
+              #        last_iddemande = cursor.fetchone()[0]
+              #        canvas = QgsMapCanvas()
+
+              # Ecriture dans le journal
+          except Exception as e:
+              print(e)
+              connection.rollback()
+      else:
+          try:
+
+              # Enregistrement de la consistance au niveau de la parcelle liee a la demande creee nampiko kely fa ilaiko any am certificat SALIM
+              if self.ui.consistanceComboBox.currentIndex() == -1:
+                  cursor.execute(
+                      "UPDATE parcelle_d SET numdemande=(%s), idhameau = %s,region = %s,district = %s,commune = %s, fkt = %s WHERE gid = (%s)",
+                      (numDmd, self.idHameau,region, district, commune, fokontany, self.idparcelle))
+              else:
+                  consistanceParcelle = str(self.ui.consistanceComboBox.currentText())
+                  cursor.execute(
+                      "UPDATE parcelle_d SET numdemande=(%s),consistance = (%s), idhameau = %s, region = %s,district = %s,commune = %s, fkt = %s WHERE gid = (%s)",
+                      (numDmd, consistanceParcelle, self.idHameau,region, district, commune, fokontany, self.idparcelle))
+              connection.commit()
+              #        last_iddemande = cursor.fetchone()[0]
+              #        canvas = QgsMapCanvas()
+
+              # Ecriture dans le journal
+          except Exception as e:
+              print(e)
+              connection.rollback()
+
+      print(" enter consitance")
+
+      try:
+
+          from Projet.journalRunn import journal
+          journal = journal(connection)
+          journal.inserToJournal(globalvars.id_user, idDemandePourJournal[0], u"Demande",u"Creation de demande de Certificat")
+          # Fin ecriture dans journal
+
+
+          #cLayer = self.parent.current_layer
+          mc = self.parent.MainWindow.canvas
+          #        mc = qgis.utils.iface.mapCanvas()
+          for layer in mc.layers():
+              if layer.type() == layer.VectorLayer:
+                  layer.removeSelection()
+
+          mc.refresh()
+          mc.refresh()
+          mc.refresh()
+          mc.refresh()
+          mc.refresh()
+          mc.refresh()
+
+      except Exception as e:
+          print(e)
+          pass
+          # self.dialog.close()
+      try:
+          cursor.execute("UPDATE parcelle_d SET grille = (%s) WHERE gid = (%s)",
+                         (str(self.ui.numeroGrilleLineEdit.text()), self.idparcelle))
+          connection.commit()
+
+          cursor.execute("UPDATE parcelle_d SET numerodmdpaps = (%s) WHERE gid = (%s)",
+                         (str(self.ui.numeroDemandeSurPapierPLOFLineEdit.text()), self.idparcelle))
+          connection.commit()
+      except Exception as e:
+          print(e)
+          connection.rollback()
+
+      self.parent.currentGeomIdParcelle = 0
+      #self.parent.ui.actionValidate.setEnabled(False)
+
+      #MAJ compteur demande
+      print(" enter cptdemande")
+      self.currentValDemande = int(self.currentValDemande) + 1
+      print self.currentValDemande
+      try:
+        self.cursor.execute("UPDATE commune SET cptdemande=(%s)  WHERE idcommune = (%s)",
+                     (self.currentValDemande,globalvars.id_commune))
+        self.connection.commit()
+      except Exception as err:
+          print err
+          self.connection.rollback()
+
+      self.updateCptDemande()
+      print("--self.p.close()--")
+      self.close()
+
+  def initMasks(self):
+    validatorNumDemande = QRegExpValidator(globalvars.regexpNumDemande)
+    validatorOccupation = QRegExpValidator(globalvars.regexpNum)
+    self.ui.lineEditDureeMiseEnValeur.setValidator(validatorOccupation)
+    #self.ui.numeroDemandeLineEdit2.setValidator(validatorNumDemande)
+
+
+  def checkState(self):
+      self.ui.lineEditNumDecision.setVisible(self.ui.checkBoxNumDecision.isChecked())
+      self.ui.dateReconnaissanceDateEdit.setVisible(self.ui.checkBoxDateReconnaissance.isChecked())
+      self.ui.dateDecision.setVisible(self.ui.checkBoxDateDecision.isChecked())
+      self.ui.dateEditDebutAffichage.setVisible(self.ui.checkBoxDebutAffichage.isChecked())
+      self.ui.dateEditFinAffichage.setVisible(self.ui.checkBoxFinAffichage.isChecked())
+
+  def fillComboHameau(self):
+      idFkt = self.utils.getComboValue(self.ui.fokontanyComboBox)
+      cur = self.connection.cursor()
+      self.ui.HameauComboBox.clear()
+      try:
+          cur.execute('select idhameau, nomhameau from hameau where idfokontany = %s', (idFkt,))
+          res = cur.fetchall()
+          for row in res:
+              self.ui.HameauComboBox.addItem(_fromUtf8(row[1]), row[0])
+
+      except Exception as err:
+          print err
+          self.connection.rollback()
+
+  def updateCptDemande(self):
+      cursor = self.connection.cursor()
+      try:
+          cursor.execute(
+              "UPDATE commune SET cptdemande = (SELECT (MAX(CAST(TRIM(SPLIT_PART(dmd.numdemande,'-','4')) as integer)) + 1) as ordre FROM demande dmd WHERE dmd.idcommune = %s)",
+              (globalvars.id_commune,))
+          self.connection.commit()
+          # QMessageBox.information(None, 'Compteur Demande', u'Compteur demande mis à jour')
+          print(u'compteur demande à jour')
+      except Exception as err:
+          # QMessageBox.critical(None, 'erreur', u'Numéro demande non conforme XXX-XX-F-XXX')
+          self.connection.rollback()
+          print(err)
+      cursor.close()
+
+
+  def openHameau(self):
+      from Parametres.hameauRunn import hameauRunn
+      Hameau = hameauRunn(self.connection, globalvars.id_projet)
+      result = Hameau.exec_()
+
+  def checkIfGidExist(self):
+      val = False
+      try:
+          cur = self.connection.cursor()
+          cur.execute("SELECT gid from parcelle_d WHERE gid = %s", (str(self.idparcelle),))
+          res = cur.fetchone()
+          if res is not None:
+              if len(res) > 0:
+                  val = True
+                  print ("*************geometrie existe**************")
+      except Exception as err:
+          print (err)
+
+      return val
+
+
+
+

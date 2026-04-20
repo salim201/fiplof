@@ -1,0 +1,8 @@
+"-t","region",
+                    "-t","district",
+                    "-t","commune",
+                    "-t","projet",
+                    "-t","projet_commune",
+                    "-t","projetcouche",
+                    "-t","fokontany",
+                    "-t","hameau",

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Opposition</class>
+ <widget class="QDialog" name="Opposition">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>930</width>
+    <height>373</height>
+   </rect>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
+  <property name="windowTitle">
+   <string>Opposition </string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QGroupBox" name="formGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>321</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>OPPOSITION</string>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>8</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="dateOppositionLabel">
+      <property name="text">
+       <string>Date Opposition</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QDateEdit" name="dateOppositionDateEdit"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="dateDemandeLabel">
+      <property name="text">
+       <string>Date Demande</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QDateEdit" name="dateDemandeDateEdit"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QTextEdit" name="textEdit"/>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="typeOppositionComboBox">
+      <item>
+       <property name="text">
+        <string>SUR LIMITE</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>SUR LES DROITS</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="typeOppositionLabel">
+      <property name="text">
+       <string>Type opposition</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="DescriptionOpp">
+      <property name="text">
+       <string>Description </string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="formGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>160</y>
+     <width>321</width>
+     <height>138</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>REGLEMENT</string>
+   </property>
+   <layout class="QFormLayout" name="formLayout_2">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>8</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="dateReglementLabel">
+      <property name="text">
+       <string>DateReglement</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QDateEdit" name="dateReglementDateEdit"/>
+    </item>
+    <item row="2" column="1">
+     <widget class="QPlainTextEdit" name="plainTextEdit"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="natureReglementComboBox">
+      <item>
+       <property name="text">
+        <string>ACQUIESCMENT SPONTANE</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>MAIN LEVEE SPONTANNEE</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ACQUIESCEMENT APRES CONCILIATION</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>MAIN LEVEE  APRES CONCILIATION</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>SENTENCE ARBITRALE</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>DECISION DU TRIBUNAL</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="natureReglementLabel">
+      <property name="text">
+       <string>Nature reglement</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="DescriptionReglement">
+      <property name="text">
+       <string>Description</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>310</y>
+     <width>321</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>VALIDER</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>ANNULER</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="gridLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>20</y>
+     <width>571</width>
+     <height>271</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTableWidget" name="tableWidget">
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>100</number>
+      </attribute>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>33</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>43</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>N Demande</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Type Opposition</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Description Opposition</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Date Opposition</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Date Demande</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Nature Reglement</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Description Reglement</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Date Reglement</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="horizontalGroupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>310</y>
+     <width>361</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="pushButton_5">
+      <property name="text">
+       <string>ENREGISTRER</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_4">
+      <property name="text">
+       <string>SUPPRIMER</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="text">
+       <string>DETAILS ...</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

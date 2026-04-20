@@ -1,0 +1,110 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'ImportFromParcelleCrisp.ui'
+#
+# Created: Mon Mar 18 14:42:51 2024
+#      by: PyQt4 UI code generator 4.10
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.resize(567, 340)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/std/icone/database-import-icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        Dialog.setWindowIcon(icon)
+        self.verticalLayout = QtGui.QVBoxLayout(Dialog)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.setContentsMargins(-1, 0, 0, -1)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.filename = QtGui.QLineEdit(Dialog)
+        self.filename.setObjectName(_fromUtf8("filename"))
+        self.gridLayout.addWidget(self.filename, 1, 1, 1, 1)
+        self.pushButtonParcourir = QtGui.QPushButton(Dialog)
+        self.pushButtonParcourir.setMaximumSize(QtCore.QSize(28, 16777215))
+        self.pushButtonParcourir.setText(_fromUtf8(""))
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/std/icone/if_folder_horizontal_open_11903.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButtonParcourir.setIcon(icon1)
+        self.pushButtonParcourir.setObjectName(_fromUtf8("pushButtonParcourir"))
+        self.gridLayout.addWidget(self.pushButtonParcourir, 1, 2, 1, 1)
+        self.labelFilename = QtGui.QLabel(Dialog)
+        self.labelFilename.setObjectName(_fromUtf8("labelFilename"))
+        self.gridLayout.addWidget(self.labelFilename, 1, 0, 1, 1)
+        self.comboListecouche = QtGui.QComboBox(Dialog)
+        self.comboListecouche.setObjectName(_fromUtf8("comboListecouche"))
+        self.comboListecouche.addItem(_fromUtf8(""))
+        self.comboListecouche.addItem(_fromUtf8(""))
+        self.comboListecouche.addItem(_fromUtf8(""))
+        self.comboListecouche.addItem(_fromUtf8(""))
+        self.gridLayout.addWidget(self.comboListecouche, 0, 1, 1, 1)
+        self.label = QtGui.QLabel(Dialog)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.verticalLayout.addLayout(self.gridLayout)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.listWidgetSteps = QtGui.QListWidget(Dialog)
+        self.listWidgetSteps.setMaximumSize(QtCore.QSize(240, 16777215))
+        self.listWidgetSteps.setAlternatingRowColors(True)
+        self.listWidgetSteps.setObjectName(_fromUtf8("listWidgetSteps"))
+        self.horizontalLayout_3.addWidget(self.listWidgetSteps)
+        self.listWidget = QtGui.QListWidget(Dialog)
+        self.listWidget.setAlternatingRowColors(True)
+        self.listWidget.setObjectName(_fromUtf8("listWidget"))
+        self.horizontalLayout_3.addWidget(self.listWidget)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.progressBar = QtGui.QProgressBar(Dialog)
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setObjectName(_fromUtf8("progressBar"))
+        self.verticalLayout.addWidget(self.progressBar)
+        self.line = QtGui.QFrame(Dialog)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName(_fromUtf8("line"))
+        self.verticalLayout.addWidget(self.line)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.pushButtonLancer = QtGui.QPushButton(Dialog)
+        self.pushButtonLancer.setObjectName(_fromUtf8("pushButtonLancer"))
+        self.horizontalLayout.addWidget(self.pushButtonLancer)
+        self.pushButtonAnnuler = QtGui.QPushButton(Dialog)
+        self.pushButtonAnnuler.setObjectName(_fromUtf8("pushButtonAnnuler"))
+        self.horizontalLayout.addWidget(self.pushButtonAnnuler)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(_translate("Dialog", "Importer Données", None))
+        self.labelFilename.setText(_translate("Dialog", "Choisir fichier source:", None))
+        self.comboListecouche.setItemText(0, _translate("Dialog", "Titre", None))
+        self.comboListecouche.setItemText(1, _translate("Dialog", "Cadastre", None))
+        self.comboListecouche.setItemText(2, _translate("Dialog", "Demande FN", None))
+        self.comboListecouche.setItemText(3, _translate("Dialog", "Terrain Statut Spécifique", None))
+        self.label.setText(_translate("Dialog", "couche", None))
+        self.pushButtonLancer.setText(_translate("Dialog", "Lancer", None))
+        self.pushButtonAnnuler.setText(_translate("Dialog", "Fermer", None))
+
+import icons_rc

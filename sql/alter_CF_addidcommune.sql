@@ -1,0 +1,1 @@
+﻿ALTER TABLE public.certificat ADD COLUMN idcommune bigint;

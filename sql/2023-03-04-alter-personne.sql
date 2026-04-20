@@ -1,0 +1,7 @@
+ALTER TABLE personne DROP COLUMN IF EXISTS cin_recto;
+ALTER TABLE personne DROP COLUMN IF EXISTS cin_verso;
+ALTER TABLE personne DROP COLUMN IF EXISTS signature;
+ALTER TABLE personne DROP COLUMN IF EXISTS empreinte_d;
+ALTER TABLE personne DROP COLUMN IF EXISTS empreinte_g;
+
+

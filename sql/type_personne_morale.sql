@@ -1,0 +1,4 @@
+﻿ALTER TABLE typepersonnemorale 
+ALTER COLUMN type type CHARACTER VARYING(50),
+ALTER COLUMN karazana type CHARACTER VARYING(50)
+;

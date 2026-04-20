@@ -1,0 +1,264 @@
+# coding: utf-8
+from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui, Qt
+import datetime
+from PopupInfosTitre import Ui_INFORMATIONS
+from Utilisateur import AccesManager
+import globalvars
+from PyQt4.QtGui import *
+# create the dialog for qgsPlof  Qt.QDialog
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+
+
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+
+class PopupInfosTitreRun(Qt.QDialog):
+    def __init__(self, parent):
+        Qt.QDialog.__init__(self)
+        self.parent = parent
+        self.connection, self.canvas = self.parent.connection, self.parent.MainWindow.canvas
+        self.newParcelleCF = True
+        self.gid = self.parent.currentSelect
+        self.ui = Ui_INFORMATIONS()
+        self.ui.setupUi(self)
+        self.ui.pushButtonAnnuler.setVisible(False)
+        self.ui.pushButtonValider.setVisible(False)
+        self.current_titre = None
+        self.current_propriete = None
+        self.current_sur_plan = None
+        self.current_titre_r = None
+        self.current_parcelle = None
+        self.current_partie = None
+        self.current_feuille = None
+        
+        self.registry = None
+        self.iddemande = self.numDemande = self.dateDemande = self.idparcelle = None
+        self.MainWindow = self.parent.MainWindow
+        self.currentGeomIdParcelle = self.gid
+        self.idparcelle = self.gid
+        self.currvalDemande = self.gid
+        self.id_projet = parent.id_projet
+        self.geometryeEdit = 0
+        self.stateEdition = 1
+        self.geomid = self.gid
+        self.tool = parent.tool
+        self.iface = parent.iface
+        self.Mcs = self.MainWindow
+        self.idDemande = self.gid
+        self.getFeatureInfos()
+        if globalvars.groupe_id != 1 and globalvars.groupe_id != 13:
+            self.ui.pushButtonEditFisc.setEnabled(False)
+        self.init_actions()
+
+    def init_actions(self):
+        try:
+            validatorNum = QRegExpValidator(globalvars.regexpNum)
+            self.ui.sur_plan.setValidator(validatorNum)
+        except Exception as err:
+            print(err)
+        self.ui.pushButtonEditFisc.clicked.connect(self.titre_edit)
+        self.ui.pushButtonValider.clicked.connect(self.save_titre_edit)
+        self.ui.pushButtonAnnuler.clicked.connect(self.stop_edit)
+
+    def getFeatureInfos(self):
+        connection = self.connection
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT t.titres,t.propriete,t.sur_plan,t.titre_r,t.parcelle,t.partie,t.feuille"
+            " FROM titre t  WHERE t.gid=%s ", [int(self.gid)])
+        dm = cursor.fetchone()
+        self.ui.titres.setReadOnly(True)
+        self.ui.propriete.setReadOnly(True)
+        self.ui.sur_plan.setReadOnly(True)
+        self.ui.titre_r.setReadOnly(True)
+        self.ui.parcelle.setReadOnly(True)
+        self.ui.partie.setReadOnly(True)
+        self.ui.feuille.setReadOnly(True)
+        
+        if len(dm) >= 1:
+            if dm[0] is None: 
+                self.ui.titres.setText("")
+            else:
+                self.ui.titres.setText(_fromUtf8(str(dm[0])))
+
+            if dm[1] is None:
+                self.ui.propriete.setText("")
+            else:
+                self.ui.propriete.setText(_fromUtf8(str(dm[1])))
+
+            if dm[2] is None:    
+                self.ui.sur_plan.setText("")
+            else:
+                self.ui.sur_plan.setText(_fromUtf8(str(dm[2])))
+
+            if dm[3] is None:    
+                self.ui.titre_r.setText("")
+            else:
+                self.ui.titre_r.setText(_fromUtf8(str(dm[3])))
+
+            if dm[4] is None:    
+                self.ui.parcelle.setText("")
+            else:
+                self.ui.parcelle.setText(_fromUtf8(str(dm[4])))
+
+            if dm[5] is None:
+                self.ui.partie.setText("")
+            else:
+                self.ui.partie.setText(_fromUtf8(str(dm[5])))
+
+            if dm[6] is None:
+                self.ui.feuille.setText("")
+            else:
+                self.ui.feuille.setText(_fromUtf8(str(dm[6])))
+        else:
+            pass
+
+    def titre_edit(self):
+        self.current_titre = str(self.ui.titres.text()).encode("utf-8")
+        self.current_propriete = str(self.ui.propriete.text()).encode("utf-8")
+        self.current_sur_plan = str(self.ui.sur_plan.text()).encode("utf-8")
+        self.current_titre_r = str(self.ui.titre_r.text()).encode("utf-8")
+        self.current_parcelle = str(self.ui.parcelle.text()).encode("utf-8")
+        self.current_partie = str(self.ui.partie.text()).encode("utf-8")
+        self.current_feuille = str(self.ui.feuille.text()).encode("utf-8")
+
+        self.ui.pushButtonEditFisc.setVisible(False)
+        self.ui.pushButtonAnnuler.setVisible(True)
+        self.ui.pushButtonValider.setVisible(True)
+        self.ui.titres.setReadOnly(False)
+        self.ui.propriete.setReadOnly(False)
+        self.ui.sur_plan.setReadOnly(False)
+        self.ui.titre_r.setReadOnly(False)
+        self.ui.parcelle.setReadOnly(False)
+        self.ui.partie.setReadOnly(False)
+        self.ui.feuille.setReadOnly(False)
+
+    def checkTitreEquality(self,titres):
+        try:
+            if titres != self.current_titre:            
+                cur = self.connection.cursor()
+                sql = "SELECT count(*) FROM titre WHERE titres = %s"
+                cur.execute(sql, (titres,))
+                res = cur.fetchall()
+                cur.close()
+                return res[0][0]
+            else:
+                return 0
+        except Exception as err:
+            print(err)
+
+    def update_titre(self):
+        titres = str(self.ui.titres.text()).encode("utf-8")
+        propriete = str(self.ui.propriete.text()).encode("utf-8")
+        sur_plan = str(self.ui.sur_plan.text()).encode("utf-8")
+        titre_r = str(self.ui.titre_r.text()).encode("utf-8")
+        parcelle = str(self.ui.parcelle.text()).encode("utf-8")
+        partie = str(self.ui.partie.text()).encode("utf-8")
+        feuille = str(self.ui.feuille.text()).encode("utf-8")
+        cursor = self.connection.cursor()
+        exe = cursor.execute(
+            "update titre set titres =%s,propriete = %s,sur_plan = %s,titre_r = %s,parcelle = %s,partie = %s,feuille = %s "
+                "WHERE gid=%s ",
+            (titres,propriete,sur_plan, titre_r,parcelle,partie,feuille,self.gid))
+        
+        self.connection.commit()
+
+    def checkmodif(self):
+        titres = str(self.ui.titres.text()).encode("utf-8")
+        propriete = str(self.ui.propriete.text()).encode("utf-8")
+        sur_plan = str(self.ui.sur_plan.text()).encode("utf-8")
+        titre_r = str(self.ui.titre_r.text()).encode("utf-8")
+        parcelle = str(self.ui.parcelle.text()).encode("utf-8")
+        partie = str(self.ui.partie.text()).encode("utf-8")
+        feuille = str(self.ui.feuille.text()).encode("utf-8")
+        
+        if titres != self.current_titre:
+            print("TRUE")
+            return True
+        if propriete != self.current_propriete:
+            print("TRUE")
+            return True
+        if sur_plan != self.current_sur_plan: 
+            print("TRUE")
+            return True
+        if titre_r != self.current_titre_r: 
+            print("TRUE")
+            return True
+        if parcelle != self.current_parcelle: 
+            print("TRUE")
+            return True
+        if partie != self.current_partie: 
+            print("TRUE")
+            return True
+        if feuille != self.current_feuille: 
+            print("TRUE")
+            return True
+        return False
+    
+    def save_titre_edit(self):
+        try:
+            titres = str(self.ui.titres.text()).encode("utf-8")
+
+            if titres != "":
+                if self.checkTitreEquality(titres) == 0:
+                    self.update_titre()
+                    self.update_titre()
+                    if self.checkmodif() == True:
+                        QtGui.QMessageBox.information(
+                                self,
+                                "Edition Titre", _fromUtf8("Donnée insérer avec succès")
+                            )
+                    self.stop_edit()
+                else:
+                    result = QtGui.QMessageBox.question(
+                        self,
+                        "Edition Titre",
+                        u"""Ce Numéro Titre existe déjà.
+                         
+                        Voulez-vous continuer ?""",
+                        buttons=QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                        defaultButton=QtGui.QMessageBox.No
+                    )
+
+                    if result == QtGui.QMessageBox.Yes:
+                        self.update_titre()
+                        QtGui.QMessageBox.information(
+                                self,
+                                "Edition Titre", _fromUtf8("Donnée insérer avec succès")
+                            )
+                        self.stop_edit()
+            else:
+                self.update_titre()
+                if self.checkmodif() == True:
+                    QtGui.QMessageBox.information(
+                            self,
+                            "Edition Titre", _fromUtf8("Donnée insérer avec succès")
+                        )
+                self.stop_edit()
+        except Exception as err:
+            print(err)
+            self.connection.rollback()
+
+
+    def stop_edit(self):
+        self.ui.pushButtonEditFisc.setVisible(True)
+        self.ui.pushButtonAnnuler.setVisible(False)
+        self.ui.pushButtonValider.setVisible(False)
+        self.ui.titres.setReadOnly(True)
+        self.ui.propriete.setReadOnly(True)
+        self.ui.sur_plan.setReadOnly(True)
+        self.ui.titre_r.setReadOnly(True)
+        self.ui.parcelle.setReadOnly(True)
+        self.ui.partie.setReadOnly(True)
+        self.ui.feuille.setReadOnly(True)

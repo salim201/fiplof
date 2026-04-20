@@ -1,0 +1,89 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'FormImportShapePLOF.ui'
+#
+# Created: Mon Mar 11 14:44:43 2024
+#      by: PyQt4 UI code generator 4.11.3
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName(_fromUtf8("Dialog"))
+        Dialog.resize(606, 137)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/std/icone/database-import-icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        Dialog.setWindowIcon(icon)
+        self.gridLayout_2 = QtGui.QGridLayout(Dialog)
+        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.label = QtGui.QLabel(Dialog)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.comboBox = QtGui.QComboBox(Dialog)
+        self.comboBox.setObjectName(_fromUtf8("comboBox"))
+        self.gridLayout.addWidget(self.comboBox, 0, 1, 1, 1)
+        self.labelFilename = QtGui.QLabel(Dialog)
+        self.labelFilename.setObjectName(_fromUtf8("labelFilename"))
+        self.gridLayout.addWidget(self.labelFilename, 1, 0, 1, 1)
+        self.pushButtonParcourir = QtGui.QPushButton(Dialog)
+        self.pushButtonParcourir.setMaximumSize(QtCore.QSize(28, 16777215))
+        self.pushButtonParcourir.setText(_fromUtf8(""))
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/std/icone/if_folder_horizontal_open_11903.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButtonParcourir.setIcon(icon1)
+        self.pushButtonParcourir.setObjectName(_fromUtf8("pushButtonParcourir"))
+        self.gridLayout.addWidget(self.pushButtonParcourir, 1, 2, 1, 1)
+        self.lineEdit = QtGui.QLineEdit(Dialog)
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.gridLayout.addWidget(self.lineEdit, 1, 1, 1, 1)
+        self.progressBar = QtGui.QProgressBar(Dialog)
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setObjectName(_fromUtf8("progressBar"))
+        self.gridLayout.addWidget(self.progressBar, 2, 1, 1, 2)
+        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.line = QtGui.QFrame(Dialog)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName(_fromUtf8("line"))
+        self.gridLayout_2.addWidget(self.line, 1, 0, 1, 1)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.pushButtonLancer = QtGui.QPushButton(Dialog)
+        self.pushButtonLancer.setObjectName(_fromUtf8("pushButtonLancer"))
+        self.horizontalLayout.addWidget(self.pushButtonLancer)
+        self.pushButtonAnnuler = QtGui.QPushButton(Dialog)
+        self.pushButtonAnnuler.setObjectName(_fromUtf8("pushButtonAnnuler"))
+        self.horizontalLayout.addWidget(self.pushButtonAnnuler)
+        self.gridLayout_2.addLayout(self.horizontalLayout, 2, 0, 1, 1)
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(_translate("Dialog", "Importer Données", None))
+        self.label.setText(_translate("Dialog", "Couche", None))
+        self.labelFilename.setText(_translate("Dialog", "Choisir fichier source:", None))
+        self.pushButtonLancer.setText(_translate("Dialog", "Lancer", None))
+        self.pushButtonAnnuler.setText(_translate("Dialog", "Fermer", None))
+
+import icons_rc

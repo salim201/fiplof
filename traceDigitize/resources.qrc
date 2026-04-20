@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/plugins/traceEdit"> 
+    <!--icon made by Robert Szczepanek . Thanks Robert-->   
+    <file>vector-create-trace.png</file>
+  </qresource>
+</RCC>
