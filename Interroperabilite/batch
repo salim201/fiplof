@@ -1,0 +1,173 @@
+def validerDemandes(self):
+    print "================ TRAITEMENT DEMANDES ================"
+
+    erreurs = []
+    success_count = 0
+
+    try:
+        selected_demandes = self.getSelectedDemandes()
+
+        if not selected_demandes:
+            QtGui.QMessageBox.warning(
+                self,
+                "Attention",
+                u"Veuillez sélectionner au moins une demande"
+            )
+            return
+
+        codes_parcelles = [d['code_parcelle'] for d in selected_demandes]
+
+        selected_batch = self.ui.tableWidgetBath.selectionModel().selectedRows()
+        if not selected_batch:
+            QtGui.QMessageBox.warning(self, "Attention", u"Veuillez sélectionner un batch.")
+            return
+
+        row_batch = selected_batch[0].row()
+        item_id = self.ui.tableWidgetBath.item(row_batch, 1)
+        batch_id = int(item_id.text()) if item_id else None
+
+        model = FiplofIngestionModel()
+        model.setConnection(self.connection)
+
+        ingestions = model.getIngestionsWithPayload(batch_id)
+
+        if not ingestions:
+            QtGui.QMessageBox.warning(self, "Erreur", u"Batch introuvable")
+            return
+
+        ingestion = ingestions[0]
+        payload = ingestion.get('payload', {})
+
+        if isinstance(payload, basestring):
+            payload = json.loads(payload)
+
+        demandes = payload.get('demandes', [])
+
+        conn = self.connection
+
+        try:
+            for code_parcelle in codes_parcelles:
+
+                try:
+                    demande_trouvee = None
+
+                    for item in demandes:
+                        parcelle = item.get('parcelle', {})
+                        if parcelle.get('code_parcelle') == code_parcelle:
+                            demande_trouvee = item
+                            break
+
+                    if not demande_trouvee:
+                        erreurs.append(u"Parcelle non trouvée : %s" % code_parcelle)
+                        continue
+
+                    # ================= PARCELLE =================
+                    parcelle = demande_trouvee.get('parcelle', {})
+                    geometry = parcelle.get('geometry', {})
+
+                    geom_hex = self.geojson_to_wkb_hex(geometry)
+
+                    localite = demande_trouvee.get('localite', {})
+
+                    region = localite.get("region", "")
+                    district = localite.get("district", "").strip().upper()
+                    commune = localite.get("commune", "")
+                    fokontany = localite.get("fokontany", "")
+
+                    commune_obj = Commune.findByName(conn, commune)
+                    fokontany_obj = Fokontany.findByName(conn, fokontany)
+                    district_obj = District.getByName(conn, district)
+
+                    id_parcelle = Parcelled.insert_parcelle_d_by_interrop(conn, {
+                        "parcelle": parcelle.get('code_parcelle', ''),
+                        "geom": geom_hex,
+                        "region": region,
+                        "district": district,
+                        "commune": commune,
+                        "id_commune": commune_obj.idcommune if commune_obj else None,
+                        "fkt": fokontany,
+                        "id_hameau": None,
+                        "categorie": demande_trouvee.get("demande", {}).get("categorie", "")
+                    })
+
+                    # ================= DEMANDE =================
+                    demande = demande_trouvee.get("demande") or {}
+
+                    id_projet = Projet.getFirstProjetId(conn)
+                    code_district = district_obj.codedistrict if district_obj else None
+
+                    num_demande = Demande.creationNum(conn, code_district, commune)
+
+                    id_demande = Demande.insert(conn, {
+                        "numdemande": num_demande,
+                        "gid": id_parcelle,
+                        "datedemande": demande.get("date_dmd"),
+                        "region": region,
+                        "district": district,
+                        "commune": commune,
+                        "idfokontany": fokontany_obj.idfokontany if fokontany_obj else None,
+                        "idcommune": commune_obj.idcommune if commune_obj else None,
+                        "idprojet": id_projet,
+                        "code_parcelle": parcelle.get('code_parcelle', ''),
+                    })
+
+                    if id_demande:
+                        Demande.incrementCptDemande(conn, commune)
+                        Parcelled.updateNumDemande(conn, id_parcelle, num_demande)
+
+                    # ================= DEMANDEURS =================
+                    demandeurs = demande_trouvee.get("demandeurs") or []
+
+                    for d in demandeurs:
+                        try:
+                            personne = d.get("personne") or {}
+
+                            personne_obj = Personne()
+                            personne_obj.nompersonne = personne.get("nom", "")
+                            personne_obj.prenompersonne = personne.get("prenom", "")
+
+                            id_personne = Personne.insert(conn, personne_obj)
+
+                            avoir = AvoirDemande()
+                            avoir.idpersonne = id_personne
+                            avoir.iddemande = id_demande
+                            avoir.idparcelle = id_parcelle
+                            avoir.representant = d.get("dmdr_principale", False)
+
+                            AvoirDemande.insert(conn, avoir)
+
+                        except Exception as e:
+                            erreurs.append(u"Demandeur erreur %s : %s" % (code_parcelle, str(e)))
+                            raise
+
+                    success_count += 1
+
+                except Exception as e:
+                    erreurs.append(u"Erreur parcelle %s : %s" % (code_parcelle, str(e)))
+                    raise
+
+            # ================= COMMIT =================
+            conn.commit()
+
+        except Exception as e:
+            conn.rollback()
+            print "ROLLBACK EFFECTUÉ"
+            raise
+
+        # ================= RESULTAT FINAL =================
+        if erreurs:
+            QtGui.QMessageBox.warning(
+                self,
+                u"Traitement terminé avec erreurs",
+                u"\n".join(erreurs[:20])
+            )
+        else:
+            QtGui.QMessageBox.information(
+                self,
+                u"Succès",
+                u"%d demande(s) traitée(s)" % success_count
+            )
+
+    except Exception as e:
+        print "ERREUR GLOBALE:", str(e)
+        QtGui.QMessageBox.critical(self, "Erreur système", str(e))

@@ -108,13 +108,13 @@ class CompareDbModel:
             print('----------------- FIN affichage schema_columns_local--------------')
             self.bar.ui.progressBar.setValue(self.current_value)
             if (schema_columns_local) :
-                print('----------------- debut update colonne local--------------')
+                #print('----------------- debut update colonne local--------------')
                 self.update_table_columns(connRemote,schema_columns_local)
-                print('+++++++++++++++++++tokony nanao update colonne  any amin ny  remote++++++++++')
+                #print('+++++++++++++++++++tokony nanao update colonne  any amin ny  remote++++++++++')
             if (schema_columns_remote):
-                print('----------------- debut update colonne remote--------------')
+                #print('----------------- debut update colonne remote--------------')
                 self.update_table_columns(connLocal,schema_columns_remote)
-                print('+++++++++++++++++++tokony nanao update colonne  any amin ny  local++++++++++')
+                #print('+++++++++++++++++++tokony nanao update colonne  any amin ny  local++++++++++')
             self.current_value += 2
             self.bar.ui.progressBar.setValue(self.current_value)
             return True
@@ -122,8 +122,8 @@ class CompareDbModel:
         except Exception as e:
             print ' error function sync_Tables_remote_local - tentative de sychronisation des structures des tables'
             print(e.message)
-            cur1.close()
-            cur2.close()
+            #cur1.close()
+            #cur2.close()
             connLocal.rollback()
             connRemote.rollback()
             return False
@@ -202,7 +202,7 @@ class CompareDbModel:
                             query = """ SELECT * FROM "%s" """ % (table_spec_topo)
                         else :
                             query = """ SELECT * FROM "%s" WHERE datemaj > '%s' """ % (table_spec_topo, last_sync_date_str)
-                        print(query)
+                        #print(query)
                         curremote.execute(query)
                         remote_data = curremote.fetchall()
 
@@ -313,7 +313,11 @@ class CompareDbModel:
                             query = """ SELECT * FROM "%s" """ % (table_spec_gf)
                         else :
                             query = """ SELECT * FROM "%s" WHERE datemaj > '%s' """ % (table_spec_gf, last_sync_date_str)
+                        #print(query)
+                        print(query)
+
                         print(0)
+
                         # Récupérer les données remote (GF)
                         curremote.execute(query)
                         remote_data = curremote.fetchall()
@@ -340,7 +344,7 @@ class CompareDbModel:
                             query = """ SELECT * FROM "%s" """ % (table_spec_gf)
                         else :
                             query = """ SELECT * FROM "%s" WHERE datemaj > '%s' """ % (table_spec_gf, last_sync_date_str)
-                        print(query)
+                        #print(query)
                         # Récupérer les données remote (GF)
                         curremote.execute(query)
                         remote_data = curremote.fetchall()
@@ -466,7 +470,6 @@ class CompareDbModel:
             if to_delete:
                 print '+++++++++++++++++++to delete *************************'
                 for element in to_delete:
-                    print '+++++++++++++++++++ delete*************************'
                     print element
                     self.delete_data(conn, table_spec_topo, element[0])
                     self.dataTolog.append({"Connexion": 'Remote and Local_ delete', "Table": table_spec_topo, "Activite": element,
@@ -493,11 +496,11 @@ class CompareDbModel:
         self.current_value += 3
         self.bar.ui.progressBar.setValue(self.current_value)
         try:
-            print "************tables sources*******************"
-            print (tables_source)
-            print "************tables target*******************"
-            print (tables_target)
-    
+            #print "************tables sources*******************"
+            #print (tables_source)
+            #print "************tables target*******************"
+            #print (tables_target)
+            print('U ')
             # Identifier les enregistrements à insérer, mettre à jour et supprimer
             to_insert = set(tables_source) - set(tables_target)
             to_update = set(tables_source).intersection(set(tables_target))
@@ -508,8 +511,8 @@ class CompareDbModel:
             #print (to_insert)
             #print ('5466666666666666666666666666666666666666666666666666666')
             if to_insert :
+                print '+++++++++++++++++++to_insert *************************'
                 for element in to_insert:
-                    print '+++++++++++++++++++to_insert *************************'
                     self.bar.ui.label.setText(u"  insert des  données")
                     self.current_value += 10
                     self.bar.ui.progressBar.setValue(self.current_value)
@@ -519,13 +522,14 @@ class CompareDbModel:
                                            "Situation": 'OK', "Erreur": ''})
                 #modification sequence après insertion
                 seq=self.get_current_sequence_value(conn,table_spec_topo)
-                print '+++++++++++++++++++seq *************************'
-                print seq
+                #print '+++++++++++++++++++seq *************************'
+                #print seq
                 self.checkSequence(conn,table_spec_topo,seq['columns_id'],seq['current_value'])
                 print '+++++++++++++++++++to_insert fin*************************'
             if to_update:
+                print '+++++++++++++++++++to_update *************************'
                 for element in to_update:
-                    print '+++++++++++++++++++to_update *************************'
+
                     self.bar.ui.label.setText(u"update des  données")
                     self.current_value += 10
                     self.bar.ui.progressBar.setValue(self.current_value)
@@ -537,7 +541,7 @@ class CompareDbModel:
                                            "Erreur": ''})
                 # modification sequence après update
                 seq=self.get_current_sequence_value(conn, table_spec_topo)
-                print '+++++++++++++++++++seq *************************'
+                #print '+++++++++++++++++++seq *************************'
                 self.checkSequence(conn,table_spec_topo, seq['columns_id'], seq['current_value'])
                 print '+++++++++++++++++++to_update fin*************************'
 
@@ -586,18 +590,18 @@ class CompareDbModel:
                         len(data), len(columns), table))'''
 
             # Afficher les colonnes et les données pour déboguer
-            print("Colonnes: {}".format(columns))
-            print("Données à insérer: {}".format(data))
+            #print("Colonnes: {}".format(columns))
+            #print("Données à insérer: {}".format(data))
 
             # Construire la requête d'insertion
             columns_str = ", ".join(columns)
             placeholders = ", ".join(["%s"] * len(columns))
             insert_query = "INSERT INTO {} ({}) VALUES ({})".format(table, columns_str, placeholders)
 
-            print("Requête d'insertion générée :")
-            print("SQL : {}".format(insert_query))
-            print("Valeurs : {}".format(data))
-
+            #print("Requête d'insertion générée :")
+            #print("SQL : {}".format(insert_query))
+            #print("Valeurs : {}".format(data))
+            print("I ")
             # Adapter les données
             data = tuple(int(value) if isinstance(value, long) else value for value in data)
 
@@ -706,8 +710,8 @@ class CompareDbModel:
 
             cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s order by ordinal_position", (table,))
             first_column = cur.fetchone()
-            print('--------------------------------first_column------------------------------------')
-            print(first_column)
+            #print('--------------------------------first_column------------------------------------')
+            #print(first_column)
             id_column = None
 
             if first_column:
@@ -726,13 +730,13 @@ class CompareDbModel:
 
             # Récupérer les tables enfants
             child_tables = cur.fetchall()
-            print ('---------------------child_tables--------------------------------------')
+            print ('---------------------child_tables  delete--------------------------------------')
             print (child_tables)
 
             # 2. Supprimer les données dans les tables enfant
             for child_table in child_tables:
                 child_table_name = child_table[1]
-                print("Deleting data from child table: {}".format(child_table_name))
+                #print("Deleting data from child table: {}".format(child_table_name))
 
                 # Récupérer le nom de la colonne de la clé étrangère dans la table enfant
                 '''query = """
@@ -768,8 +772,9 @@ class CompareDbModel:
                 formatted_query = query % (child_table_name, table)
 
                 # Affichage de la requête formatée avant exécution
-                print formatted_query
-                print('*******formatted_query************')
+                #print formatted_query
+                #print('*******formatted_query************')
+                print('dc ')
                 cur.execute(formatted_query)
                 foreign_key_column = cur.fetchone()
                 #print('*******foreign_key_column************')
@@ -779,7 +784,7 @@ class CompareDbModel:
                 #print('*******foreign_key_ tapitra************')
                 if foreign_key_column:
                     foreign_key_column_name = foreign_key_column[0]
-                    print('*******foreign_key_column_name************')
+                    #print('*******foreign_key_column_name************')
 
                     # Vérification si des lignes existent dans la table enfant avec la clé étrangère
                     cur.execute(""" SELECT 1 FROM {} WHERE {} = %s LIMIT 1
@@ -795,14 +800,15 @@ class CompareDbModel:
                                            WHERE {} = %s
                                        """.format(child_table_name, foreign_key_column_name), (id_value,))
                         conn.commit()
-                        print("Data deleted from table: {}".format(child_table_name))
+                        #print("Data deleted from table: {}".format(child_table_name))
                     else:
+                        print(''' ''')
                         # Si aucune ligne n'est trouvée, on affiche un message indiquant qu'il n'y a rien à supprimer
-                        print('Nothing to delete in table: {}'.format(child_table_name))
+                        #print('Nothing to delete in table: {}'.format(child_table_name))
 
 
             # 3. Supprimer l'élément de la table principale
-            print("Deleting data from table: {}".format(table))
+            #print("Deleting data from table: {}".format(table))
             cur.execute("""
                 DELETE FROM {}
                 WHERE {} = %s

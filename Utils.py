@@ -6,9 +6,40 @@ from psycopg2 import extras
 import  datetime
 
 
+def disable_idle_timeout(conn):
+    try:
+        cur = conn.cursor()
+        cur.execute("SHOW server_version_num")
+        version = int(cur.fetchone()[0])
+        if version >= 90600:
+            cur.execute("SET idle_in_transaction_session_timeout = 0")
+        cur.close()
+    except Exception:
+        conn.rollback()
+
+
+def create_connection():
+    from Configuration import DbConfig
+    cfg = DbConfig.DbConfig()
+    try:
+        conn = psycopg2.connect(database=cfg.db_name, user=cfg.db_user,
+                                password=cfg.db_pass, host=cfg.db_host,
+                                keepalives=1, keepalives_idle=30,
+                                keepalives_interval=10, keepalives_count=3)
+    except (psycopg2.OperationalError, TypeError):
+        conn = psycopg2.connect(database=cfg.db_name, user=cfg.db_user,
+                                password=cfg.db_pass, host=cfg.db_host)
+    disable_idle_timeout(conn)
+    return conn
+
+
 class Utils:
     def __init__(self, connection):
         self.connection = connection
+
+    def _ensureConnection(self):
+        if self.connection is None or self.connection.closed:
+            self.connection = create_connection()
 
     @staticmethod
     def getTableWidgetCellIntvalue(tablewidget, i, j):
@@ -92,6 +123,7 @@ class Utils:
 
     def fillComboWithSql(self, combowidget, sql, column, idcolumn):
         # type: (QtGui.QComboBox, str) -> None
+        self._ensureConnection()
         cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
         rows = []
         combowidget.clear()
@@ -101,7 +133,10 @@ class Utils:
             cursor.close()
         except Exception as e:
             print(e)
-            self.connection.rollback()
+            try:
+                self.connection.rollback()
+            except Exception:
+                pass
         for i in rows:
             combowidget.addItem(i[column], i[idcolumn])
 

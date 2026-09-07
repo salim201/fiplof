@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Attribution date et CRL</string>
+   <string>Gestion CRL</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../icons.qrc">
@@ -81,7 +81,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBoxNumDemande">
+       <widget class="QCheckBox" name="checkBoxNumDecision">
         <property name="text">
          <string/>
         </property>

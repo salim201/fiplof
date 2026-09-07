@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import psycopg2
 import psycopg2.extras
 import globalvars
@@ -42,6 +43,138 @@ class Demande:
         self.idDemandeurPrincipale = None
         self.idparcelle = None
         self.idPresidentCrl = None
+
+    @staticmethod
+    def incrementCptDemande(connection, commune):
+
+        try:
+            cur = connection.cursor()
+
+            sql = """
+                UPDATE commune
+                SET cptdemande = cptdemande + 1
+                WHERE UPPER(TRIM(nomcommune)) = UPPER(TRIM(%s))
+            """
+
+            cur.execute(sql, (commune,))
+            connection.commit()
+
+            cur.close()
+
+        except Exception as e:
+            connection.rollback()
+            print("Erreur incrementCptDemande :", e)
+
+    @staticmethod
+    def creationNum(connection, codedistrict, commune):
+        """
+        Format :
+        105-11-F-33000
+        codedistrict-codeg-F-cptdemande(commune)
+        """
+
+        try:
+            cur = connection.cursor()
+
+            sql = """
+                SELECT codeg, cptdemande
+                FROM commune
+                WHERE UPPER(nomcommune) = UPPER(%s)
+            """
+
+            cur.execute(sql, (commune,))
+            result = cur.fetchone()
+            print ("++++++++++++++++++++++++++++++++++++++++++++++SELECT codeg, cptdemande FROM commune WHERE nomcommune = '%s'" % commune)
+            if result:
+                codeg = result[0]
+                cptdemande = result[1]
+            else:
+                codeg = None
+                cptdemande = 0
+            
+            num_demande = "%s-%s-F-%s" % (codedistrict, codeg, cptdemande)
+
+            cur.close()
+
+            return num_demande
+
+        except Exception as e:
+            print("Erreur creationNum :", e)
+            return None
+
+    @staticmethod
+    def insert(connection, data):
+
+        print('DEBUG  insert Demande: ', data)
+        
+        cursor = connection.cursor()
+        try:
+            query = """
+                INSERT INTO demande (
+
+                    numdemande,
+                    gid,
+                    datedemande,
+                    datedecision,
+                    numdecision,
+                    datereconnaissance,
+                    region,
+                    district,
+                    commune,
+                    fokontany,
+                    idfokontany,
+                    idcommune,
+                    consistance,
+                    idprojet,
+                    code_parcelle,
+                    categorie,
+                    debut_affichage,
+                    fin_affichage,
+                    duree_occupation,
+                    origine,
+                    avis_crl,
+                    texte_crl
+
+                )
+                VALUES (
+
+                    %(numdemande)s,
+                    %(gid)s,
+                    %(datedemande)s,
+                    %(datedecision)s,
+                    %(numdecision)s,
+                    %(datereconnaissance)s,
+                    %(region)s,
+                    %(district)s,
+                    %(commune)s,
+                    %(fokontany)s,
+                    %(idfokontany)s,
+                    %(idcommune)s,
+                    %(consistance)s,
+                    %(idprojet)s,
+                    %(code_parcelle)s,
+                    %(categorie)s,
+                    %(debut_affichage)s,
+                    %(fin_affichage)s,
+                    %(duree_occupation)s,
+                    %(origine)s,
+                    %(avis_crl)s,
+                    %(texte_crl)s
+
+                )
+                RETURNING iddemande;
+            """
+            cursor.execute(query, data)
+            idd = cursor.fetchone()[0]
+            connection.commit()
+            return idd
+
+        except Exception as e:
+            connection.rollback()
+            print("INSERT ERROR DEMANDE:", e)
+            return None
+        finally:
+            cursor.close()
 
     @staticmethod
     def findBetween(connection, date1, date2):

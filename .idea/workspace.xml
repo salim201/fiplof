@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ccf2999-a33b-48f1-bfac-ad7ed1774b87" name="Default Changelist" comment="" />
+    <list default="true" id="1ccf2999-a33b-48f1-bfac-ad7ed1774b87" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Configuration/app.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Configuration/app.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Etats/PrintCertificatFoncier.py" beforeDir="false" afterPath="$PROJECT_DIR$/Etats/PrintCertificatFoncier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Inventaire/ImportInventaireThread.py" beforeDir="false" afterPath="$PROJECT_DIR$/Inventaire/ImportInventaireThread.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plof.py" beforeDir="false" afterPath="$PROJECT_DIR$/plof.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -381,9 +386,6 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.css" />
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

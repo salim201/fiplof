@@ -1,3 +1,5 @@
+import psycopg2
+import psycopg2.extras
 from BaseModel import BaseModel
 
 
@@ -27,4 +29,34 @@ class Fokontany(BaseModel):
     def map(self, res):
         self.idfokontany, self.idcommune, self.codefokontany, self.nomfokontany, self.shapelength, self.shapearea, self.csv_id =\
             res['idfokontany'], res['idcommune'], res['codefokontany'], res['nomfokontany'], res['shapelength'], res['shapearea'], res['csv_id']
+
+    @staticmethod
+    def findByName(connection, nom_fokontany):
+        cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        try:
+            cursor.execute(
+                """
+                SELECT *
+                FROM fokontany
+                WHERE UPPER(TRIM(nomfokontany)) = UPPER(TRIM(%s))
+                """,
+                (nom_fokontany,)
+            )
+
+            res = cursor.fetchone()
+
+            if res is None:
+                return None
+
+            f = Fokontany(connection)
+            f.map(res)
+            return f
+
+        except Exception as e:
+            print("[Fokontany.findByName] erreur:", e)
+            return None
+
+        finally:
+            cursor.close()
 

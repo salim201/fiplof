@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'crl.ui'
 #
-# Created: Mon Apr 07 11:20:40 2025
+# Created: Tue Apr 08 09:35:45 2025
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,10 +65,10 @@ class Ui_Dialog(object):
         self.pushButtonRechercher = QtGui.QPushButton(self.groupBox)
         self.pushButtonRechercher.setObjectName(_fromUtf8("pushButtonRechercher"))
         self.gridLayout.addWidget(self.pushButtonRechercher, 3, 2, 1, 3)
-        self.checkBoxNumDemande = QtGui.QCheckBox(self.groupBox)
-        self.checkBoxNumDemande.setText(_fromUtf8(""))
-        self.checkBoxNumDemande.setObjectName(_fromUtf8("checkBoxNumDemande"))
-        self.gridLayout.addWidget(self.checkBoxNumDemande, 0, 0, 1, 1)
+        self.checkBoxNumDecision = QtGui.QCheckBox(self.groupBox)
+        self.checkBoxNumDecision.setText(_fromUtf8(""))
+        self.checkBoxNumDecision.setObjectName(_fromUtf8("checkBoxNumDecision"))
+        self.gridLayout.addWidget(self.checkBoxNumDecision, 0, 0, 1, 1)
         self.label = QtGui.QLabel(self.groupBox)
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
@@ -141,7 +141,7 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Attribution date et CRL", None))
+        Dialog.setWindowTitle(_translate("Dialog", "Gestion CRL", None))
         self.groupBox.setTitle(_translate("Dialog", "Recherche", None))
         self.label_3.setText(_translate("Dialog", "Hameau", None))
         self.label_2.setText(_translate("Dialog", "Fokontany", None))

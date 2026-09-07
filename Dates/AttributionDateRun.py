@@ -140,26 +140,37 @@ class AttributionDateRun(QDialog):
 
     def assignerCRL(self):
         print "assigner"
-        self.lisCRL()
-        self.listiddmdselected()
-        if len(self.alldmdselected)!=0 :
-            #alldmdselected=liste id demande selectionne
-            print '---------DEBUT alldmdselected-------------'
-            print self.listcrl
-            print '---------FIN alldmdselected-------------'
-            insertOK=False
+        try:
+            self.lisCRL()
+            self.listiddmdselected()
+            if len(self.alldmdselected)==0 :
+                QMessageBox.critical(self, "Erreur", u"Aucune demande selectionnée",
+                                     u"veuillez selectionner les demandes!")
+                return
+
+            total = len(self.alldmdselected) * len(self.listcrl)
+            if total == 0:
+                QMessageBox.critical(self, "Erreur", u"Aucun membre CRL à assigner",
+                                     u"veuillez ajouter des membres CRL!")
+                return
+
+            progress = QProgressDialog(u"Assignation des CRL en cours...", None, 0, total, self)
+            progress.setWindowTitle(u"Assignation CRL")
+            progress.setModal(True)
+            progress.show()
+
+            insertOK = False
+            count = 0
             for oneiddmdselected in self.alldmdselected:
-                print "--------onerow------"
-                print oneiddmdselected
                 data = []
                 try :
                     self.iddemande = int(self.ui.tableWidgetDemande.item(oneiddmdselected, 1).text())
-                    dateaffichage = self.ui.tableWidgetDemande.item(oneiddmdselected,6).text()
-                    #rowcrl=[idrolecrl, int(idtitulaire), int(idsupleant)] [[4, 1, 'titulaire'], [4, 3, 'suppleant']]
-                    for rowcrl in  self.listcrl :
-                        print "--------rowcrl------"
-                        print rowcrl
-                        print "--------iddemande------"
+                    for rowcrl in self.listcrl :
+                        QApplication.processEvents()
+                        if progress.wasCanceled():
+                            return
+                        progress.setValue(count)
+                        count += 1
                         data.append(self.iddemande)
                         for info in rowcrl:
                             if info=='titulaire':
@@ -169,9 +180,8 @@ class AttributionDateRun(QDialog):
                                     data.append(False)
                                 else :
                                     data.append(info)
-                        print "--------data------"
-                        print data
                         try:
+                            data.append(False)  # president
                             RoleCrlModel = RoleCrl(self.connection)
                             res = RoleCrlModel.insert_role(data)
                             data = []
@@ -179,20 +189,23 @@ class AttributionDateRun(QDialog):
                         except Exception as e:
                             print(e)
                             insertOK = False
-                            QMessageBox.critical(self, "Erreur","erreur d'enregistrement des crl des demandes",
-                                                 "veuillez selectionner les demandes!")
+                            QMessageBox.critical(self, "Erreur", u"erreur d'enregistrement des crl des demandes",
+                                                 u"veuillez selectionner les demandes!")
 
                 except Exception as e:
                     print(e)
+                    progress.close()
                     return
-            if  insertOK :
+            progress.setValue(total)
+            progress.close()
+            if insertOK :
                 QMessageBox.information(self, "INFO",
                                         u"Insertion ou mise à jour CRL réussie!")
             else :
-                QMessageBox.critical(self, "Erreur",u"une erreur s'est produite, veuillez vérifier les saisis!")
-        else:
-            QMessageBox.critical(self, "Erreur", u"Aucune demande selectionnée",
-                                 "veuillez selectionner les demandes!")
+                QMessageBox.critical(self, "Erreur", u"une erreur s'est produite, veuillez vérifier les saisis!")
+        except Exception as e:
+            print(e)
+            QMessageBox.critical(self, "Erreur", u"Une erreur inattendue est survenue: %s" % str(e))
 
 
     def lisCRL(self):
@@ -203,6 +216,9 @@ class AttributionDateRun(QDialog):
             if len(rolecrl) != 0:
                 RoleCrlModel = RoleCrl(self.connection)
                 role = RoleCrlModel.find_by_lib(rolecrl)
+                if role is None:
+                    print u"Rôle CRL introuvable: %s" % rolecrl
+                    continue
                 idperstitulaire = Utils.getTableWidgetCellStrValue(self.ui.tableWidgetCRL, i, 3)
                 idperssupleant = Utils.getTableWidgetCellStrValue(self.ui.tableWidgetCRL, i, 4)
                 if int(idperstitulaire)>0:
