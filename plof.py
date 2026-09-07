@@ -600,7 +600,7 @@ class Plof():
         _labelCoords = QtGui.QLabel(u"Coordonnée :")
         _EPSG = QtGui.QLabel(u"EPSG :")
         #label version FIPLOF
-        _versionFiplof = QtGui.QLabel(u"                                                                  Patch du : 09/02/2026")
+        _versionFiplof = QtGui.QLabel(u"                                                                  Patch du : 07/09/2026")
 
         #unicode(self.ui.lineEditNumCF.text()).encode('utf-8')
         self.labelCoordonnees = QtGui.QLineEdit("")
