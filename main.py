@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# Created: Mon Apr 07 14:50:52 2025
+# Created: Thu Jun 04 13:54:16 2026
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -209,6 +209,9 @@ class Ui_MainWindow(object):
         self.menuZone_Certifiable.setObjectName(_fromUtf8("menuZone_Certifiable"))
         self.menuA_Propos = QtGui.QMenu(self.menubar)
         self.menuA_Propos.setObjectName(_fromUtf8("menuA_Propos"))
+        self.menuInterrop_rabilit = QtGui.QMenu(self.menubar)
+        self.menuInterrop_rabilit.setObjectName(_fromUtf8("menuInterrop_rabilit"))
+        
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setSizeGripEnabled(True)
@@ -983,6 +986,16 @@ class Ui_MainWindow(object):
         self.actionRecherche.setObjectName(_fromUtf8("actionRecherche"))
         self.actionGestion_CLR = QtGui.QAction(MainWindow)
         self.actionGestion_CLR.setObjectName(_fromUtf8("actionGestion_CLR"))
+        self.actionReception_Demande = QtGui.QAction(MainWindow)
+        self.actionReception_Demande.setObjectName(_fromUtf8("actionReception_Demande"))
+        self.actionSuiviReception_Demande = QtGui.QAction(MainWindow)
+        self.actionSuiviReception_Demande.setObjectName(_fromUtf8("actionSuiviReception_Demande"))
+        self.actionGestion_Compte_Interrop_rabilit = QtGui.QAction(MainWindow)
+        self.actionGestion_Compte_Interrop_rabilit.setObjectName(_fromUtf8("actionGestion_Compte_Interrop_rabilit"))
+        self.actionTransformation_en_demande = QtGui.QAction(MainWindow)
+        self.actionTransformation_en_demande.setObjectName(_fromUtf8("actionTransformation_en_demande"))
+        self.actionConfiguuration_Service_FIPLOF = QtGui.QAction(MainWindow)
+        self.actionConfiguuration_Service_FIPLOF.setObjectName(_fromUtf8("actionConfiguuration_Service_FIPLOF"))
         self.menu_Fichier.addAction(self.actionGeoreferencement)
         self.menu_Fichier.addAction(self.actionCharger_points_depuis_xls)
         self.menu_Fichier.addAction(self.actionLevee_Parcellaire)
@@ -1169,6 +1182,12 @@ class Ui_MainWindow(object):
         self.menuPLOF.addAction(self.actionOptions_d_interconnexion)
         self.menuPLOF.addSeparator()
         self.menuPLOF.addAction(self.actionSauvergarde_en_ligne)
+        self.menuInterrop_rabilit.addAction(self.actionReception_Demande)
+        self.menuInterrop_rabilit.addAction(self.actionTransformation_en_demande)
+        self.menuInterrop_rabilit.addAction(self.actionSuiviReception_Demande)
+        self.menuInterrop_rabilit.addSeparator()
+        self.menuInterrop_rabilit.addAction(self.actionGestion_Compte_Interrop_rabilit)
+        self.menuInterrop_rabilit.addAction(self.actionConfiguuration_Service_FIPLOF)
         self.menubar.addAction(self.menu_Fichier.menuAction())
         self.menubar.addAction(self.menuCertificat_Foncier.menuAction())
         self.menubar.addAction(self.menu_Impot_Foncier.menuAction())
@@ -1178,6 +1197,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Etats.menuAction())
         self.menubar.addAction(self.menuInventaire_Parcellaire.menuAction())
         self.menubar.addAction(self.menuPLOF.menuAction())
+        self.menubar.addAction(self.menuInterrop_rabilit.menuAction())
         self.menubar.addAction(self.menuA_Propos.menuAction())
         self.toolBar.addAction(self.actionZoomIn)
         self.toolBar.addAction(self.actionZoomOut)
@@ -1260,6 +1280,7 @@ class Ui_MainWindow(object):
         self.menuPLOF.setTitle(_translate("MainWindow", "PLOF et Interconnexion", None))
         self.menuZone_Certifiable.setTitle(_translate("MainWindow", "Echange hors ligne", None))
         self.menuA_Propos.setTitle(_translate("MainWindow", "A-propos", None))
+        self.menuInterrop_rabilit.setTitle(_translate("MainWindow", "Interopérabilité", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "Boite a outil SIG", None))
         self.dockWidget.setWindowTitle(_translate("MainWindow", "Couches", None))
         self.pushButtonAddRaster.setToolTip(_translate("MainWindow", "Ajouter Couche Raster", None))
@@ -1480,7 +1501,22 @@ class Ui_MainWindow(object):
         self.actionOptions_d_interconnexion.setText(_translate("MainWindow", "Options d\'interconnexion", None))
         self.actionSauvergarde_en_ligne.setText(_translate("MainWindow", "Sauvergarde en ligne", None))
         self.actionRecherche.setText(_translate("MainWindow", "Recherche", None))
-        self.actionGestion_CLR.setText(_translate("MainWindow", "Gestion CLR", None))
+        self.actionGestion_CLR.setText(_translate("MainWindow", "Gestion CRL", None))
+        self.actionReception_Demande.setText(_translate("MainWindow", "Reception Demande", None))
+        self.actionSuiviReception_Demande.setText(_translate("MainWindow", "Suivi", None))
+        self.actionGestion_Compte_Interrop_rabilit.setText(_translate("MainWindow", "Gestion Compte Interropérabilité", None))
+        self.actionTransformation_en_demande.setText(_translate("MainWindow", "Transformation en demande", None))
+        self.actionConfiguuration_Service_FIPLOF.setText(_translate("MainWindow", "Configuration Service FIPLOF", None))
 
 from Widgets.DraggableListView import DraggableListView
 import icons_rc
+
+if __name__ == "__main__":
+    import sys
+    app = QtGui.QApplication(sys.argv)
+    MainWindow = QtGui.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
+

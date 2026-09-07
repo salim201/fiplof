@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Gestion</class>
+ <widget class="QWidget" name="Gestion">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1230</width>
+    <height>779</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Gestion Batch </string>
+  </property>
+  <widget class="QPushButton" name="pushButton_valider">
+   <property name="geometry">
+    <rect>
+     <x>1100</x>
+     <y>380</y>
+     <width>111</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Valider</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>30</y>
+     <width>371</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>18</pointsize>
+     <underline>true</underline>
+    </font>
+   </property>
+   <property name="text">
+    <string>Liste des blocs de demande reçus</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidgetBath">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>100</y>
+     <width>1081</width>
+     <height>239</height>
+    </rect>
+   </property>
+   <column>
+    <property name="text">
+     <string>Id</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Source</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Statut</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Date Insertion</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Nb demande Ok</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Nb demande Erreur</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Traitement</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QTableWidget" name="tableWidgetDemande">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>380</y>
+     <width>1081</width>
+     <height>391</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Microsoft New Tai Lue</family>
+    </font>
+   </property>
+   <column>
+    <property name="text">
+     <string/>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Code Parcelle</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Contenance</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Date demande</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Num décision</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Date Décision</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Début Affichage</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Fin Affichage</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Date RL</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Occupation (année)</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QCheckBox" name="cocherTous">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>350</y>
+     <width>111</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cocher tous</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import os
 from PyQt4 import QtGui, Qt
 from .AddLayer import Ui_Dialog
 from models.ProjetCouche import ProjetCouche
 from Utils import Utils
 from osgeo import ogr
+from osgeo import gdal
 import sys
 import globalvars
 reload(sys)
@@ -113,11 +115,28 @@ class AddLayerRun(QtGui.QDialog):
             self.ui.comboBoxLabel.addItem(field_name)
 
     def browse_file(self):
-        filename = QtGui.QFileDialog.getOpenFileName(self, "Choisissez un fichier")
+        if self.ui.comboBoxType.currentIndex() == 1:
+            raster_filter = ("Raster (*.tif *.tiff *.png *.jpg *.jpeg *.jp2 *.ecw *.sid *.img);;"
+                             u"Tous les fichiers (*)")
+            filename = QtGui.QFileDialog.getOpenFileName(self, u"Choisissez un raster", "", raster_filter)
+        else:
+            filename = QtGui.QFileDialog.getOpenFileName(self, u"Choisissez un fichier")
         if not filename:
             return
         self.ui.lineEditFichier.setText(filename)
         self.load_metadata(str(filename))
+
+    def _estRasterValide(self, filename):
+        if not filename or not os.path.exists(filename):
+            return False
+        try:
+            ds = gdal.Open(filename)
+            if ds is None:
+                return False
+            ds = None
+            return True
+        except Exception:
+            return False
 
     def choose_color(self):
         dialog = QtGui.QColorDialog()
@@ -146,13 +165,25 @@ class AddLayerRun(QtGui.QDialog):
             if self.ui.comboBoxType.currentIndex() == 1:
                 type_couche = 'R'
                 self.selected_color = QtGui.QColor('white')
+
             if self.ui.lineEditLibelle.text().isEmpty():
+                QtGui.QMessageBox.warning(self, u"Champ requis", u"Veuillez saisir le libell\u00e9 de la couche.")
                 self.ui.lineEditLibelle.setFocus()
                 return
             if type_couche == 'S' and not self.selected_color:
+                QtGui.QMessageBox.warning(self, u"Champ requis", u"Veuillez choisir une couleur de fond.")
                 self.ui.pushButtonCouleur.setFocus()
                 return
             if self.ui.lineEditFichier.text().isEmpty():
+                QtGui.QMessageBox.warning(self, u"Champ requis", u"Veuillez choisir un fichier (vecteur ou raster).")
+                self.ui.pushButtonParcourir.setFocus()
+                return
+            if type_couche == 'R' and not self._estRasterValide(str(self.ui.lineEditFichier.text())):
+                QtGui.QMessageBox.critical(
+                    self, u"Fichier invalide",
+                    u"Le fichier s\u00e9lectionn\u00e9 n'est pas un raster valide ou n'est pas support\u00e9.\n\n"
+                    u"Formats courants : .tif, .tiff, .png, .jpg, .jpeg, .jp2, .ecw, .sid, .img"
+                )
                 self.ui.pushButtonParcourir.setFocus()
                 return
             if (self.ui.remplissage.isChecked()):

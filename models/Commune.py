@@ -22,3 +22,34 @@ class Commune:
     def map(self, res):
         self.idcommune, self.iddistrict, self.codecommune, self.nomcommune, self.maire = \
         res["idcommune"], res["iddistrict"], res["codecommune"], res["nomcommune"], res["maire"]
+
+
+    @staticmethod
+    def findByName(connection, nom_commune):
+        cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        print('DEBUG: Commune', nom_commune)
+        try:
+            cursor.execute(
+                """
+                SELECT *
+                FROM commune
+                WHERE UPPER(TRIM(nomcommune)) = UPPER(TRIM(%s))
+                """,
+                (nom_commune,)
+            )
+
+            res = cursor.fetchone()
+
+            if res is None:
+                return None
+
+            commune = Commune()
+            commune.map(res)
+            return commune
+
+        except Exception as e:
+            print("[Commune.findByName] erreur:", e)
+            return None
+
+        finally:
+            cursor.close()

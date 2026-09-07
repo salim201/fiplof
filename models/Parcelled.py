@@ -39,3 +39,99 @@ class Parcelled:
         cursor.close()
         return None
 
+    #arivola 13-05-2026
+    @staticmethod
+    def insert_parcelle_d_by_interrop(connection, data):
+        """
+        data = dict venant de ton JSON API
+        """
+        print("DEBUG  insert_parcelle_d_by_interrop ", data)
+        cursor = connection.cursor()
+
+        try:
+            query = """
+                INSERT INTO parcelle_d (
+                    codeparcelle,
+                    commune,
+                    district,
+                    region,
+                    fkt,
+                    idhameau,
+                    consistance,
+                    categorie,
+                    id_commune,
+                    geom,
+                    surface
+                )
+                VALUES (
+                    %(parcelle)s,
+                    %(commune)s,
+                    %(district)s,
+                    %(region)s,
+                    %(fkt)s,
+                    %(id_hameau)s,
+                    %(consistance)s,
+                    %(categorie)s,
+                    %(id_commune)s,
+
+                    ST_SetSRID(
+                        ST_GeomFromWKB(
+                            decode(%(geom)s, 'hex')
+                        ),
+                        29702
+                    ),
+
+                    ST_Area(
+                        ST_SetSRID(
+                            ST_GeomFromWKB(
+                                decode(%(geom)s, 'hex')
+                            ),
+                            29702
+                        )
+                    )
+                )
+                RETURNING gid
+                """
+
+            cursor.execute(query, data)
+
+            gid = cursor.fetchone()[0]
+            connection.commit()
+            print("DEBUG  gid ", gid)
+
+            return gid
+
+        except Exception as e:
+            connection.rollback()
+            print("INSERT ERROR parcelle_d:", str(e))
+            return None
+
+        finally:
+            cursor.close()
+
+
+    @staticmethod
+    def updateNumDemande(connection, gid, numdemande):
+
+        cursor = connection.cursor(
+            cursor_factory=psycopg2.extras.DictCursor
+        )
+        try:
+            sql = """
+                UPDATE parcelle_d
+                SET numdemande = %s
+                WHERE gid = %s
+            """
+            cursor.execute(sql, (
+                numdemande,
+                gid
+            ))
+            connection.commit()
+            print("INFO : updateNumDemande EFFECTUE")
+            return True
+        except Exception as e:
+            connection.rollback()
+            print("Erreur updateNumDemande :", e)
+        finally:
+            cursor.close()
+        return False

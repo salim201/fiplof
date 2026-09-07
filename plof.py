@@ -254,7 +254,13 @@ class Plof():
         #self.toolPoint.setAction(self.ui.actionAddPoint)
 
 
-        self.connection = psycopg2.connect(database=self.db_config.db_name, user=self.db_config.db_user, password=self.db_config.db_pass, host=self.db_config.db_host)
+        try:
+            self.connection = psycopg2.connect(database=self.db_config.db_name, user=self.db_config.db_user, password=self.db_config.db_pass, host=self.db_config.db_host,
+                                               keepalives=1, keepalives_idle=30, keepalives_interval=10, keepalives_count=3)
+        except (psycopg2.OperationalError, TypeError):
+            self.connection = psycopg2.connect(database=self.db_config.db_name, user=self.db_config.db_user, password=self.db_config.db_pass, host=self.db_config.db_host)
+        from Utils import disable_idle_timeout
+        disable_idle_timeout(self.connection)
         self.runMigration()
         self.sender = 0 # Ajouter pour faire la difference entre les origines de la creation de la parcelle pour gerer son enregistrement
         self.currLayerIndicator = None
@@ -374,7 +380,20 @@ class Plof():
         self.ui.action_Affichage_Collectif.triggered.connect(self.etatsAffichageCollectif)
         self.ui.action_Certificat_Original.triggered.connect(self.impressionOriginal)
         self.ui.actionRe_Impression.triggered.connect(self.ReimpressionOriginal)
+        
+        # Connexion du menu Interropérabilité
+        self.ui.actionReception_Demande.setVisible(False)
+        self.ui.actionTransformation_en_demande.triggered.connect(self.transformationEnDemande)
+        self.ui.actionGestion_Compte_Interrop_rabilit.setVisible(False)
 
+        self.actionEnvoiMiseAJour = QtGui.QAction(self.MainWindow)
+        self.actionEnvoiMiseAJour.setText(u"Envoi mise \xe0 jour")
+        self.ui.menuInterrop_rabilit.insertAction(
+            self.ui.actionSuiviReception_Demande, self.actionEnvoiMiseAJour)
+        self.actionEnvoiMiseAJour.triggered.connect(self.envoiMiseAJour)
+
+        self.ui.actionSuiviReception_Demande.triggered.connect(self.showSuivi)
+        self.ui.actionConfiguuration_Service_FIPLOF.triggered.connect(self.openConfigFIPLOF)
 
         #self.ui.action_ConsultationCertificat.triggered.connect(self.rechercherCF)
         self.ui.action_ConsultationCertificat.setVisible(False)        #Demande
@@ -581,7 +600,7 @@ class Plof():
         _labelCoords = QtGui.QLabel(u"Coordonnée :")
         _EPSG = QtGui.QLabel(u"EPSG :")
         #label version FIPLOF
-        _versionFiplof = QtGui.QLabel(u"                                                                  Patch du : 25/02/2026")
+        _versionFiplof = QtGui.QLabel(u"                                                                  Patch du : 07/09/2026")
 
         #unicode(self.ui.lineEditNumCF.text()).encode('utf-8')
         self.labelCoordonnees = QtGui.QLineEdit("")
@@ -3842,6 +3861,72 @@ class Plof():
         except StandardError as e:
             print (e)
 
+
+    def batchDemande(self):
+        try:
+            print('-------------------Visualisation des batchDemande----------------------')
+            from Interroperabilite.controlleurs.batchDemandeController import BatchDemandeController
+            print('-------------------nterroperabilite.controlleurs.batchDemandeController----------------------')
+            controller = BatchDemandeController(self)
+            print('-------------------batchDemandeController----------------------')
+            controller.showBatchDemande()
+        except Exception as er:
+            print ("Erreur lors de l'ouverture du batch demande:", str(er))
+
+    def transformationEnDemande(self):
+        try:
+            print('-------------------Ouverture fenêtre transformation demande----------------------')
+            from Interroperabilite.controlleurs.batchDemandeController import BatchDemandeController
+            print('-------------------Ouverture fenêtre transformation demande----------------------')
+            controller = BatchDemandeController(self)
+            print('-------------------showListeDossierATransformer----------------------')
+            controller.showListeDossierATransformer()
+        except Exception as er:
+            print ("Erreur lors de l'ouverture du batch demande:", str(er))
+
+    def gestionCompteInteroperabilite(self):
+        try:
+            from Interroperabilite.controlleurs.securiteCompteController import SecuriteCompteController
+            controller = SecuriteCompteController(self.connection)
+            controller.showDialog()
+        except Exception as er:
+            print("Erreur Gestion Compte Interoperabilite:", str(er))
+
+    def envoiMiseAJour(self):
+        try:
+            print('-------------------Ouverture envoi mise a jour----------------------')
+            from Interroperabilite.controlleurs.batchDemandeController import BatchDemandeController
+            controller = BatchDemandeController(self)
+            controller.showEnvoiMiseAJour()
+        except Exception as er:
+            print("Erreur lors de l'ouverture envoi mise a jour:", str(er))
+
+    def showSuivi(self):
+        try:
+            print('-------------------Ouverture suivi----------------------')
+            from Interroperabilite.controlleurs.batchDemandeController import BatchDemandeController
+            controller = BatchDemandeController(self)
+            controller.showSuivi()
+        except Exception as er:
+            print("Erreur lors de l'ouverture suivi:", str(er))
+
+    def openConfigFIPLOF(self):
+        try:
+            print('-------------------Configuration Service FIPLOF----------------------')
+            from Interroperabilite.ConfigFIPLOFRun import ConfigFIPLOFRun
+            dialog = ConfigFIPLOFRun()
+            dialog.exec_()
+        except Exception as er:
+            print("Erreur lors de l'ouverture config FIPLOF:", str(er))
+
+    '''def runCreationGroupee(self):
+        print ("hanao Création groupee.")
+        try:
+            from Certificat.TransformationGroupeeDmdRun import TransformationGroupeeDmdRun
+            TransformationGroupee = TransformationGroupeeDmdRun(self.connection)
+            TransformationGroupee.exec_()
+        except Exception as er:
+            print (er)'''
 
     def rechercheDemande(self):
         print ("recherche")

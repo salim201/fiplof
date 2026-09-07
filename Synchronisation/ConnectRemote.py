@@ -100,7 +100,7 @@ class ConnectRemote:
             bar_syncho.ui.progressBar.setValue(6)
             remoteConn = self.connectToRemote()
 
-            #3-comparaison des tables - colonnes manquants  -   missing_columns_list   est la liste des colonne des tables qui sont manquants dans local et remote
+            #3-comparaison des tables - colonnes manquants - missing_columns_list   est la liste des colonne des tables qui sont manquants dans local et remote
             missing_columns_list=CompareDbModel.compare_Tables_columns_remote_local(self,localConn,remoteConn,bar_syncho)
 
             #4-préparation  connexion local et remote  et la bar de syncho
@@ -109,12 +109,19 @@ class ConnectRemote:
 
             #5-verification si il y des differences entre les  structures des tables
             if (missing_columns_list):
+                print('-------------------------------Misy colonne tsy ampy ------------------------------------')
                 self.append_dataTolog('local and remote',missing_columns_list,u'Liste des tables et colonnes manquantes entre deux BD',
                                       'OK', '')
                 # 6-synchronisation des structures de tables
                 objet_compare.sync_Tables_remote_local(localConn, remoteConn,missing_columns_list)
+                self.append_dataTolog('local and remote', '',
+                                      u'Il y a une différence entre les tables ou colonnes',
+                                      'OK', '')
+
             else:
+                print('------------------------------- Tsy Misy colonne tsy ampy ------------------------------------')
                 self.append_dataTolog('local and remote', '', u'Tentative de comparaison des tables et colonnes entre deux BD: Aucune différence','OK','' )
+
             '''
             print '*************** ento no manao sauvegarde bd********'
             #self.create_database_dump(self.db_config.db_name, self.db_config.db_user, self.db_config.db_pass, self.db_config.db_host, self.db_config.db_port, output_file)

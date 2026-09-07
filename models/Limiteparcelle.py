@@ -28,3 +28,45 @@ class Limiteparcelle:
         cursor.close()
         return results
 
+    @staticmethod
+    def insert(connection, lp):
+
+        cursor = connection.cursor(
+                cursor_factory=psycopg2.extras.DictCursor
+            )
+
+        try:
+
+                sql = """
+                    INSERT INTO limitesparcelle
+                    (
+                        idpointscardinaux,
+                        idparcelle,
+                        description
+                    )
+                    VALUES
+                    (
+                        %s, %s, %s
+                    )
+                """
+
+                cursor.execute(sql, (
+
+                    lp.idpointscardinaux,
+                    lp.idparcelle,
+                    lp.description
+
+                ))
+
+                connection.commit()
+                return True
+
+        except Exception as e:
+            connection.rollback()
+            print("Erreur insert LimitesParcelle :", e)
+
+        finally:
+            cursor.close()
+
+        return False
+

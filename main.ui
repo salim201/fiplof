@@ -566,6 +566,23 @@
      <string>A-propos</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuInterrop_rabilit">
+    <property name="title">
+     <string>Interopérabilité</string>
+    </property>
+    <widget class="QMenu" name="menuConfiguration">
+     <property name="title">
+      <string>Configuration</string>
+     </property>
+     <addaction name="actionGestion_Compte_Interrop_rabilit"/>
+     <addaction name="actionConfiguuration_Service_FIPLOF"/>
+    </widget>
+    <addaction name="actionReception_Demande"/>
+    <addaction name="actionTransformation_en_demande"/>
+    <addaction name="actionSuiviReception_Demande"/>
+    <addaction name="separator"/>
+    <addaction name="menuConfiguration"/>
+   </widget>
    <addaction name="menu_Fichier"/>
    <addaction name="menuCertificat_Foncier"/>
    <addaction name="menu_Impot_Foncier"/>
@@ -575,6 +592,7 @@
    <addaction name="menu_Etats"/>
    <addaction name="menuInventaire_Parcellaire"/>
    <addaction name="menuPLOF"/>
+   <addaction name="menuInterrop_rabilit"/>
    <addaction name="menuA_Propos"/>
   </widget>
   <widget class="QStatusBar" name="statusbar">
@@ -2405,6 +2423,31 @@
   <action name="actionGestion_CLR">
    <property name="text">
     <string>Gestion CLR</string>
+   </property>
+  </action>
+  <action name="actionReception_Demande">
+   <property name="text">
+    <string>Reception Demande</string>
+   </property>
+  </action>
+  <action name="actionSuiviReception_Demande">
+   <property name="text">
+    <string>Suivi</string>
+   </property>
+  </action>
+  <action name="actionGestion_Compte_Interrop_rabilit">
+   <property name="text">
+    <string>Gestion Compte Interropérabilité</string>
+   </property>
+  </action>
+  <action name="actionTransformation_en_demande">
+   <property name="text">
+    <string>Transformation en demande</string>
+   </property>
+  </action>
+  <action name="actionConfiguuration_Service_FIPLOF">
+   <property name="text">
+    <string>Configuration Service FIPLOF</string>
    </property>
   </action>
  </widget>

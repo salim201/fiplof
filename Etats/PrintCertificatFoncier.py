@@ -101,13 +101,14 @@ class PrintCertificatFoncier:
               " LEFT JOIN region R on R.idregion = D.idregion" \
               " WHERE C.idcertificat = %s"
 
-
+        print "**************id certificat************ = "
+        print self.idcertificat
         cursor.execute(sql, (self.idcertificat,))
         rows = cursor.fetchall()
         cursor.close()
         print 'toa ato le izy'
         print rows
-
+        print "feno ve"
         if len(rows) == 0:
             return
         i = 0
